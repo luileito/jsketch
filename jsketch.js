@@ -1,6 +1,6 @@
 /*!
  * jSketch 0.6 | Luis A. Leiva | MIT license
- * A lightweight JavaScript library for drawing facilities on HTML5 canvas.
+ * A simple JavaScript library for drawing facilities on HTML5 canvas.
  */
 /**
  * A simple JavaScript library for drawing facilities on HTML5 canvas.
@@ -25,38 +25,38 @@
      * @param {Object} elem MUST be a DOM element
      * @param {Object} options configuration
      */
-    var jSketch = function(elem,options){
-      return new Sketch(elem,options);
+    var jSketch = function(elem, options){
+      return new Sketch(elem, options);
     };
     // base class (private)
-    var Sketch = function(elem,options){
+    var Sketch = function(elem, options){
       // although discouraged, we can instantiate the class without arguments
       if (!elem) return;
       // one can pass default setup values
-      options = options || {};
+      if (typeof options === 'undefined') options = {};
       // set drawing context first
       this.context(elem);
       // scene defaults
       this.stageWidth  = elem.getAttribute("width");
       this.stageHeight = elem.getAttribute("height");
       // drawing defaults
-      this.graphics.fillStyle   = options.fillStyle   || '#F00';
-      this.graphics.strokeStyle = options.strokeStyle || '#F0F';
-      this.graphics.lineWidth   = options.lineWidth   || 2;
-      this.graphics.lineCap     = options.lineCap     || 'round';
-      this.graphics.lineJoin    = options.lineJoin    || 'round';
-      this.graphics.mitterLimit = options.mitterLimit || 10;
+      this.graphics.fillStyle   = typeof options.fillStyle   !== 'undefined' ? options.fillStyle   : '#F00';
+      this.graphics.strokeStyle = typeof options.strokeStyle !== 'undefined' ? options.strokeStyle : '#F0F';
+      this.graphics.lineWidth   = typeof options.lineWidth   !== 'undefined' ? options.lineWidth   : 2;
+      this.graphics.lineCap     = typeof options.lineCap     !== 'undefined' ? options.lineCap     : 'round';
+      this.graphics.lineJoin    = typeof options.lineJoin    !== 'undefined' ? options.lineJoin    : 'round';
+      this.graphics.mitterLimit = typeof options.mitterLimit !== 'undefined' ? options.mitterLimit : 10;
       // make room for storing some data such as brush type, colors, etc.
       this.data = {};
       // make constructor chainable
       return this;
     };
-    /** 
-     * jSketch methods (publicly extensible).
-     * @class
-     * @memberOf jSketch
-     * @see jSketch
-     */    
+   /** 
+    * jSketch methods (publicly extensible).
+    * @class
+    * @memberOf jSketch
+    * @see jSketch
+    */    
     jSketch.fn = Sketch.prototype = {
       /**
        * Allows to change the drawing context at runtime.

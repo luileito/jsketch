@@ -212,14 +212,15 @@
    * $(selector).sketchable({
    *   interactive: true,
    *   events: {
-   *     create: function(elem,data){}, 
-   *     clear: function(elem,data){}, 
-   *     destroy: function(elem,data){}, 
-   *     mouseDown: function(evt){}, 
-   *     mouseMove: function(evt){}, 
-   *     mouseUp: function(evt){}, 
+   *     create: function(elem, data){}, 
+   *     clear: function(elem, data){}, 
+   *     destroy: function(elem, data){}, 
+   *     mouseDown: function(elem, data, evt){}, 
+   *     mouseMove: function(elem, data, evt){}, 
+   *     mouseUp: function(elem, data, evt){}, 
    *   },
    *   graphics: {
+   *     firstPointSize: 0,    
    *     lineWidth: 3,
    *     strokeStyle: '#F0F',
    *     fillStyle: '#F0F',
@@ -232,22 +233,22 @@
   $.fn.sketchable.defaults = {
     // if interactive is set to true, you can:
     // * draw on canvas via mouse/pen/touch input
-    // * assign callbacks to onMouseDown(evt), onMouseMove(evt), onMouseUp(evt)
+    // * assign callbacks to a number of "key" events like create, mouseUp, etc.
     interactive: true,
     events: {
-      // create: function(elem,data){}, 
-      // clear: function(elem,data){}, 
-      // destroy: function(elem,data){}, 
-      // mouseDown: function(evt){}, 
-      // mouseMove: function(evt){}, 
-      // mouseUp: function(evt){}, 
+      // create: function(elem, data){}, 
+      // clear: function(elem, data){}, 
+      // destroy: function(elem, data){}, 
+      // mouseDown: function(elem, data, evt){}, 
+      // mouseMove: function(elem, data, evt){}, 
+      // mouseUp: function(elem, data, evt){}, 
     },
     // TODO: add more jSketch config options
     graphics: {
-      fillStyle: '#F0F', 
-      strokeStyle: '#F0F',
+      firstPointSize: 0,
       lineWidth: 3,
-      firstPointSize: 0
+      strokeStyle: '#F0F',
+      fillStyle: '#F0F'
       //lineCap: 
       //lineJoin: 
       //miterLimit: 
@@ -256,8 +257,6 @@
 
 
 
-  // main drawing callbacks if interactive is set to true ----------------------
-      
   function getMousePos(e) {
     var elem = $(e.target), pos = elem.offset();
     return {
@@ -274,15 +273,16 @@
   
   function mousemoveHandler(e) {
     var elem = $(e.target), data = elem.data(_ns);
-    // XXX: Comment this to record _all_ move movements on the canvas.
+    // XXX: Comment this to record _all_ move movements on the canvas, 
+    //      including those where the user is not drawing.
     if (!data.canvas.isDrawing) return;
     
     var p = getMousePos(e);
     if (data.canvas.isDrawing) data.canvas.lineTo(p.x, p.y);
     saveMousePos(data, p);
     if (typeof options.events.mouseMove === 'function') {
-      options.events.mouseMove(e);
-    }     
+      options.events.mouseMove(elem, data, e);
+    }
   };
             
   function mousedownHandler(e) {
@@ -296,7 +296,7 @@
     }
     saveMousePos(data, p);
     if (typeof options.events.mouseDown === 'function') {
-      options.events.mouseDown(e);
+      options.events.mouseDown(elem, data, e);
     }
   };
       
@@ -307,7 +307,7 @@
     data.strokes.push(data.coords);
     data.coords = [];
     if (typeof options.events.mouseUp === 'function') {
-      options.events.mouseUp(e);
+      options.events.mouseUp(elem, data, e);
     }
   };
 
@@ -315,11 +315,11 @@
     e.preventDefault();
     var elem = $(e.target);
     var touch = e.originalEvent.changedTouches[0];
-    // Copy original event properties to touch event to simulate mouse event.
+    // Copy original event properties to touch event.
     for (var o in e) {
       touch[o] = e[o];
     }
-    // remove (emulated) mouse events on mobile devices
+    // Remove (emulated) mouse events on mobile devices.
     switch(e.type) {
       case "touchstart": 
         elem.unbind(e.type, mousedownHandler);

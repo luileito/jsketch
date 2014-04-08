@@ -1,5 +1,5 @@
 /*!
- * jSketch 0.6 | Luis A. Leiva | MIT license
+ * jSketch 0.7 | Luis A. Leiva | MIT license
  * A simple JavaScript library for drawing facilities on HTML5 canvas.
  */
 /**
@@ -8,10 +8,9 @@
  * such as object chainability and old-school AS3-like notation.
  * @name jSketch
  * @class
- * @author Luis Leiva
- * @version 0.6
- * @date 16 Jan 2012
- * @since 2010
+ * @author Luis A. Leiva
+ * @version 0.7
+ * @date 8 Apr 2014
  * @example
  * var canvas1 = document.getElementById('foo');
  * var canvas2 = document.getElementById('bar'); 
@@ -350,8 +349,9 @@
        * @methodOf jSketch
        */
       clear: function() {
-        this.graphics.clearRect(0,0, this.stageWidth,this.stageHeight);
+        // The following resets _all_ styles, so better use clearRect.
         //this.canvas.width = this.canvas.width;
+        this.graphics.clearRect(0,0, this.stageWidth,this.stageHeight);
         this.data = {};
         return this;
       },

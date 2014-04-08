@@ -1,6 +1,6 @@
 /*!
  * jQuery sketchable 1.4 | Luis A. Leiva | MIT license
- * This is a jQuery plugin built on top of jSketch drawing class.
+ * This is a jQuery plugin for the jSketch drawing class.
  */
 /**
 * @name $
@@ -185,7 +185,8 @@
    *  or a configuration object.
    * @returns jQuery
    * @class
-   * @version 1.4   
+   * @version 1.4
+   * @date 8 Apr 2014
    * @example 
    * $(selector).sketchable();
    * $(selector).sketchable({interactive:false});
@@ -266,7 +267,7 @@
   };
 
   function saveMousePos(data, pt) {
-    //var timeDelta = (new Date).getTime() - data.timestamp;
+    //var delta = (new Date).getTime() - data.timestamp;
     var time = (new Date).getTime();
     data.coords.push([ pt.x, pt.y, time, data.canvas.isDrawing ]);
   };

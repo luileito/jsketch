@@ -1,19 +1,19 @@
 /*!
- * jQuery sketchable 1.3 | Luis A. Leiva | MIT license
+ * jQuery sketchable 1.4 | Luis A. Leiva | MIT license
  * This is a jQuery plugin built on top of jSketch drawing class.
  */
 /**
- * @name $
- * @class 
- * See <a href="http://jquery.com/">the jQuery library</a> for full details.  
- * This just documents the method that is added to jQuery by this plugin.
- */
+* @name $
+* @class 
+* See <a href="http://jquery.com/">the jQuery library</a> for full details.  
+* This just documents the method that is added to jQuery by this plugin.
+*/
 /**
- * @name $.fn
- * @class 
- * See <a href="http://jquery.com/">the jQuery library</a> for full details.  
- * This just documents the method that is added to jQuery by this plugin.
- */
+* @name $.fn
+* @class 
+* See <a href="http://jquery.com/">the jQuery library</a> for full details.  
+* This just documents the method that is added to jQuery by this plugin.
+*/
 ;(function($){
   // config options + namespace ID
   var options, _ns = "sketchable";
@@ -46,11 +46,17 @@
             fillStyle: options.graphics.fillStyle,
             strokeStyle: options.graphics.strokeStyle,
             lineWidth: options.graphics.lineWidth,
-          })//.background(options.graphics.background); // let user decide...
-          
+          });
+          // Flag drawing state.
+          sketch.isDrawing = false;
           elem.data(_ns, {
-            strokes: [], // mouse strokes
-            coords: [],  // a single stroke
+            // All strokes will be stored here.
+            strokes: [], 
+            // This array represents a single stroke.
+            coords: [],  
+            // Date of first coord, used as time origin.
+            timestamp: new Date().getTime(),
+            // Save a pointer to the drawing canvas.
             canvas: sketch
           });
           
@@ -61,7 +67,7 @@
             elem.bind("touchstart", touchHandler);
             elem.bind("touchend", touchHandler);
             elem.bind("touchmove", touchHandler);
-            // fix Chrome "bug"
+            // fix Chrome bug
             this.onselectstart = function(){ return false };
           }
         }
@@ -72,7 +78,7 @@
     },
     /** 
      * Gets/Sets drawing data strokes sequence.
-     * @param Array arr data strokes: multidimensional array of [x,y,status]'s; status = 0 (pen down) or 1 (pen up)
+     * @param Array arr data strokes: multidimensional array of {x,y,time,status} tuples; status = 0 (pen down) or 1 (pen up)
      * @return Strokes object on get, jQuery on set (with the new data attached)
      * @name strokes
      * @methodOf methods
@@ -88,7 +94,6 @@
         });
       } else { // getter
         var data = $(this).data(_ns);
-        
         return data.strokes;
       }    
     },
@@ -125,7 +130,7 @@
         data.strokes = [];
         if (typeof options.events.clear === 'function') {
           options.events.clear(elem, data);
-        }     
+        }
       });
     },
     /** 
@@ -180,7 +185,7 @@
    *  or a configuration object.
    * @returns jQuery
    * @class
-   * @version 1.3
+   * @version 1.4   
    * @example 
    * $(selector).sketchable();
    * $(selector).sketchable({interactive:false});
@@ -206,15 +211,15 @@
    * $(selector).sketchable({
    *   interactive: true,
    *   events: {
-   *     create: function(elem,data){},
-   *     clear: function(elem,data){},
-   *     destroy: function(elem,data){},      
+   *     create: function(elem,data){}, 
+   *     clear: function(elem,data){}, 
+   *     destroy: function(elem,data){}, 
    *     mouseDown: function(evt){}, 
    *     mouseMove: function(evt){}, 
-   *     mouseUp: function(evt){},      
+   *     mouseUp: function(evt){}, 
    *   },
    *   graphics: {
-   *     lineWidth: 2,
+   *     lineWidth: 3,
    *     strokeStyle: '#F0F',
    *     fillStyle: '#F0F',
    *     lineCap: "round",
@@ -229,18 +234,19 @@
     // * assign callbacks to onMouseDown(evt), onMouseMove(evt), onMouseUp(evt)
     interactive: true,
     events: {
-      // create: function(elem,data){},
-      // clear: function(elem,data){},
-      // destroy: function(elem,data){},
+      // create: function(elem,data){}, 
+      // clear: function(elem,data){}, 
+      // destroy: function(elem,data){}, 
       // mouseDown: function(evt){}, 
       // mouseMove: function(evt){}, 
-      // mouseUp: function(evt){},
+      // mouseUp: function(evt){}, 
     },
     // TODO: add more jSketch config options
     graphics: {
       fillStyle: '#F0F', 
       strokeStyle: '#F0F',
-      lineWidth: 2
+      lineWidth: 3,
+      firstPointSize: 0
       //lineCap: 
       //lineJoin: 
       //miterLimit: 
@@ -254,18 +260,25 @@
   function getMousePos(e) {
     var elem = $(e.target), pos = elem.offset();
     return {
-      x: e.pageX - pos.left,
-      y: e.pageY - pos.top
+      x: Math.round(e.pageX - pos.left),
+      y: Math.round(e.pageY - pos.top)
     }
   };
-      
+
+  function saveMousePos(data, pt) {
+    //var timeDelta = (new Date).getTime() - data.timestamp;
+    var time = (new Date).getTime();
+    data.coords.push([ pt.x, pt.y, time, data.canvas.isDrawing ]);
+  };
+  
   function mousemoveHandler(e) {
     var elem = $(e.target), data = elem.data(_ns);
+    // XXX: Comment this to record _all_ move movements on the canvas.
     if (!data.canvas.isDrawing) return;
+    
     var p = getMousePos(e);
-    data.canvas.lineTo(p.x, p.y);
-    //data.coords.push({ x:p.x, y:p.y, type:0 });
-    data.coords.push([ p.x, p.y, 0 ]);
+    if (data.canvas.isDrawing) data.canvas.lineTo(p.x, p.y);
+    saveMousePos(data, p);
     if (typeof options.events.mouseMove === 'function') {
       options.events.mouseMove(e);
     }     
@@ -276,10 +289,11 @@
     data.canvas.isDrawing = true;
     var p = getMousePos(e);
     data.canvas.beginPath();
-    // mark visually 1st point of stroke
-    data.canvas.fillCircle(p.x,p.y,options.graphics.lineWidth);
-    //data.coords.push({ x:p.x, y:p.y, type:1 });
-    data.coords.push([ p.x, p.y, 1 ]);
+    // Mark visually 1st point of stroke.
+    if (options.graphics.firstPointSize > 0) {
+      data.canvas.fillCircle(p.x, p.y, options.graphics.firstPointSize);
+    }
+    saveMousePos(data, p);
     if (typeof options.events.mouseDown === 'function') {
       options.events.mouseDown(e);
     }
@@ -300,7 +314,10 @@
     e.preventDefault();
     var elem = $(e.target);
     var touch = e.originalEvent.changedTouches[0];
-    touch.type = e.type;
+    // Copy original event properties to touch event to simulate mouse event.
+    for (var o in e) {
+      touch[o] = e[o];
+    }
     // remove (emulated) mouse events on mobile devices
     switch(e.type) {
       case "touchstart": 

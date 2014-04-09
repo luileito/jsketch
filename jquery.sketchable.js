@@ -211,7 +211,7 @@
    * @example
    * $(selector).sketchable({
    *   interactive: true,
-   *   mouseUpMovements: false,
+   *   mouseupMovements: false,
    *   events: {
    *     create: function(elem, data){}, 
    *     clear: function(elem, data){}, 
@@ -236,7 +236,7 @@
     interactive: true,
     // Indicate whether non-drawing strokes should be registered as well.
     // Notice that the last mouseUp stroke is never recorded, as the user has already finished drawing.
-    mouseUpMovements: false,
+    mouseupMovements: false,
     // Callback Event
     events: {
       // create: function(elem, data){}, 
@@ -276,7 +276,7 @@
   
   function mousemoveHandler(e) {
     var elem = $(e.target), data = elem.data(_ns);
-    if (!options.mouseUpMovements && !data.canvas.isDrawing) return;
+    if (!options.mouseupMovements && !data.canvas.isDrawing) return;
     
     var p = getMousePos(e);
     if (data.canvas.isDrawing) data.canvas.lineTo(p.x, p.y);

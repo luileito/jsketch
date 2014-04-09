@@ -271,7 +271,7 @@
   function saveMousePos(data, pt) {
     //var delta = (new Date).getTime() - data.timestamp;
     var time = (new Date).getTime();
-    data.coords.push([ pt.x, pt.y, time, data.canvas.isDrawing ]);
+    data.coords.push([ pt.x, pt.y, time, +data.canvas.isDrawing ]);
   };
   
   function mousemoveHandler(e) {

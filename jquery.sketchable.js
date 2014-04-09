@@ -1,5 +1,5 @@
 /*!
- * jQuery sketchable 1.4 | Luis A. Leiva | MIT license
+ * jQuery sketchable 1.5 | Luis A. Leiva | MIT license
  * This is a jQuery plugin for the jSketch drawing class.
  */
 /**
@@ -59,7 +59,7 @@
             // Save a pointer to the drawing canvas.
             canvas: sketch
           });
-          
+          // Attach event listeners.
           if (options.interactive) {
             elem.bind("mousedown", mousedownHandler);
             elem.bind("mouseup", mouseupHandler);
@@ -67,7 +67,7 @@
             elem.bind("touchstart", touchHandler);
             elem.bind("touchend", touchHandler);
             elem.bind("touchmove", touchHandler);
-            // fix Chrome bug
+            // Fix Chrome "bug".
             this.onselectstart = function(){ return false };
           }
         }
@@ -185,8 +185,8 @@
    *  or a configuration object.
    * @returns jQuery
    * @class
-   * @version 1.4
-   * @date 8 Apr 2014
+   * @version 1.5
+   * @date 9 Apr 2014
    * @example 
    * $(selector).sketchable();
    * $(selector).sketchable({interactive:false});
@@ -211,6 +211,7 @@
    * @example
    * $(selector).sketchable({
    *   interactive: true,
+   *   mouseUpMovements: false,
    *   events: {
    *     create: function(elem, data){}, 
    *     clear: function(elem, data){}, 
@@ -231,10 +232,12 @@
    * });
    */
   $.fn.sketchable.defaults = {
-    // if interactive is set to true, you can:
-    // * draw on canvas via mouse/pen/touch input
-    // * assign callbacks to a number of "key" events like create, mouseUp, etc.
+    // In interactive mode, it's possible to draw via mouse/pen/touch input.
     interactive: true,
+    // Indicate whether non-drawing strokes should be registered as well.
+    // Notice that the last mouseUp stroke is never recorded, as the user has already finished drawing.
+    mouseUpMovements: false,
+    // Callback Event
     events: {
       // create: function(elem, data){}, 
       // clear: function(elem, data){}, 
@@ -273,9 +276,7 @@
   
   function mousemoveHandler(e) {
     var elem = $(e.target), data = elem.data(_ns);
-    // XXX: Comment this to record _all_ move movements on the canvas, 
-    //      including those where the user is not drawing.
-    if (!data.canvas.isDrawing) return;
+    if (!options.mouseUpMovements && !data.canvas.isDrawing) return;
     
     var p = getMousePos(e);
     if (data.canvas.isDrawing) data.canvas.lineTo(p.x, p.y);

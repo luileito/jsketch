@@ -192,7 +192,11 @@
    * $(selector).sketchable({interactive:false});
    */
   $.fn.sketchable = function(method) {
-    if (methods[method]) {
+    // This "magic" keyword returns all available plugin methods,
+    // so that they can be easily extended/overriden.
+    if (method === 'methods' || method === 'functions') {
+      return methods;
+    } else if (methods[method]) {
       return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
     } else if (typeof method === 'object' || !method) {
       return methods.init.apply(this, arguments);

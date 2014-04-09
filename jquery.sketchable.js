@@ -71,8 +71,8 @@
             this.onselectstart = function(){ return false };
           }
         }
-        if (typeof options.events.create === 'function') {
-          options.events.create(elem, elem.data(_ns));
+        if (typeof options.events.init === 'function') {
+          options.events.init(elem, elem.data(_ns));
         }
       });
     },
@@ -197,7 +197,7 @@
     } else if (typeof method === 'object' || !method) {
       return methods.init.apply(this, arguments);
     } else {
-      $.error('Method '+ method +' does not exist on jQuery.sketchable');
+      $.error('Method '+ method +' does not exist. See jQuery.sketchable("methods").');
     }
     return this;
   };
@@ -213,12 +213,12 @@
    *   interactive: true,
    *   mouseupMovements: false,
    *   events: {
-   *     create: function(elem, data){}, 
+   *     init: function(elem, data){}, 
    *     clear: function(elem, data){}, 
    *     destroy: function(elem, data){}, 
-   *     mouseDown: function(elem, data, evt){}, 
-   *     mouseMove: function(elem, data, evt){}, 
-   *     mouseUp: function(elem, data, evt){}, 
+   *     mousedown: function(elem, data, evt){}, 
+   *     mousemove: function(elem, data, evt){}, 
+   *     mouseup: function(elem, data, evt){}, 
    *   },
    *   graphics: {
    *     firstPointSize: 0,    
@@ -239,12 +239,12 @@
     mouseupMovements: false,
     // Callback Event
     events: {
-      // create: function(elem, data){}, 
+      // init: function(elem, data){}, 
       // clear: function(elem, data){}, 
       // destroy: function(elem, data){}, 
-      // mouseDown: function(elem, data, evt){}, 
-      // mouseMove: function(elem, data, evt){}, 
-      // mouseUp: function(elem, data, evt){}, 
+      // mousedown: function(elem, data, evt){}, 
+      // mousemove: function(elem, data, evt){}, 
+      // mouseup: function(elem, data, evt){}, 
     },
     // TODO: add more jSketch config options
     graphics: {
@@ -281,8 +281,8 @@
     var p = getMousePos(e);
     if (data.canvas.isDrawing) data.canvas.lineTo(p.x, p.y);
     saveMousePos(data, p);
-    if (typeof options.events.mouseMove === 'function') {
-      options.events.mouseMove(elem, data, e);
+    if (typeof options.events.mousemove === 'function') {
+      options.events.mousemove(elem, data, e);
     }
   };
             
@@ -296,8 +296,8 @@
       data.canvas.fillCircle(p.x, p.y, options.graphics.firstPointSize);
     }
     saveMousePos(data, p);
-    if (typeof options.events.mouseDown === 'function') {
-      options.events.mouseDown(elem, data, e);
+    if (typeof options.events.mousedown === 'function') {
+      options.events.mousedown(elem, data, e);
     }
   };
       
@@ -307,8 +307,8 @@
     data.canvas.closePath();
     data.strokes.push(data.coords);
     data.coords = [];
-    if (typeof options.events.mouseUp === 'function') {
-      options.events.mouseUp(elem, data, e);
+    if (typeof options.events.mouseup === 'function') {
+      options.events.mouseup(elem, data, e);
     }
   };
 

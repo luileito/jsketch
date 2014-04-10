@@ -1,5 +1,5 @@
 /*!
- * jQuery sketchable 1.5 | Luis A. Leiva | MIT license
+ * jQuery sketchable 1.6 | Luis A. Leiva | MIT license
  * This is a jQuery plugin for the jSketch drawing class.
  */
 /**
@@ -36,7 +36,7 @@
      */
     init: function(opts) {
       // options will be available for all plugin methods
-      options = $.extend({}, $.fn.sketchable.defaults, opts);
+      options = $.extend({}, $.fn.sketchable.defaults, opts || {});
       return this.each(function() {
         var elem = $(this), data = elem.data(_ns);
         // first-time checks
@@ -53,11 +53,11 @@
             // All strokes will be stored here.
             strokes: [], 
             // This array represents a single stroke.
-            coords: [],  
+            coords: [], 
             // Date of first coord, used as time origin.
-            timestamp: new Date().getTime(),
-            // Save a pointer to the drawing canvas.
-            canvas: sketch
+            timestamp: new Date().getTime(), 
+            // Save a pointer to the drawing canvas (jSketch instance).
+            sketch: sketch
           });
           // Attach event listeners.
           if (options.interactive) {
@@ -101,7 +101,7 @@
      * Allows low-level manipulation of the sketchable canvas.
      * @param Object callback function, invoked with 2 arguments:
      *                * elem: jQuery element
-     *                * data: canvas (DOM element)
+     *                * data: element data
      * @return jQuery
      * @name handler
      * @methodOf methods
@@ -117,7 +117,7 @@
       });        
     },
     /** 
-     * Clears canvas (and strokes data).
+     * Clears canvas (together with strokes data).
      * @return jQuery
      * @name clear
      * @methodOf methods
@@ -126,7 +126,7 @@
     clear: function() {
       return this.each(function() {
         var elem = $(this), data = elem.data(_ns);
-        data.canvas.clear();
+        data.sketch.clear();
         data.strokes = [];
         if (typeof options.events.clear === 'function') {
           options.events.clear(elem, data);
@@ -153,7 +153,7 @@
       });        
     },
     /** 
-     * Destroys sketchable canvas (and strokes data).
+     * Destroys sketchable canvas (together with strokes data and events).
      * @return jQuery
      * @name destroy
      * @methodOf methods     
@@ -170,7 +170,7 @@
           elem.unbind("touchend", touchHandler);
           elem.unbind("touchmove", touchHandler);
         }
-        elem.removeData(_ns)//.remove();
+        elem.removeData(_ns);
         if (typeof options.events.destroy === 'function') {
           options.events.destroy(elem, data);
         }
@@ -185,16 +185,16 @@
    *  or a configuration object.
    * @returns jQuery
    * @class
-   * @version 1.5
+   * @version 1.6
    * @date 9 Apr 2014
    * @example 
    * $(selector).sketchable();
    * $(selector).sketchable({interactive:false});
    */
   $.fn.sketchable = function(method) {
-    // This "magic" keyword returns all available plugin methods,
+    // These "magic" keywords return internal plugin methods,
     // so that they can be easily extended/overriden.
-    if (method === 'methods' || method === 'functions') {
+    if ("methods functions hooks".split(" ").indexOf(method) > -1) {
       return methods;
     } else if (methods[method]) {
       return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
@@ -275,15 +275,15 @@
   function saveMousePos(data, pt) {
     //var delta = (new Date).getTime() - data.timestamp;
     var time = (new Date).getTime();
-    data.coords.push([ pt.x, pt.y, time, +data.canvas.isDrawing ]);
+    data.coords.push([ pt.x, pt.y, time, +data.sketch.isDrawing ]);
   };
   
   function mousemoveHandler(e) {
     var elem = $(e.target), data = elem.data(_ns);
-    if (!options.mouseupMovements && !data.canvas.isDrawing) return;
+    if (!options.mouseupMovements && !data.sketch.isDrawing) return;
     
     var p = getMousePos(e);
-    if (data.canvas.isDrawing) data.canvas.lineTo(p.x, p.y);
+    if (data.sketch.isDrawing) data.sketch.lineTo(p.x, p.y);
     saveMousePos(data, p);
     if (typeof options.events.mousemove === 'function') {
       options.events.mousemove(elem, data, e);
@@ -292,12 +292,12 @@
             
   function mousedownHandler(e) {
     var elem = $(e.target), data = elem.data(_ns);  
-    data.canvas.isDrawing = true;
+    data.sketch.isDrawing = true;
     var p = getMousePos(e);
-    data.canvas.beginPath();
+    data.sketch.beginPath();
     // Mark visually 1st point of stroke.
     if (options.graphics.firstPointSize > 0) {
-      data.canvas.fillCircle(p.x, p.y, options.graphics.firstPointSize);
+      data.sketch.fillCircle(p.x, p.y, options.graphics.firstPointSize);
     }
     saveMousePos(data, p);
     if (typeof options.events.mousedown === 'function') {
@@ -307,8 +307,8 @@
       
   function mouseupHandler(e) {
     var elem = $(e.target), data = elem.data(_ns);
-    data.canvas.isDrawing = false;
-    data.canvas.closePath();
+    data.sketch.isDrawing = false;
+    data.sketch.closePath();
     data.strokes.push(data.coords);
     data.coords = [];
     if (typeof options.events.mouseup === 'function') {
@@ -325,7 +325,7 @@
       touch[o] = e[o];
     }
     // Remove (emulated) mouse events on mobile devices.
-    switch(e.type) {
+    switch (e.type) {
       case "touchstart": 
         elem.unbind(e.type, mousedownHandler);
         mousedownHandler(touch);

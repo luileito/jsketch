@@ -1,19 +1,19 @@
 /*!
- * jQuery sketchable 1.6 | Luis A. Leiva | MIT license
+ * jQuery sketchable | v1.6 | Luis A. Leiva | MIT license
  * This is a jQuery plugin for the jSketch drawing class.
  */
 /**
-* @name $
-* @class 
-* See <a href="http://jquery.com/">the jQuery library</a> for full details.  
-* This just documents the method that is added to jQuery by this plugin.
-*/
+ * @name $
+ * @class 
+ * See <a href="http://jquery.com/">the jQuery library</a> for full details.  
+ * This just documents the method that is added to jQuery by this plugin.
+ */
 /**
-* @name $.fn
-* @class 
-* See <a href="http://jquery.com/">the jQuery library</a> for full details.  
-* This just documents the method that is added to jQuery by this plugin.
-*/
+ * @name $.fn
+ * @class 
+ * See <a href="http://jquery.com/">the jQuery library</a> for full details.  
+ * This just documents the method that is added to jQuery by this plugin.
+ */
 ;(function($){
   // config options + namespace ID
   var options, _ns = "sketchable";
@@ -30,24 +30,23 @@
      * @param {Object} opts plugin configuration (see defaults)
      * @return jQuery
      * @name init
-     * @ignore     
+     * @ignore
      * @methodOf methods
      * @example $(selector).sketchable();
      */
     init: function(opts) {
-      // options will be available for all plugin methods
+      // Options will be available for all plugin methods.
       options = $.extend({}, $.fn.sketchable.defaults, opts || {});
       return this.each(function() {
         var elem = $(this), data = elem.data(_ns);
-        // first-time checks
         if (!data) {
-          // TODO: add more drawing properties (and set them configurable)
+          // TODO: Add more drawing properties (and set them configurable).
           var sketch = new jSketch(this, {
             fillStyle: options.graphics.fillStyle,
             strokeStyle: options.graphics.strokeStyle,
             lineWidth: options.graphics.lineWidth,
           });
-          // Flag drawing state.
+          // Flag drawing state on a per-canvas basis.
           sketch.isDrawing = false;
           elem.data(_ns, {
             // All strokes will be stored here.
@@ -181,13 +180,12 @@
 
   /** 
    * Creates a new jQuery.sketchable object.
-   * @param {String|Object} method name of the method to invoke, 
-   *  or a configuration object.
-   * @returns jQuery
+   * @param {String|Object} method name of the method to invoke, or a configuration object.
+   * @return jQuery
    * @class
    * @version 1.6
    * @date 9 Apr 2014
-   * @example 
+   * @example
    * $(selector).sketchable();
    * $(selector).sketchable({interactive:false});
    */
@@ -208,7 +206,7 @@
   
   /** 
    * Default configuration (publicly modifiable).
-   * Note that on[···] callbacks are triggered only if interactive == true.
+   * Note that mouse[···] callbacks are triggered only if interactive is set to true.
    * @name defaults
    * @default
    * @memberOf $.fn.sketchable
@@ -273,6 +271,7 @@
   };
 
   function saveMousePos(data, pt) {
+    // TODO: Compress mouse data in order to save bandwidth.
     //var delta = (new Date).getTime() - data.timestamp;
     var time = (new Date).getTime();
     data.coords.push([ pt.x, pt.y, time, +data.sketch.isDrawing ]);
@@ -304,7 +303,7 @@
       options.events.mousedown(elem, data, e);
     }
   };
-      
+  
   function mouseupHandler(e) {
     var elem = $(e.target), data = elem.data(_ns);
     data.sketch.isDrawing = false;
@@ -315,7 +314,7 @@
       options.events.mouseup(elem, data, e);
     }
   };
-
+  
   function touchHandler(e) {
     e.preventDefault();
     var elem = $(e.target);

@@ -183,8 +183,6 @@
    * @param {String|Object} method name of the method to invoke, or a configuration object.
    * @return jQuery
    * @class
-   * @version 1.6
-   * @date 9 Apr 2014
    * @example
    * $(selector).sketchable();
    * $(selector).sketchable({interactive:false});

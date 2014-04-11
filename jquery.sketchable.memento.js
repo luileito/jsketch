@@ -27,13 +27,13 @@
     // Private stuff //////////////////////////////////////////////////////////
     var stack = [];
     var stpos = -1;
-    var self = this;
+    var self  = this;
     
     function prev() {
       if (stpos > 0) {
         stpos--;
         var snapshot = new Image();
-        snapshot.src = stack[stpos].state;
+        snapshot.src = stack[stpos].image;
         snapshot.onload = function() {
           restore(this);
         };
@@ -44,7 +44,7 @@
       if (stpos < stack.length - 1) {
         stpos++;
         var snapshot = new Image();
-        snapshot.src = stack[stpos].state;
+        snapshot.src = stack[stpos].image;
         snapshot.onload = function() {
           restore(this);
         };
@@ -122,7 +122,7 @@
       stpos++;
       if (stpos < stack.length) stack.length = stpos;
       $canvas.sketchable('handler', function(elem, data) {
-        stack.push({ state: elem[0].toDataURL(), strokes: data.strokes.slice() });
+        stack.push({ image: elem[0].toDataURL(), strokes: data.strokes.slice() });
       });
     };
     /** 
@@ -172,10 +172,10 @@
     // A helper function to override user-defined event listeners.
     function override(ev) {
       if (options.events && typeof options.events[ev] === 'function') {
-        var _init = options.events[ev];
+        var fn = options.events[ev];
         options.events[ev] = function() {
           var args = Array.prototype.slice.call(arguments, 0);
-          _init.call(this, args);
+          fn.call(this, args);
           callbacks[ev].apply(this, args);
         }
       } else {
@@ -183,6 +183,7 @@
       }
     };
     
+    // Event order matters.
     var events = 'init mouseup destroy'.split(" ");
     for (var i = 0; i < events.length; i++) {
       override(events[i]);
@@ -195,7 +196,7 @@
       },
       redo: function() {
         mc.redo();
-      },
+      }
     });
     
     return plugin.defaults;

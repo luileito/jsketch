@@ -171,7 +171,7 @@
     
     // A helper function to override user-defined event listeners.
     function override(ev) {
-      if (options.events && typeof options.events[ev] === 'function') {
+      if (options && options.events && typeof options.events[ev] === 'function') {
         var _init = options.events[ev];
         options.events[ev] = function() {
           var args = Array.prototype.slice.call(arguments, 0);

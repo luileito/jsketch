@@ -15,8 +15,8 @@
  * This just documents the method that is added to jQuery by this plugin.
  */
 ;(function($){
-  // config options + namespace ID
-  var options, _ns = "sketchable";
+  // Custom namespace ID.
+  var _ns = "sketchable";
   /** 
    * Note: This is NOT a constructor actually, but a series of methods to be 
    * called from the plugin.
@@ -36,7 +36,7 @@
      */
     init: function(opts) {
       // Options will be available for all plugin methods.
-      options = $.extend({}, $.fn.sketchable.defaults, opts || {});
+      var options = $.extend({}, $.fn.sketchable.defaults, opts || {});
       return this.each(function() {
         var elem = $(this), data = elem.data(_ns);
         if (!data) {
@@ -56,7 +56,9 @@
             // Date of first coord, used as time origin.
             timestamp: new Date().getTime(), 
             // Save a pointer to the drawing canvas (jSketch instance).
-            sketch: sketch
+            sketch: sketch, 
+            // Save also a pointer to the given options.
+            options: options
           });
           // Attach event listeners.
           if (options.interactive) {
@@ -124,7 +126,7 @@
      */
     clear: function() {
       return this.each(function() {
-        var elem = $(this), data = elem.data(_ns);
+        var elem = $(this), data = elem.data(_ns), options = data.options;
         data.sketch.clear();
         data.strokes = [];
         if (typeof options.events.clear === 'function') {
@@ -144,7 +146,7 @@
      */    
     reset: function(opts) {
       return this.each(function(){
-        var elem = $(this), data = elem.data(_ns);
+        var elem = $(this), data = elem.data(_ns), options = data.options;
         elem.sketchable('destroy').sketchable(opts);
         if (typeof options.events.reset === 'function') {
           options.events.reset(elem, data);
@@ -160,7 +162,7 @@
      */
     destroy: function() {
       return this.each(function(){
-        var elem = $(this), data = elem.data(_ns);
+        var elem = $(this), data = elem.data(_ns), options = data.options;
         if (options.interactive) {
           elem.unbind("mousedown", mousedownHandler);
           elem.unbind("mouseup", mouseupHandler);
@@ -276,8 +278,10 @@
   };
   
   function mousemoveHandler(e) {
-    var elem = $(e.target), data = elem.data(_ns);
+    var elem = $(e.target), data = elem.data(_ns), options = data.options;
     if (!options.mouseupMovements && !data.sketch.isDrawing) return;
+    // This would grab all penup strokes before drawing anythong on the canvas.
+    //if ( (!options.mouseupMovements || data.strokes.length === 0) && !data.sketch.isDrawing ) return;
     
     var p = getMousePos(e);
     if (data.sketch.isDrawing) data.sketch.lineTo(p.x, p.y);
@@ -288,7 +292,7 @@
   };
             
   function mousedownHandler(e) {
-    var elem = $(e.target), data = elem.data(_ns);  
+    var elem = $(e.target), data = elem.data(_ns), options = data.options;
     data.sketch.isDrawing = true;
     var p = getMousePos(e);
     data.sketch.beginPath();
@@ -303,7 +307,7 @@
   };
   
   function mouseupHandler(e) {
-    var elem = $(e.target), data = elem.data(_ns);
+    var elem = $(e.target), data = elem.data(_ns), options = data.options;
     data.sketch.isDrawing = false;
     data.sketch.closePath();
     data.strokes.push(data.coords);

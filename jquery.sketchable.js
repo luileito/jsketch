@@ -44,7 +44,7 @@
           var sketch = new jSketch(this, {
             fillStyle: options.graphics.fillStyle,
             strokeStyle: options.graphics.strokeStyle,
-            lineWidth: options.graphics.lineWidth,
+            lineWidth: options.graphics.lineWidth
           });
           // Flag drawing state on a per-canvas basis.
           sketch.isDrawing = false;
@@ -220,7 +220,7 @@
    *     destroy: function(elem, data){}, 
    *     mousedown: function(elem, data, evt){}, 
    *     mousemove: function(elem, data, evt){}, 
-   *     mouseup: function(elem, data, evt){}, 
+   *     mouseup: function(elem, data, evt){}
    *   },
    *   graphics: {
    *     firstPointSize: 0,    
@@ -246,7 +246,7 @@
       // destroy: function(elem, data){}, 
       // mousedown: function(elem, data, evt){}, 
       // mousemove: function(elem, data, evt){}, 
-      // mouseup: function(elem, data, evt){}, 
+      // mouseup: function(elem, data, evt){}
     },
     // TODO: add more jSketch config options
     graphics: {
@@ -254,9 +254,9 @@
       lineWidth: 3,
       strokeStyle: '#F0F',
       fillStyle: '#F0F'
-      //lineCap: 
-      //lineJoin: 
-      //miterLimit: 
+      //lineCap: "round",
+      //lineJoin: "round",
+      //miterLimit: 10
     }
   };
 
@@ -319,11 +319,11 @@
   
   function touchHandler(e) {
     e.preventDefault();
-    var elem = $(e.target);
+    var elem  = $(e.target);
     var touch = e.originalEvent.changedTouches[0];
     // Copy original event properties to touch event.
     for (var o in e) {
-      touch[o] = e[o];
+      if (e.hasOwnProperty(o)) touch[o] = e[o];
     }
     // Remove (emulated) mouse events on mobile devices.
     switch (e.type) {

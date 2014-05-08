@@ -301,6 +301,11 @@
     if (options.graphics.firstPointSize > 0) {
       data.sketch.fillCircle(p.x, p.y, options.graphics.firstPointSize);
     }
+    // Don't mix mouseup and mousedown in the same stroke.
+    if (data.coords.length > 0) {
+      data.strokes.push(data.coords);
+      data.coords = [];
+    }
     saveMousePos(data, p);
     if (typeof options.events.mousedown === 'function') {
       options.events.mousedown(elem, data, e);

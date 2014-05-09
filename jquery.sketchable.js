@@ -1,5 +1,5 @@
 /*!
- * jQuery sketchable | v1.6 | Luis A. Leiva | MIT license
+ * jQuery sketchable | v1.7 | Luis A. Leiva | MIT license
  * This is a jQuery plugin for the jSketch drawing class.
  */
 /**
@@ -213,6 +213,7 @@
    * $(selector).sketchable({
    *   interactive: true,
    *   mouseupMovements: false,
+   *   relTimestamps: false,
    *   events: {
    *     init: function(elem, data){}, 
    *     clear: function(elem, data){}, 
@@ -222,7 +223,7 @@
    *     mouseup: function(elem, data, evt){}, 
    *   },
    *   graphics: {
-   *     firstPointSize: 0,    
+   *     firstPointSize: 3,    
    *     lineWidth: 3,
    *     strokeStyle: '#F0F',
    *     fillStyle: '#F0F',
@@ -238,6 +239,8 @@
     // Indicate whether non-drawing strokes should be registered as well.
     // Notice that the last mouseUp stroke is never recorded, as the user has already finished drawing.
     mouseupMovements: false,
+    // Inidicate whether timestamps should be relative (start at time 0) or absolute (start at Unix epoch).
+    relTimestamps: false,
     // Callback Event
     events: {
       // init: function(elem, data){}, 
@@ -252,10 +255,10 @@
       firstPointSize: 3,
       lineWidth: 3,
       strokeStyle: '#F0F',
-      fillStyle: '#F0F'
-      //lineCap: 
-      //lineJoin: 
-      //miterLimit: 
+      fillStyle: '#F0F',
+      lineCap: "round",
+      lineJoin: "round",
+      miterLimit: 10
     }
   };
 
@@ -270,9 +273,13 @@
   };
 
   function saveMousePos(data, pt) {
-    // TODO: Compress mouse data in order to save bandwidth.
-    //var delta = (new Date).getTime() - data.timestamp;
     var time = (new Date).getTime();
+    if (data.options.relTimestamps) {
+      // The first timestamp is relative to initialization time;
+      // thus fix it so that it is relative to the timestamp of the first stroke.
+      if (data.strokes.length === 0 && data.coords.length === 0) data.timestamp = time;
+      time -= data.timestamp;
+    }
     data.coords.push([ pt.x, pt.y, time, +data.sketch.isDrawing ]);
   };
   

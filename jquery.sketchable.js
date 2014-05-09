@@ -36,16 +36,12 @@
      */
     init: function(opts) {
       // Options will be available for all plugin methods.
-      var options = $.extend({}, $.fn.sketchable.defaults, opts || {});
+      var options = $.extend(true, {}, $.fn.sketchable.defaults, opts || {});
       return this.each(function() {
         var elem = $(this), data = elem.data(_ns);
         if (!data) {
           // TODO: Add more drawing properties (and set them configurable).
-          var sketch = new jSketch(this, {
-            fillStyle: options.graphics.fillStyle,
-            strokeStyle: options.graphics.strokeStyle,
-            lineWidth: options.graphics.lineWidth,
-          });
+          var sketch = new jSketch(this, options.graphics);
           // Flag drawing state on a per-canvas basis.
           sketch.isDrawing = false;
           elem.data(_ns, {
@@ -251,7 +247,7 @@
     },
     // TODO: add more jSketch config options
     graphics: {
-      firstPointSize: 0,
+      firstPointSize: 3,
       lineWidth: 3,
       strokeStyle: '#F0F',
       fillStyle: '#F0F'

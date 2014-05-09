@@ -39,23 +39,8 @@
       var options = $.extend(true, {}, $.fn.sketchable.defaults, opts || {});
       return this.each(function() {
         var elem = $(this), data = elem.data(_ns);
+        // Check if element is not initialized yet. 
         if (!data) {
-          // TODO: Add more drawing properties (and set them configurable).
-          var sketch = new jSketch(this, options.graphics);
-          // Flag drawing state on a per-canvas basis.
-          sketch.isDrawing = false;
-          elem.data(_ns, {
-            // All strokes will be stored here.
-            strokes: [], 
-            // This array represents a single stroke.
-            coords: [], 
-            // Date of first coord, used as time origin.
-            timestamp: new Date().getTime(), 
-            // Save a pointer to the drawing canvas (jSketch instance).
-            sketch: sketch, 
-            // Save also a pointer to the given options.
-            options: options
-          });
           // Attach event listeners.
           if (options.interactive) {
             elem.bind("mousedown", mousedownHandler);
@@ -68,6 +53,23 @@
             this.onselectstart = function(){ return false };
           }
         }
+        var sketch = new jSketch(this, options.graphics);
+        // Flag drawing state on a per-canvas basis.
+        sketch.isDrawing = false;
+        // Reconfigure element data.
+        elem.data(_ns, {
+          // All strokes will be stored here.
+          strokes: [], 
+          // This array represents a single stroke.
+          coords: [], 
+          // Date of first coord, used as time origin.
+          timestamp: new Date().getTime(), 
+          // Save a pointer to the drawing canvas (jSketch instance).
+          sketch: sketch, 
+          // Save also a pointer to the given options.
+          options: options
+        });
+        // Trigger init event.
         if (typeof options.events.init === 'function') {
           options.events.init(elem, elem.data(_ns));
         }

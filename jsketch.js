@@ -15,7 +15,7 @@
  * var canvas1 = document.getElementById('foo');
  * var canvas2 = document.getElementById('bar'); 
  * // instantiate once, reuse everywhere
- * var brush = new jSketch(canvas1).lineStyle('red').moveTo(50,50).lineTo(10,10);
+ * var brush = new jSketch(canvas1).lineStyle('red').moveTo(50,50).lineTo(10,10).stroke();
  * brush.context(canvas2).beginFill('#5F7').fillCircle(30,30,8).endFill();
  */
 (function(window){
@@ -59,7 +59,7 @@
     jSketch.fn = Sketch.prototype = {
       /**
        * Allows to change the drawing context at runtime.
-       * @param {Object} elem DOM element
+       * @param {Object} elem   DOM element
        * @return jSketch
        * @name context
        * @methodOf jSketch
@@ -89,7 +89,7 @@
       },
       /**
        * Sets the background color of canvas.
-       * @param {Number|String} color an HTML color
+       * @param {Number|String} color   an HTML color
        * @return jSketch
        * @name background
        * @methodOf jSketch
@@ -105,7 +105,7 @@
        * Shortcut for setting the size + background color.
        * @param {Number} width
        * @param {Number} height       
-       * @param {Number|String} color an HTML color
+       * @param {Number|String} color   an HTML color
        * @return jSketch
        * @name stage
        * @methodOf jSketch
@@ -116,7 +116,7 @@
       },
       /**
        * Sets the fill color.
-       * @param {Number|String} color an HTML color
+       * @param {Number|String} color   an HTML color
        * @return jSketch
        * @name beginFill
        * @methodOf jSketch
@@ -138,11 +138,11 @@
       },
       /**
        * Sets the line style.
-       * @param {Number|String} color an HTML color
-       * @param {Number} thickness line thickness
-       * @param {String} thickness style of line cap
-       * @param {String} joinStyle style of line join
-       * @param {String} mitter style of mitter       
+       * @param {Number|String} color   an HTML color
+       * @param {Number} thickness      line thickness
+       * @param {String} capStyle       style of line cap
+       * @param {String} joinStyle      style of line join
+       * @param {String} mitter         style of mitter
        * @return jSketch
        * @name lineStyle
        * @methodOf jSketch
@@ -177,7 +177,6 @@
        */
       lineTo: function(x,y) {
         this.graphics.lineTo(x,y);
-        this.graphics.stroke();
         return this;
       },
       /**
@@ -199,15 +198,14 @@
        * Draws curve to given coordinate.
        * @param {Number} x
        * @param {Number} y
-       * @param {Number} cpx x coordinate of control point
-       * @param {Number} cpy y coordinate of control point
+       * @param {Number} cpx   x coordinate of control point
+       * @param {Number} cpy   y coordinate of control point
        * @return jSketch
        * @name curveTo
        * @methodOf jSketch
        */
       curveTo: function(x,y,cpx,cpy) {
         this.graphics.quadraticCurveTo(cpx,cpy,x,y);
-        this.graphics.stroke();
         return this;
       },
       /**
@@ -216,8 +214,8 @@
        * @param {Number} y1
        * @param {Number} x2
        * @param {Number} y2       
-       * @param {Number} cpx x coordinate of control point
-       * @param {Number} cpy y coordinate of control point
+       * @param {Number} cpx   x coordinate of control point
+       * @param {Number} cpy   y coordinate of control point
        * @return jSketch
        * @name curve
        * @methodOf jSketch
@@ -225,6 +223,16 @@
       curve: function(x1,y1,x2,y2,cpx,cpy) {
         this.graphics.moveTo(x1,y1);
         this.curveTo(x2,y2,cpx,cpy);
+        return this;
+      },
+      /**
+       * Strokes a given path.
+       * @return jSketch
+       * @name stroke
+       * @methodOf jSketch
+       */
+      stroke: function() {
+        this.graphics.stroke();
         return this;
       },
       /**
@@ -331,6 +339,7 @@
         this.data.strokeStyle = this.graphics.strokeStyle;
         this.graphics.globalCompositeOperation = "copy";
         this.graphics.strokeStyle = "rgba(0,0,0,0)";
+        return this;
       },
       /**
        * Sets brush to pencil mode.
@@ -341,6 +350,7 @@
       pencil: function() {
         this.graphics.globalCompositeOperation = "source-over";
         this.graphics.strokeStyle = this.data.strokeStyle;
+        return this;
       },      
       /**
        * Clears stage.
@@ -373,6 +383,23 @@
        */
       restore: function() {
         this.graphics.restore();
+        return this;
+      },
+      /**
+       * Draws an image.
+       * @param {Number} img
+       * @param {Number} x
+       * @param {Number} y
+       * @return jSketch
+       * @name drawImage
+       * @methodOf jSketch
+       */
+      drawImage: function(src, x,y) {
+        var self = this, img = new Image();
+        img.src = src;
+        img.onload = function() {
+          self.graphics.drawImage(img, x,y);
+        }
         return this;
       }
     };

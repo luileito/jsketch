@@ -128,6 +128,7 @@
         data.sketch.clear();
         data.strokes = [];
         data.coords  = [];
+        // Trigger clear event, if need be.
         if (typeof options.events.clear === 'function') {
           options.events.clear(elem, data);
         }
@@ -147,6 +148,7 @@
       return this.each(function(){
         var elem = $(this), data = elem.data(_ns), options = data.options;
         elem.sketchable('destroy').sketchable(opts);
+        // Trigger reset event, if need be.
         if (typeof options.events.reset === 'function') {
           options.events.reset(elem, data);
         }
@@ -171,6 +173,7 @@
           elem.unbind("touchmove", touchHandler);
         }
         elem.removeData(_ns);
+        // Trigger destroy event, if need be.
         if (typeof options.events.destroy === 'function') {
           options.events.destroy(elem, data);
         }
@@ -263,7 +266,6 @@
   };
 
 
-
   function getMousePos(e) {
     var elem = $(e.target), pos = elem.offset();
     return {
@@ -271,7 +273,7 @@
       y: Math.round(e.pageY - pos.top)
     }
   };
-
+  
   function saveMousePos(data, pt) {
     var time = (new Date).getTime();
     if (data.options.relTimestamps) {
@@ -290,28 +292,33 @@
     if ( (!options.mouseupMovements || data.strokes.length === 0) && !data.sketch.isDrawing ) return;
     
     var p = getMousePos(e);
-    if (data.sketch.isDrawing) data.sketch.lineTo(p.x, p.y);
+    // Save mouse coords as soon as possible.
     saveMousePos(data, p);
+    if (data.sketch.isDrawing) {
+      data.sketch.lineTo(p.x, p.y).stroke();
+    }
+    // Trigger mousemove event, if need be.
     if (typeof options.events.mousemove === 'function') {
       options.events.mousemove(elem, data, e);
     }
   };
-            
+  
   function mousedownHandler(e) {
     var elem = $(e.target), data = elem.data(_ns), options = data.options;
-    data.sketch.isDrawing = true;
     var p = getMousePos(e);
-    data.sketch.beginPath();
-    // Mark visually 1st point of stroke.
-    if (options.graphics.firstPointSize > 0) {
-      data.sketch.fillCircle(p.x, p.y, options.graphics.firstPointSize);
-    }
-    // Don't mix mouseup and mousedown in the same stroke.
+    // Save mouse coords as soon as possible, but don't mix mouseup and mousedown points in the same stroke.
     if (data.coords.length > 0) {
       data.strokes.push(data.coords);
       data.coords = [];
     }
     saveMousePos(data, p);
+    // Flag drawing state.
+    data.sketch.isDrawing = true;
+    // Mark visually 1st point of stroke.
+    if (options.graphics.firstPointSize > 0) {
+      data.sketch.beginPath().fillCircle(p.x, p.y, options.graphics.firstPointSize).closePath();
+    }
+    // Trigger mousedown event, if need be.
     if (typeof options.events.mousedown === 'function') {
       options.events.mousedown(elem, data, e);
     }
@@ -319,10 +326,11 @@
   
   function mouseupHandler(e) {
     var elem = $(e.target), data = elem.data(_ns), options = data.options;
+    // Reset state.
     data.sketch.isDrawing = false;
-    data.sketch.closePath();
     data.strokes.push(data.coords);
     data.coords = [];
+    // Trigger mouseup event, if need be.
     if (typeof options.events.mouseup === 'function') {
       options.events.mouseup(elem, data, e);
     }

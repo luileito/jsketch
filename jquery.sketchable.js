@@ -295,7 +295,7 @@
     var p = getMousePos(e);
     if (data.sketch.isDrawing) {
       var last = data.coords[idx][ data.coords[idx].length - 1 ];
-      data.sketch.beginPath().line(last[0], last[1], p.x, p.y).closePath();
+      data.sketch.beginPath().line(last[0], last[1], p.x, p.y).stroke().closePath();
     }
     saveMousePos(idx, data, p);
     if (typeof options.events.mousemove === 'function') {
@@ -349,21 +349,21 @@
     switch (e.type) {
       case "touchstart": 
         elem.unbind(e.type, mousedownHandler);
-        for (var i = 1, t = touch[i-1]; i <= touch.length; i++) {
+        for (var i = 0, t = touch[i]; i < touch.length; i++) {
           for (var o in e) t[o] = e[o];
           mousedownHandler(t, t.identifier);
         }
         break;
       case "touchmove":
         elem.unbind(e.type, mousemoveHandler);
-        for (var i = 1, t = touch[i-1]; i <= touch.length; i++) {
+        for (var i = 0, t = touch[i]; i < touch.length; i++) {
           for (var o in e) t[o] = e[o];
           mousemoveHandler(t, t.identifier);
         }
         break;
       case "touchend":
         elem.unbind(e.type, mouseupHandler);
-        for (var i = 1, t = touch[i-1]; i <= touch.length; i++) {
+        for (var i = 0, t = touch[i]; i < touch.length; i++) {
           for (var o in e) t[o] = e[o];
           mouseupHandler(t, t.identifier);
         }

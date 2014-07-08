@@ -54,14 +54,15 @@
           }
         }
         var sketch = new jSketch(this, options.graphics);
+//        sketch.beginPath();
         // Flag drawing state on a per-canvas basis.
         sketch.isDrawing = false;
         // Reconfigure element data.
         elem.data(_ns, {
           // All strokes will be stored here.
           strokes: [], 
-          // This array represents a single stroke.
-          coords: [], 
+          // This will store one stroke per touching finger.
+          coords: {}, 
           // Date of first coord, used as time origin.
           timestamp: new Date().getTime(), 
           // Save a pointer to the drawing canvas (jSketch instance).
@@ -127,8 +128,7 @@
         var elem = $(this), data = elem.data(_ns), options = data.options;
         data.sketch.clear();
         data.strokes = [];
-        data.coords  = [];
-        // Trigger clear event, if need be.
+        data.coords  = {};
         if (typeof options.events.clear === 'function') {
           options.events.clear(elem, data);
         }
@@ -148,7 +148,6 @@
       return this.each(function(){
         var elem = $(this), data = elem.data(_ns), options = data.options;
         elem.sketchable('destroy').sketchable(opts);
-        // Trigger reset event, if need be.
         if (typeof options.events.reset === 'function') {
           options.events.reset(elem, data);
         }
@@ -173,7 +172,6 @@
           elem.unbind("touchmove", touchHandler);
         }
         elem.removeData(_ns);
-        // Trigger destroy event, if need be.
         if (typeof options.events.destroy === 'function') {
           options.events.destroy(elem, data);
         }
@@ -266,6 +264,7 @@
   };
 
 
+
   function getMousePos(e) {
     var elem = $(e.target), pos = elem.offset();
     return {
@@ -273,66 +272,70 @@
       y: Math.round(e.pageY - pos.top)
     }
   };
-  
-  function saveMousePos(data, pt) {
+
+  function saveMousePos(idx, data, pt) {
     var time = (new Date).getTime();
     if (data.options.relTimestamps) {
       // The first timestamp is relative to initialization time;
       // thus fix it so that it is relative to the timestamp of the first stroke.
-      if (data.strokes.length === 0 && data.coords.length === 0) data.timestamp = time;
+      if (data.strokes.length === 0 && data.coords[idx].length === 0) data.timestamp = time;
       time -= data.timestamp;
     }
-    data.coords.push([ pt.x, pt.y, time, +data.sketch.isDrawing ]);
+    data.coords[idx].push([ pt.x, pt.y, time, +data.sketch.isDrawing ]);
   };
   
-  function mousemoveHandler(e) {
+  function mousemoveHandler(e, idx) {
+    if (typeof idx === 'undefined') idx = 0;
+    
     var elem = $(e.target), data = elem.data(_ns), options = data.options;
     //if (!options.mouseupMovements && !data.sketch.isDrawing) return;
     // This would grab all penup strokes AFTER drawing something on the canvas for the first time.
     if ( (!options.mouseupMovements || data.strokes.length === 0) && !data.sketch.isDrawing ) return;
     
     var p = getMousePos(e);
-    // Save mouse coords as soon as possible.
-    saveMousePos(data, p);
     if (data.sketch.isDrawing) {
-      data.sketch.lineTo(p.x, p.y).stroke();
+      var last = data.coords[idx][ data.coords[idx].length - 1 ];
+      data.sketch.beginPath().line(last[0], last[1], p.x, p.y).closePath();
     }
-    // Trigger mousemove event, if need be.
+    saveMousePos(idx, data, p);
     if (typeof options.events.mousemove === 'function') {
       options.events.mousemove(elem, data, e);
     }
   };
-  
-  function mousedownHandler(e) {
+            
+  function mousedownHandler(e, idx) {
+    if (typeof idx === 'undefined') idx = 0;
+    
     var elem = $(e.target), data = elem.data(_ns), options = data.options;
-    var p = getMousePos(e);
-    // Save mouse coords as soon as possible, but don't mix mouseup and mousedown points in the same stroke.
-    if (data.coords.length > 0) {
-      data.strokes.push(data.coords);
-      data.coords = [];
-    }
-    saveMousePos(data, p);
-    // Flag drawing state.
     data.sketch.isDrawing = true;
-    data.sketch.beginPath();
+    var p = getMousePos(e);
+    
     // Mark visually 1st point of stroke.
     if (options.graphics.firstPointSize > 0) {
       data.sketch.fillCircle(p.x, p.y, options.graphics.firstPointSize);
     }
-    // Trigger mousedown event, if need be.
+    // Ensure that coords is properly initialized.
+    if (!data.coords[idx]) {
+      data.coords[idx] = [];
+    }
+    // Don't mix mouseup and mousedown in the same stroke.
+    if (data.coords[idx].length > 0) {
+      data.strokes.push(data.coords[idx]);
+      data.coords[idx] = [];
+    }
+    saveMousePos(idx, data, p);
     if (typeof options.events.mousedown === 'function') {
       options.events.mousedown(elem, data, e);
     }
   };
   
-  function mouseupHandler(e) {
+  function mouseupHandler(e, idx) {
+    if (typeof idx === 'undefined') idx = 0;
+    
     var elem = $(e.target), data = elem.data(_ns), options = data.options;
-    // Reset state.
     data.sketch.isDrawing = false;
-    data.sketch.closePath();
-    data.strokes.push(data.coords);
-    data.coords = [];
-    // Trigger mouseup event, if need be.
+    data.strokes.push(data.coords[idx]);
+    data.coords[idx] = [];
     if (typeof options.events.mouseup === 'function') {
       options.events.mouseup(elem, data, e);
     }
@@ -341,28 +344,34 @@
   function touchHandler(e) {
     e.preventDefault();
     var elem = $(e.target);
-    var touch = e.originalEvent.changedTouches[0];
-    // Copy original event properties to touch event.
-    for (var o in e) {
-      touch[o] = e[o];
-    }
+    var touch = e.originalEvent.changedTouches;
     // Remove (emulated) mouse events on mobile devices.
     switch (e.type) {
       case "touchstart": 
         elem.unbind(e.type, mousedownHandler);
-        mousedownHandler(touch);
+        for (var i = 1, t = touch[i-1]; i <= touch.length; i++) {
+          for (var o in e) t[o] = e[o];
+          mousedownHandler(t, t.identifier);
+        }
         break;
       case "touchmove":
         elem.unbind(e.type, mousemoveHandler);
-        mousemoveHandler(touch);
+        for (var i = 1, t = touch[i-1]; i <= touch.length; i++) {
+          for (var o in e) t[o] = e[o];
+          mousemoveHandler(t, t.identifier);
+        }
         break;
       case "touchend":
         elem.unbind(e.type, mouseupHandler);
-        mouseupHandler(touch);
+        for (var i = 1, t = touch[i-1]; i <= touch.length; i++) {
+          for (var o in e) t[o] = e[o];
+          mouseupHandler(t, t.identifier);
+        }
         break;
       default: 
         return;
     }
+    return false;
   };
 
 })(jQuery);

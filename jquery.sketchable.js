@@ -314,9 +314,10 @@
     saveMousePos(data, p);
     // Flag drawing state.
     data.sketch.isDrawing = true;
+    data.sketch.beginPath();
     // Mark visually 1st point of stroke.
     if (options.graphics.firstPointSize > 0) {
-      data.sketch.beginPath().fillCircle(p.x, p.y, options.graphics.firstPointSize).closePath();
+      data.sketch.fillCircle(p.x, p.y, options.graphics.firstPointSize);
     }
     // Trigger mousedown event, if need be.
     if (typeof options.events.mousedown === 'function') {
@@ -328,6 +329,7 @@
     var elem = $(e.target), data = elem.data(_ns), options = data.options;
     // Reset state.
     data.sketch.isDrawing = false;
+    data.sketch.closePath();
     data.strokes.push(data.coords);
     data.coords = [];
     // Trigger mouseup event, if need be.

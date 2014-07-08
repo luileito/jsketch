@@ -122,7 +122,7 @@
        * @methodOf jSketch
        */
       beginFill: function(color) {
-        this.data.fillStyle = this.graphics.fillStyle;
+        this.saveGraphics('fillStyle');
         this.graphics.fillStyle = color;
         return this;
       },
@@ -283,7 +283,7 @@
         this.graphics.stroke();
         this.graphics.closePath();
         return this;
-      },      
+      },
       /**
        * Draws a filled circle.
        * @param {Number} x
@@ -335,10 +335,12 @@
        * @name eraser
        * @methodOf jSketch
        */
-      eraser: function() {
-        this.data.strokeStyle = this.graphics.strokeStyle;
-        this.graphics.globalCompositeOperation = "copy";
-        this.graphics.strokeStyle = "rgba(0,0,0,0)";
+      eraser: function(brushSize) {
+        if (typeof brushSize === 'undefined') brushSize = 15;
+        if (typeof this.data.strokeStyle === 'undefined') this.saveGraphics('strokeStyle lineWidth');
+        this.graphics.globalCompositeOperation = "destination-out";
+        this.graphics.strokeStyle = "rgba(0,0,0,1)";
+        this.graphics.lineWidth = brushSize;
         return this;
       },
       /**
@@ -349,9 +351,9 @@
        */
       pencil: function() {
         this.graphics.globalCompositeOperation = "source-over";
-        this.graphics.strokeStyle = this.data.strokeStyle;
+        this.restoreGraphics('strokeStyle lineWidth');
         return this;
-      },      
+      },
       /**
        * Clears stage.
        * @return jSketch
@@ -383,6 +385,36 @@
        */
       restore: function() {
         this.graphics.restore();
+        return this;
+      },
+      /**
+       * Saves given drawing settings.
+       * @param {Mixed} propList  Array or space-separated String
+       * @return jSketch
+       * @name saveGraphics
+       * @methodOf jSketch
+       */
+      saveGraphics: function(propList) {
+        if (typeof propList === 'string') propList = propList.split(" ");
+        for (var p = 0; p < propList.length; p++) {
+          var prop = propList[p];
+          this.data[prop] = this.graphics[prop];
+        }
+        return this;
+      },
+      /**
+       * Restores given drawing settings.
+       * @param {Mixed} propList  Array or space-separated String
+       * @return jSketch
+       * @name restoreGraphics
+       * @methodOf jSketch
+       */
+      restoreGraphics: function(propList) {
+        if (typeof propList === 'string') propList = propList.split(" ");
+        for (var p = 0; p < propList.length; p++) {
+          var prop = propList[p];
+          this.graphics[prop] = this.data[prop];
+        }
         return this;
       },
       /**

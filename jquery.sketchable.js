@@ -1,5 +1,5 @@
 /*!
- * jQuery sketchable | v1.7 | Luis A. Leiva | MIT license
+ * jQuery sketchable | v1.8 | Luis A. Leiva | MIT license
  * This is a jQuery plugin for the jSketch drawing class.
  */
 /**

@@ -1,5 +1,5 @@
 /*!
- * jSketch 0.7 | Luis A. Leiva | MIT license
+ * jSketch 0.8 | Luis A. Leiva | MIT license
  * A simple JavaScript library for drawing facilities on HTML5 canvas.
  */
 /**

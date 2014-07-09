@@ -4,81 +4,82 @@
  */
 /**
  * A simple JavaScript library for drawing facilities on HTML5 canvas.
- * This class is mostly a wrapper for the HTML5 canvas API with some sugar, 
- * such as object chainability and old-school AS3-like notation.
+ * This class is mostly a wrapper for the HTML5 canvas API with some syntactic sugar, 
+ * such as function chainability and old-school AS3-like notation.
  * @name jSketch
  * @class
+ * @version 0.8
+ * @date 9 Jul 2014
  * @author Luis A. Leiva
- * @version 0.7
- * @date 8 Apr 2014
+ * @license MIT license 
  * @example
  * var canvas1 = document.getElementById('foo');
  * var canvas2 = document.getElementById('bar'); 
- * // instantiate once, reuse everywhere
+ * // Instantiate once, reuse everywhere.
  * var brush = new jSketch(canvas1).lineStyle('red').moveTo(50,50).lineTo(10,10).stroke();
+ * // Actually, .moveTo(50,50).lineTo(10,10) can be just .line(50,50, 10,10)
+ * // Switching between contexts removes the need of having to reinstantiate the jSketch class.
  * brush.context(canvas2).beginFill('#5F7').fillCircle(30,30,8).endFill();
  */
 (function(window){
     /**
      * @constructor
-     * @param {Object} elem MUST be a DOM element
-     * @param {Object} options configuration
+     * @param {Object} elem - MUST be a DOM element
+     * @param {Object} options - Configuration
      */
     var jSketch = function(elem, options){
       return new Sketch(elem, options);
     };
-    // base class (private)
+    // Base class, private.
     var Sketch = function(elem, options){
-      // although discouraged, we can instantiate the class without arguments
+      // Although discouraged, we can instantiate the class without arguments.
       if (!elem) return;
-      // one can pass default setup values
+      // We can pass default setup values.
       if (typeof options === 'undefined') options = {};
-      // set drawing context first
+      // Set drawing context first.
       this.context(elem);
-      // scene defaults
+      // Scene defaults.
       this.stageWidth  = elem.getAttribute("width");
       this.stageHeight = elem.getAttribute("height");
-      // drawing defaults
+      // Drawing defaults.
       this.graphics.fillStyle   = typeof options.fillStyle   !== 'undefined' ? options.fillStyle   : '#F00';
       this.graphics.strokeStyle = typeof options.strokeStyle !== 'undefined' ? options.strokeStyle : '#F0F';
       this.graphics.lineWidth   = typeof options.lineWidth   !== 'undefined' ? options.lineWidth   : 2;
       this.graphics.lineCap     = typeof options.lineCap     !== 'undefined' ? options.lineCap     : 'round';
       this.graphics.lineJoin    = typeof options.lineJoin    !== 'undefined' ? options.lineJoin    : 'round';
       this.graphics.mitterLimit = typeof options.mitterLimit !== 'undefined' ? options.mitterLimit : 10;
-      // make room for storing some data such as brush type, colors, etc.
+      // Make room for storing some data such as brush type, colors, etc.
       this.data = {};
-      // make constructor chainable
+      // Make constructor chainable.
       return this;
     };
    /** 
     * jSketch methods (publicly extensible).
-    * @class
-    * @memberOf jSketch
+    * @ignore
+    * @memberof jSketch
     * @see jSketch
-    */    
+    */
     jSketch.fn = Sketch.prototype = {
       /**
        * Allows to change the drawing context at runtime.
-       * @param {Object} elem   DOM element
+       * @param {Object} elem - DOM element.
        * @return jSketch
-       * @name context
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       context: function(elem) {
         if (elem == null) throw("No canvas element specified.");
-        // save shortcuts: canvas (DOM elem) & graphics (2D canvas context)
+        // Save shortcuts: canvas (DOM elem) & graphics (2D canvas context).
         this.canvas = elem;
         this.graphics = elem.getContext("2d");
-        // allow chainability
+        // Always allow chainability.
         return this;
       },
       /**
        * Sets the dimensions of canvas.
-       * @param {Number} width
-       * @param {Number} height       
+       * @param {Number} width - New canvas width.
+       * @param {Number} height - New canvas width.
        * @return jSketch
-       * @name size
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       size: function(width,height) {
         this.stageWidth  = width;
@@ -89,26 +90,24 @@
       },
       /**
        * Sets the background color of canvas.
-       * @param {Number|String} color   an HTML color
+       * @param {Number|String} color - An HTML color.
        * @return jSketch
-       * @name background
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       background: function(color) {
         var oldFill = this.graphics.fillStyle;
         this.beginFill(color);
         this.graphics.fillRect(0,0,this.stageWidth,this.stageHeight);
-        this.beginFill(oldFill); // restore old fill
+        this.beginFill(oldFill); // Restore old fill
         return this;
       },
       /**
        * Shortcut for setting the size + background color.
-       * @param {Number} width
-       * @param {Number} height       
-       * @param {Number|String} color   an HTML color
+       * @param {Number} width - New canvas width.
+       * @param {Number} height - New canvas width.      
+       * @param {Number|String} bgcolor - An HTML color.
        * @return jSketch
-       * @name stage
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       stage: function(width,height,bgcolor) {
         this.size(width,height).background(bgcolor);
@@ -116,10 +115,9 @@
       },
       /**
        * Sets the fill color.
-       * @param {Number|String} color   an HTML color
+       * @param {Number|String} color - An HTML color.
        * @return jSketch
-       * @name beginFill
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       beginFill: function(color) {
         this.saveGraphics('fillStyle');
@@ -129,8 +127,7 @@
       /**
        * Recovers the fill color that was set before <code>beginFill()</code>.
        * @return jSketch
-       * @name endFill
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       endFill: function() {
         this.graphics.fillStyle = this.data.fillStyle;
@@ -138,14 +135,13 @@
       },
       /**
        * Sets the line style.
-       * @param {Number|String} color   an HTML color
-       * @param {Number} thickness      line thickness
-       * @param {String} capStyle       style of line cap
-       * @param {String} joinStyle      style of line join
-       * @param {String} mitter         style of mitter
+       * @param {Number|String} color - An HTML color.
+       * @param {Number} thickness - Line thickness.
+       * @param {String} capStyle - Style of line cap.
+       * @param {String} joinStyle - Style of line join.
+       * @param {String} mitter - Style of mitter.
        * @return jSketch
-       * @name lineStyle
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       lineStyle: function(color,thickness,capStyle,joinStyle,mitter) {
         this.graphics.strokeStyle = color     || this.graphics.strokeStyle;
@@ -157,11 +153,10 @@
       },
       /**
        * Move brush to a coordinate in canvas.
-       * @param {Number} x
-       * @param {Number} y
+       * @param {Number} x - Horizontal coordinate.
+       * @param {Number} y - Vertical coordinate.
        * @return jSketch
-       * @name moveTo
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       moveTo: function(x,y) {
         this.graphics.moveTo(x,y);
@@ -169,25 +164,23 @@
       },
       /**
        * Draws line to given coordinate.
-       * @param {Number} x
-       * @param {Number} y
+       * @param {Number} x - Horizontal coordinate.
+       * @param {Number} y - Vertical coordinate.
        * @return jSketch
-       * @name lineTo
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       lineTo: function(x,y) {
         this.graphics.lineTo(x,y);
         return this;
       },
       /**
-       * Draws line from coordinate 1 to coordinate 2.
-       * @param {Number} x1
-       * @param {Number} y1
-       * @param {Number} x2
-       * @param {Number} y2       
+       * Draws line from point 1 to point 2.
+       * @param {Number} x1 - Horizontal coordinate of point 1.
+       * @param {Number} y1 - Vertical coordinate of point 1.
+       * @param {Number} x2 - Horizontal coordinate of point 2.
+       * @param {Number} y2 - Vertical coordinate of point 2.
        * @return jSketch
-       * @name line
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       line: function(x1,y1,x2,y2) {
         this.graphics.moveTo(x1,y1);
@@ -196,13 +189,12 @@
       },
       /**
        * Draws curve to given coordinate.
-       * @param {Number} x
-       * @param {Number} y
-       * @param {Number} cpx   x coordinate of control point
-       * @param {Number} cpy   y coordinate of control point
+       * @param {Number} x - Horizontal coordinate.
+       * @param {Number} y - Vertical coordinate.
+       * @param {Number} cpx - Horizontal coordinate of control point.
+       * @param {Number} cpy - Vertical coordinate of control point.
        * @return jSketch
-       * @name curveTo
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       curveTo: function(x,y,cpx,cpy) {
         this.graphics.quadraticCurveTo(cpx,cpy,x,y);
@@ -210,15 +202,14 @@
       },
       /**
        * Draws curve from coordinate 1 to coordinate 2.
-       * @param {Number} x1
-       * @param {Number} y1
-       * @param {Number} x2
-       * @param {Number} y2       
-       * @param {Number} cpx   x coordinate of control point
-       * @param {Number} cpy   y coordinate of control point
+       * @param {Number} x1 - Horizontal coordinate of point 1.
+       * @param {Number} y1 - Vertical coordinate of point 1.
+       * @param {Number} x2 - Horizontal coordinate of point 2.
+       * @param {Number} y2 - Vertical coordinate of point 2.
+       * @param {Number} cpx - Horizontal coordinate of control point.
+       * @param {Number} cpy - Vertical coordinate of control point.
        * @return jSketch
-       * @name curve
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       curve: function(x1,y1,x2,y2,cpx,cpy) {
         this.graphics.moveTo(x1,y1);
@@ -228,8 +219,7 @@
       /**
        * Strokes a given path.
        * @return jSketch
-       * @name stroke
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       stroke: function() {
         this.graphics.stroke();
@@ -237,14 +227,13 @@
       },
       /**
        * Draws a stroke-only rectangle.
-       * @param {Number} x
-       * @param {Number} y
-       * @param {Number} width
-       * @param {Number} height
+       * @param {Number} x - Horizontal coordinate.
+       * @param {Number} y - Vertical coordinate.
+       * @param {Number} width - Rectangle width.
+       * @param {Number} height - Rectangle height.
        * @return jSketch
-       * @name strokeRect
-       * @methodOf jSketch
-       */      
+       * @memberof jSketch
+       */
       strokeRect: function(x,y,width,height) {
         this.graphics.beginPath();
         //this.moveTo(x,y).lineTo(x+width,y).lineTo(x+width,y+height).lineTo(y,y+height).lineTo(x,y);
@@ -254,13 +243,12 @@
       },
       /**
        * Draws a filled rectangle.
-       * @param {Number} x
-       * @param {Number} y
-       * @param {Number} width
-       * @param {Number} height
+       * @param {Number} x - Horizontal coordinate.
+       * @param {Number} y - Vertical coordinate.
+       * @param {Number} width - Rectangle width.
+       * @param {Number} height - Rectangle height.
        * @return jSketch
-       * @name fillRect
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       fillRect: function(x,y,width,height) {
         this.graphics.beginPath();
@@ -270,12 +258,11 @@
       },
       /**
        * Draws a stroke-only circle.
-       * @param {Number} x
-       * @param {Number} y
-       * @param {Number} radius
+       * @param {Number} x - Horizontal coordinate.
+       * @param {Number} y - Vertical coordinate.
+       * @param {Number} radius - Circle radius.
        * @return jSketch
-       * @name strokeCircle
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       strokeCircle: function(x,y,radius) {
         this.graphics.beginPath();
@@ -286,12 +273,11 @@
       },
       /**
        * Draws a filled circle.
-       * @param {Number} x
-       * @param {Number} y
-       * @param {Number} radius
+       * @param {Number} x - Horizontal coordinate.
+       * @param {Number} y - Vertical coordinate.
+       * @param {Number} radius - Circle radius.
        * @return jSketch
-       * @name fillCircle
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       fillCircle: function(x,y,radius) {
         this.graphics.beginPath();
@@ -312,8 +298,7 @@
       /**
        * A path is started.
        * @return jSketch
-       * @name beginPath
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       beginPath: function() {
         this.graphics.beginPath();
@@ -322,8 +307,7 @@
       /**
        * A path is finished.
        * @return jSketch
-       * @name closePath
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       closePath: function() {
         this.graphics.closePath();
@@ -331,9 +315,9 @@
       },
       /**
        * Sets brush to eraser mode.
+       * @param {Number} brushSize - Brush size.
        * @return jSketch
-       * @name eraser
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       eraser: function(brushSize) {
         if (typeof brushSize === 'undefined') brushSize = 15;
@@ -345,20 +329,20 @@
       },
       /**
        * Sets brush to pencil mode.
+       * @param {Number} brushSize - Brush size.
        * @return jSketch
-       * @name pencil
-       * @methodOf jSketch
+       * @memberof jSketch
        */
-      pencil: function() {
+      pencil: function(brushSize) {
         this.graphics.globalCompositeOperation = "source-over";
         this.restoreGraphics('strokeStyle lineWidth');
+        if (typeof brushSize !== 'undefined') this.graphics.lineWidth = brushSize;
         return this;
       },
       /**
        * Clears stage.
        * @return jSketch
-       * @name clear
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       clear: function() {
         // The following resets _all_ styles, so better use clearRect.
@@ -370,8 +354,7 @@
       /**
        * Saves a snapshot of all styles and transformations.
        * @return jSketch
-       * @name save
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       save: function() {
         this.graphics.save();
@@ -380,8 +363,7 @@
       /**
        * Restores previous drawing state.
        * @return jSketch
-       * @name restore
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       restore: function() {
         this.graphics.restore();
@@ -389,10 +371,9 @@
       },
       /**
        * Saves given drawing settings.
-       * @param {Mixed} propList  Array or space-separated String
+       * @param propList {Array|String} propList - Array or space-separated String.
        * @return jSketch
-       * @name saveGraphics
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       saveGraphics: function(propList) {
         if (typeof propList === 'string') propList = propList.split(" ");
@@ -404,10 +385,9 @@
       },
       /**
        * Restores given drawing settings.
-       * @param {Mixed} propList  Array or space-separated String
+       * @param propList {Array|String} propList - Array or space-separated String.
        * @return jSketch
-       * @name restoreGraphics
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       restoreGraphics: function(propList) {
         if (typeof propList === 'string') propList = propList.split(" ");
@@ -419,12 +399,11 @@
       },
       /**
        * Draws an image.
-       * @param {Number} img
-       * @param {Number} x
-       * @param {Number} y
+       * @param {Number} src - Image source path.
+       * @param {Number} x - Horizontal coordinate.
+       * @param {Number} y - Vertical coordinate.
        * @return jSketch
-       * @name drawImage
-       * @methodOf jSketch
+       * @memberof jSketch
        */
       drawImage: function(src, x,y) {
         var self = this, img = new Image();
@@ -436,7 +415,7 @@
       }
     };
 
-    // expose
+    // Expose.
     window.jSketch = jSketch;
     
 })(this);

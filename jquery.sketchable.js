@@ -1,37 +1,34 @@
 /*!
  * jQuery sketchable | v1.8 | Luis A. Leiva | MIT license
- * This is a jQuery plugin for the jSketch drawing class.
+ * A jQuery plugin for the jSketch drawing library.
  */
 /**
  * @name $
- * @class 
- * See <a href="http://jquery.com/">the jQuery library</a> for full details.  
- * This just documents the method that is added to jQuery by this plugin.
+ * @class
+ * @ignore
+ * @description This just documents the method that is added to jQuery by this plugin.
+ * See <a href="http://jquery.com/">the jQuery library</a> for full details.
  */
 /**
  * @name $.fn
- * @class 
+ * @memberof $
+ * @description This just documents the method that is added to jQuery by this plugin.
  * See <a href="http://jquery.com/">the jQuery library</a> for full details.  
- * This just documents the method that is added to jQuery by this plugin.
  */
 ;(function($){
   // Custom namespace ID.
   var _ns = "sketchable";
   /** 
-   * Note: This is NOT a constructor actually, but a series of methods to be 
-   * called from the plugin.
-   * @name methods
-   * @class
-   * Plugin API.
+   * jQuery sketchable plugin API. 
+   * @namespace methods
    */
   var methods = {
     /** 
      * Initializes the selected jQuery objects.      
-     * @param {Object} opts plugin configuration (see defaults)
+     * @param {Object} opts plugin configuration (see defaults).
      * @return jQuery
-     * @name init
      * @ignore
-     * @methodOf methods
+     * @namespace methods.init
      * @example $(selector).sketchable();
      */
     init: function(opts) {
@@ -54,7 +51,6 @@
           }
         }
         var sketch = new jSketch(this, options.graphics);
-//        sketch.beginPath();
         // Flag drawing state on a per-canvas basis.
         sketch.isDrawing = false;
         // Reconfigure element data.
@@ -78,13 +74,12 @@
     },
     /** 
      * Gets/Sets drawing data strokes sequence.
-     * @param Array arr data strokes: multidimensional array of {x,y,time,status} tuples; status = 0 (pen down) or 1 (pen up)
+     * @param {Array} arr - Multidimensional array of [x,y,time,status] tuples; status = 0 (pen down) or 1 (pen up).
      * @return Strokes object on get, jQuery on set (with the new data attached)
-     * @name strokes
-     * @methodOf methods
+     * @namespace methods.strokes
      * @example
-     * $(selector).sketchable('strokes');
-     * $(selector).sketchable('strokes', [ [arr1], ..., [arrN] ]);
+     * $(selector).sketchable('strokes'); // Getter
+     * $(selector).sketchable('strokes', [ [arr1], ..., [arrN] ]); // Setter
      */
     strokes: function(arr) {
       if (arr) { // setter
@@ -99,12 +94,9 @@
     },
     /** 
      * Allows low-level manipulation of the sketchable canvas.
-     * @param Object callback function, invoked with 2 arguments:
-     *                * elem: jQuery element
-     *                * data: element data
+     * @param {Function} callback - Callback function, invoked with 2 arguments: elem (jQuery element) and data (jQuery element data).
      * @return jQuery
-     * @name handler
-     * @methodOf methods
+     * @namespace methods.handler
      * @example
      * $(selector).sketchable('handler', function(elem, data){
      *   // do something with elem or data
@@ -117,10 +109,11 @@
       });        
     },
     /** 
-     * Clears canvas (together with strokes data).
+     * Clears canvas (together with strokes data). 
+     * If you need to clear canvas only, just invoke <tt>data.sketch.clear()</tt> via <tt>$(selector).sketchable('handler')</tt>.
+     * @see methods.handler
      * @return jQuery
-     * @name clear
-     * @methodOf methods
+     * @namespace methods.clear
      * @example $(selector).sketchable('clear');
      */
     clear: function() {
@@ -136,10 +129,9 @@
     },
     /** 
      * Reinitializes a sketchable canvas with given opts.
-     * @param Object opts configuration options
+     * @param {Object} opts - Configuration options.
      * @return jQuery
-     * @name reset
-     * @methodOf methods
+     * @namespace methods.reset
      * @example 
      * $(selector).sketchable('reset');
      * $(selector).sketchable('reset', {interactive:false});
@@ -156,8 +148,7 @@
     /** 
      * Destroys sketchable canvas (together with strokes data and events).
      * @return jQuery
-     * @name destroy
-     * @methodOf methods     
+     * @namespace methods.destroy
      * @example $(selector).sketchable('destroy');     
      */
     destroy: function() {
@@ -181,13 +172,19 @@
   };
 
   /** 
-   * Creates a new jQuery.sketchable object.
-   * @param {String|Object} method name of the method to invoke, or a configuration object.
+   * Creates a <tt>jQuery.sketchable</tt> instance.
+   * This is a jQuery plugin for the <tt>jSketch</tt> drawing class.
+   * @param {String|Object} method - Method to invoke, or a configuration object.
    * @return jQuery
    * @class
+   * @version 1.8
+   * @date 9 Jul 2014
+   * @author Luis A. Leiva
+   * @license MIT license 
    * @example
    * $(selector).sketchable();
    * $(selector).sketchable({interactive:false});
+   * @see methods
    */
   $.fn.sketchable = function(method) {
     // These "magic" keywords return internal plugin methods,
@@ -205,23 +202,23 @@
   };
   
   /** 
-   * Default configuration (publicly modifiable).
-   * Note that mouse[···] callbacks are triggered only if interactive is set to true.
+   * Default configuration.
+   * Note that mouse* callbacks are triggered only if <tt>interactive</tt> is set to <tt>true</tt>.
    * @name defaults
    * @default
-   * @memberOf $.fn.sketchable
+   * @memberof $.fn.sketchable
    * @example
    * $(selector).sketchable({
    *   interactive: true,
    *   mouseupMovements: false,
    *   relTimestamps: false,
    *   events: {
-   *     init: function(elem, data){}, 
-   *     clear: function(elem, data){}, 
-   *     destroy: function(elem, data){}, 
-   *     mousedown: function(elem, data, evt){}, 
-   *     mousemove: function(elem, data, evt){}, 
-   *     mouseup: function(elem, data, evt){}, 
+   *     init: function(elem, data){ }, 
+   *     clear: function(elem, data){ }, 
+   *     destroy: function(elem, data){ }, 
+   *     mousedown: function(elem, data, evt){ }, 
+   *     mousemove: function(elem, data, evt){ }, 
+   *     mouseup: function(elem, data, evt){ }, 
    *   },
    *   graphics: {
    *     firstPointSize: 3,    
@@ -242,16 +239,15 @@
     mouseupMovements: false,
     // Inidicate whether timestamps should be relative (start at time 0) or absolute (start at Unix epoch).
     relTimestamps: false,
-    // Callback Event
+    // Event callbacks.
     events: {
-      // init: function(elem, data){}, 
-      // clear: function(elem, data){}, 
-      // destroy: function(elem, data){}, 
-      // mousedown: function(elem, data, evt){}, 
-      // mousemove: function(elem, data, evt){}, 
-      // mouseup: function(elem, data, evt){}, 
+      // init: function(elem, data){ }, 
+      // clear: function(elem, data){ }, 
+      // destroy: function(elem, data){ }, 
+      // mousedown: function(elem, data, evt){ }, 
+      // mousemove: function(elem, data, evt){ }, 
+      // mouseup: function(elem, data, evt){ }, 
     },
-    // TODO: add more jSketch config options
     graphics: {
       firstPointSize: 3,
       lineWidth: 3,
@@ -264,7 +260,9 @@
   };
 
 
-
+  /**
+   * @private
+   */
   function getMousePos(e) {
     var elem = $(e.target), pos = elem.offset();
     return {
@@ -273,6 +271,9 @@
     }
   };
 
+  /**
+   * @private
+   */
   function saveMousePos(idx, data, pt) {
     var time = (new Date).getTime();
     if (data.options.relTimestamps) {
@@ -283,7 +284,10 @@
     }
     data.coords[idx].push([ pt.x, pt.y, time, +data.sketch.isDrawing ]);
   };
-  
+
+  /**
+   * @private
+   */
   function mousemoveHandler(e, idx) {
     if (typeof idx === 'undefined') idx = 0;
     
@@ -302,7 +306,10 @@
       options.events.mousemove(elem, data, e);
     }
   };
-            
+
+  /**
+   * @private
+   */
   function mousedownHandler(e, idx) {
     if (typeof idx === 'undefined') idx = 0;
     
@@ -328,7 +335,10 @@
       options.events.mousedown(elem, data, e);
     }
   };
-  
+
+  /**
+   * @private
+   */
   function mouseupHandler(e, idx) {
     if (typeof idx === 'undefined') idx = 0;
     
@@ -340,30 +350,33 @@
       options.events.mouseup(elem, data, e);
     }
   };
-  
+
+  /**
+   * @private
+   */
   function touchHandler(e) {
     e.preventDefault();
     var elem = $(e.target);
-    var touch = e.originalEvent.changedTouches;
+    var touches = e.originalEvent.changedTouches;
     // Remove (emulated) mouse events on mobile devices.
     switch (e.type) {
       case "touchstart": 
         elem.unbind(e.type, mousedownHandler);
-        for (var i = 0, t = touch[i]; i < touch.length; i++) {
+        for (var i = 0, t = touches[i]; i < touches.length; i++) {
           for (var o in e) t[o] = e[o];
           mousedownHandler(t, t.identifier);
         }
         break;
       case "touchmove":
         elem.unbind(e.type, mousemoveHandler);
-        for (var i = 0, t = touch[i]; i < touch.length; i++) {
+        for (var i = 0, t = touches[i]; i < touches.length; i++) {
           for (var o in e) t[o] = e[o];
           mousemoveHandler(t, t.identifier);
         }
         break;
       case "touchend":
         elem.unbind(e.type, mouseupHandler);
-        for (var i = 0, t = touch[i]; i < touch.length; i++) {
+        for (var i = 0, t = touches[i]; i < touches.length; i++) {
           for (var o in e) t[o] = e[o];
           mouseupHandler(t, t.identifier);
         }

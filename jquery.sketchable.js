@@ -122,6 +122,7 @@
         data.sketch.clear();
         data.strokes = [];
         data.coords  = {};
+        
         if (typeof options.events.clear === 'function') {
           options.events.clear(elem, data);
         }
@@ -140,6 +141,7 @@
       return this.each(function(){
         var elem = $(this), data = elem.data(_ns), options = data.options;
         elem.sketchable('destroy').sketchable(opts);
+        
         if (typeof options.events.reset === 'function') {
           options.events.reset(elem, data);
         }
@@ -163,6 +165,7 @@
           elem.unbind("touchmove", touchHandler);
         }
         elem.removeData(_ns);
+        
         if (typeof options.events.destroy === 'function') {
           options.events.destroy(elem, data);
         }
@@ -275,6 +278,11 @@
    * @private
    */
   function saveMousePos(idx, data, pt) {
+    // Ensure that coords is properly initialized.
+    if (!data.coords[idx]) {
+      data.coords[idx] = [];
+    }
+    
     var time = (new Date).getTime();
     if (data.options.relTimestamps) {
       // The first timestamp is relative to initialization time;
@@ -282,6 +290,7 @@
       if (data.strokes.length === 0 && data.coords[idx].length === 0) data.timestamp = time;
       time -= data.timestamp;
     }
+    
     data.coords[idx].push([ pt.x, pt.y, time, +data.sketch.isDrawing ]);
   };
 
@@ -302,6 +311,7 @@
       data.sketch.beginPath().line(last[0], last[1], p.x, p.y).stroke().closePath();
     }
     saveMousePos(idx, data, p);
+    
     if (typeof options.events.mousemove === 'function') {
       options.events.mousemove(elem, data, e);
     }
@@ -331,6 +341,7 @@
       data.coords[idx] = [];
     }
     saveMousePos(idx, data, p);
+    
     if (typeof options.events.mousedown === 'function') {
       options.events.mousedown(elem, data, e);
     }
@@ -346,6 +357,7 @@
     data.sketch.isDrawing = false;
     data.strokes.push(data.coords[idx]);
     data.coords[idx] = [];
+    
     if (typeof options.events.mouseup === 'function') {
       options.events.mouseup(elem, data, e);
     }

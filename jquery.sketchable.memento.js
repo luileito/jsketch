@@ -150,8 +150,8 @@
   var plugin = $.fn.sketchable;
   var availMethods = plugin('methods');
   
-  function configure(elem, options) {
-    $.extend(true, plugin.defaults, options);
+  function configure(elem, opts) {
+    var options = $.extend(true, plugin.defaults, opts);
     
     var mc = new MementoCanvas(elem);
     

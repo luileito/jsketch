@@ -151,7 +151,7 @@
   var availMethods = plugin('methods');
   
   function configure(elem, options) {
-    $.extend(plugin.defaults, options);
+    $.extend(true, plugin.defaults, options);
     
     var mc = new MementoCanvas(elem);
     

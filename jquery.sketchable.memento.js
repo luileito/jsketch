@@ -131,6 +131,8 @@
      * @memberOf MementoCanvas
      */
     this.init = function() {
+      // Prevent subsequent instances to re-attach this event to the document.
+      $(document).off("keypress", keyManager);
       $(document).on("keypress", keyManager);
     };
     /** 
@@ -151,7 +153,9 @@
   var availMethods = plugin('methods');
   
   function configure(elem, opts) {
-    var options = $.extend(true, plugin.defaults, opts);
+    var self = elem, options = $.extend(true, plugin.defaults, opts);
+    // Actually this plugin is singleton, so exit early.
+    if (!options.interactive) return opts;
     
     var mc = new MementoCanvas(elem);
     
@@ -174,9 +178,10 @@
       if (options && options.events && typeof options.events[ev] === 'function') {
         var fn = options.events[ev];
         options.events[ev] = function() {
+          // Exec original function first, then exec our callback.
           var args = Array.prototype.slice.call(arguments, 0);
-          fn.call(this, args);
-          callbacks[ev].apply(this, args);
+          fn.apply(self, args);
+          callbacks[ev].apply(self, args);
         }
       } else {
         plugin.defaults.events[ev] = callbacks[ev];
@@ -212,15 +217,10 @@
    * $(selector).sketchable();
    * $(selector).sketchable({interactive:false});
    */
-  $.fn.sketchable = function(method) {
-    if (typeof method === 'object' || !method) {
-      // Object creation: configure memento extension.
-      var newOptions = configure(this, arguments[0]);
-      return availMethods.init.apply(this, [newOptions]);
-    } else if (availMethods[method]) {
-      // Method invocation: execute it as usual.
-      return availMethods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-    }
+  var initfn = availMethods.init;
+  availMethods.init = function(opts) {
+    var conf = configure(this, opts);
+    return initfn.apply(this, [conf]);
   };
-
+  
 })(jQuery);

@@ -220,7 +220,7 @@
   var initfn = availMethods.init;
   availMethods.init = function(opts) {
     var conf = configure(this, opts);
-    return initfn.apply(this, [conf]);
+    return initfn.call(this, conf);
   };
   
 })(jQuery);

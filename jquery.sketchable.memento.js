@@ -158,7 +158,6 @@
     if (!options.interactive) return opts;
     
     var mc = new MementoCanvas(elem);
-    
     var callbacks = {
       init: function(elem, data) {
         data.memento = mc;
@@ -187,11 +186,15 @@
         plugin.defaults.events[ev] = callbacks[ev];
       }
     };
-    
-    // Event order matters.
-    var events = 'init mouseup destroy'.split(" ");
-    for (var i = 0; i < events.length; i++) {
-      override(events[i]);
+
+    // Avoid re-attaching the same callbacks more than once.
+    if (!plugin.isMementoReady) {
+      // Event order matters.
+      var events = 'init mouseup destroy'.split(" ");
+      for (var i = 0; i < events.length; i++) {
+        override(events[i]);
+      }
+      plugin.isMementoReady = true;
     }
     
     // Expose public API for jquery.sketchable plugin.

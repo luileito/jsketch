@@ -4,17 +4,17 @@
  */
 /**
  * A simple JavaScript library for drawing facilities on HTML5 canvas.
- * This class is mostly a wrapper for the HTML5 canvas API with some syntactic sugar, 
+ * This class is mostly a wrapper for the HTML5 canvas API with some syntactic sugar,
  * such as function chainability and old-school AS3-like notation.
  * @name jSketch
  * @class
  * @version 0.8
  * @date 9 Jul 2014
  * @author Luis A. Leiva
- * @license MIT license 
+ * @license MIT license
  * @example
  * var canvas1 = document.getElementById('foo');
- * var canvas2 = document.getElementById('bar'); 
+ * var canvas2 = document.getElementById('bar');
  * // Instantiate once, reuse everywhere.
  * var brush = new jSketch(canvas1).lineStyle('red').moveTo(50,50).lineTo(10,10).stroke();
  * // Actually, .moveTo(50,50).lineTo(10,10) can be just .line(50,50, 10,10)
@@ -48,12 +48,14 @@
       this.graphics.lineCap     = typeof options.lineCap     !== 'undefined' ? options.lineCap     : 'round';
       this.graphics.lineJoin    = typeof options.lineJoin    !== 'undefined' ? options.lineJoin    : 'round';
       this.graphics.mitterLimit = typeof options.mitterLimit !== 'undefined' ? options.mitterLimit : 10;
+      // Remember graphic options for later saveing/restoring drawing status.
+      this.graphics.options = Object.keys(options);
       // Make room for storing some data such as brush type, colors, etc.
       this.data = {};
       // Make constructor chainable.
       return this;
     };
-   /** 
+   /**
     * jSketch methods (publicly extensible).
     * @ignore
     * @memberof jSketch
@@ -104,7 +106,7 @@
       /**
        * Shortcut for setting the size + background color.
        * @param {Number} width - New canvas width.
-       * @param {Number} height - New canvas width.      
+       * @param {Number} height - New canvas width.
        * @param {Number|String} bgcolor - An HTML color.
        * @return jSketch
        * @memberof jSketch
@@ -120,7 +122,7 @@
        * @memberof jSketch
        */
       beginFill: function(color) {
-        this.saveGraphics('fillStyle');
+        this.saveGraphics();
         this.graphics.fillStyle = color;
         return this;
       },
@@ -239,7 +241,7 @@
         //this.moveTo(x,y).lineTo(x+width,y).lineTo(x+width,y+height).lineTo(y,y+height).lineTo(x,y);
         this.graphics.strokeRect(x,y,width,height);
         this.graphics.closePath();
-        return this;        
+        return this;
       },
       /**
        * Draws a filled rectangle.
@@ -301,6 +303,7 @@
        * @memberof jSketch
        */
       beginPath: function() {
+        this.saveGraphics();
         this.graphics.beginPath();
         return this;
       },
@@ -311,6 +314,7 @@
        */
       closePath: function() {
         this.graphics.closePath();
+        this.restoreGraphics();
         return this;
       },
       /**
@@ -321,7 +325,7 @@
        */
       eraser: function(brushSize) {
         if (typeof brushSize === 'undefined') brushSize = 15;
-        if (typeof this.data.strokeStyle === 'undefined') this.saveGraphics('strokeStyle lineWidth');
+        if (typeof this.data.strokeStyle === 'undefined') this.saveGraphics();
         this.graphics.globalCompositeOperation = "destination-out";
         this.graphics.strokeStyle = "rgba(0,0,0,1)";
         this.graphics.lineWidth = brushSize;
@@ -335,7 +339,7 @@
        */
       pencil: function(brushSize) {
         this.graphics.globalCompositeOperation = "source-over";
-        this.restoreGraphics('strokeStyle lineWidth');
+        this.restoreGraphics();
         if (typeof brushSize !== 'undefined') this.graphics.lineWidth = brushSize;
         return this;
       },
@@ -376,6 +380,7 @@
        * @memberof jSketch
        */
       saveGraphics: function(propList) {
+        if (typeof propList === 'undefined') propList = this.graphics.options;
         if (typeof propList === 'string') propList = propList.split(" ");
         for (var p = 0; p < propList.length; p++) {
           var prop = propList[p];
@@ -390,6 +395,7 @@
        * @memberof jSketch
        */
       restoreGraphics: function(propList) {
+        if (typeof propList === 'undefined') propList = this.graphics.options;
         if (typeof propList === 'string') propList = propList.split(" ");
         for (var p = 0; p < propList.length; p++) {
           var prop = propList[p];
@@ -417,5 +423,5 @@
 
     // Expose.
     window.jSketch = jSketch;
-    
+
 })(this);

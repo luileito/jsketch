@@ -325,9 +325,7 @@
        */
       eraser: function(brushSize) {
         if (typeof brushSize === 'undefined') brushSize = 15;
-        if (typeof this.data.strokeStyle === 'undefined') this.saveGraphics();
         this.graphics.globalCompositeOperation = "destination-out";
-        this.graphics.strokeStyle = "rgba(0,0,0,1)";
         this.graphics.lineWidth = brushSize;
         return this;
       },
@@ -338,9 +336,8 @@
        * @memberof jSketch
        */
       pencil: function(brushSize) {
-        this.graphics.globalCompositeOperation = "source-over";
-        this.restoreGraphics();
         if (typeof brushSize !== 'undefined') this.graphics.lineWidth = brushSize;
+        this.graphics.globalCompositeOperation = "source-over";
         return this;
       },
       /**
@@ -349,8 +346,7 @@
        * @memberof jSketch
        */
       clear: function() {
-        // The following resets _all_ styles, so better use clearRect.
-        //this.canvas.width = this.canvas.width;
+        // Note: using 'this.canvas.width = this.canvas.width' resets _all_ styles, so better use clearRect.
         this.graphics.clearRect(0,0, this.stageWidth,this.stageHeight);
         this.data = {};
         return this;

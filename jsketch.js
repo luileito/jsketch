@@ -47,7 +47,7 @@
       this.graphics.lineWidth   = typeof options.lineWidth   !== 'undefined' ? options.lineWidth   : 2;
       this.graphics.lineCap     = typeof options.lineCap     !== 'undefined' ? options.lineCap     : 'round';
       this.graphics.lineJoin    = typeof options.lineJoin    !== 'undefined' ? options.lineJoin    : 'round';
-      this.graphics.mitterLimit = typeof options.mitterLimit !== 'undefined' ? options.mitterLimit : 10;
+      this.graphics.miterLimit  = typeof options.miterLimit  !== 'undefined' ? options.miterLimit  : 10;
       // Remember graphic options for later saveing/restoring drawing status.
       this.graphics.options = Object.keys(options);
       // Make room for storing some data such as brush type, colors, etc.
@@ -141,16 +141,16 @@
        * @param {Number} thickness - Line thickness.
        * @param {String} capStyle - Style of line cap.
        * @param {String} joinStyle - Style of line join.
-       * @param {String} mitter - Style of mitter.
+       * @param {String} miter - Style of line miter. Only works if capStyle is "miter".
        * @return jSketch
        * @memberof jSketch
        */
-      lineStyle: function(color,thickness,capStyle,joinStyle,mitter) {
+      lineStyle: function(color,thickness,capStyle,joinStyle,miter) {
         this.graphics.strokeStyle = color     || this.graphics.strokeStyle;
         this.graphics.lineWidth   = thickness || this.graphics.lineWidth;
         this.graphics.lineCap     = capStyle  || this.graphics.lineCap;
         this.graphics.lineJoin    = joinStyle || this.graphics.lineJoin;
-        this.graphics.mitterLimit = mitter    || this.graphics.mitterLimit;
+        this.graphics.miterLimit  = miter     || this.graphics.miterLimit;
         return this;
       },
       /**

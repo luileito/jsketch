@@ -402,12 +402,14 @@
       /**
        * Draws an image.
        * @param {Number} src - Image source path.
-       * @param {Number} x - Horizontal coordinate.
-       * @param {Number} y - Vertical coordinate.
+       * @param {Number} [x] - Horizontal coordinate.
+       * @param {Number} [y] - Vertical coordinate.
        * @return jSketch
        * @memberof jSketch
        */
       drawImage: function(src, x,y) {
+        if (typeof x === 'undefined') x = 0;
+        if (typeof y === 'undefined') y = 0;
         var self = this, img = new Image();
         img.src = src;
         img.onload = function() {

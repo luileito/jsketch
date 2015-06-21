@@ -42,14 +42,7 @@
       this.stageWidth  = elem.getAttribute("width");
       this.stageHeight = elem.getAttribute("height");
       // Drawing defaults.
-      this.graphics.fillStyle   = typeof options.fillStyle   !== 'undefined' ? options.fillStyle   : '#F00';
-      this.graphics.strokeStyle = typeof options.strokeStyle !== 'undefined' ? options.strokeStyle : '#F0F';
-      this.graphics.lineWidth   = typeof options.lineWidth   !== 'undefined' ? options.lineWidth   : 2;
-      this.graphics.lineCap     = typeof options.lineCap     !== 'undefined' ? options.lineCap     : 'round';
-      this.graphics.lineJoin    = typeof options.lineJoin    !== 'undefined' ? options.lineJoin    : 'round';
-      this.graphics.miterLimit  = typeof options.miterLimit  !== 'undefined' ? options.miterLimit  : 10;
-      // Remember graphic options for later saveing/restoring drawing status.
-      this.graphics.options = Object.keys(options);
+      this.drawingDefaults(options);
       // Make room for storing some data such as brush type, colors, etc.
       this.data = {};
       // Make constructor chainable.
@@ -77,6 +70,30 @@
         return this;
       },
       /**
+       * Sets drawing defaults.
+       * @param {Object} [options] - Drawing options.
+       * @param {String} options.fillStyle - Fill style color (default: '#F00').
+       * @param {String} options.strokeStyle - Stroke style color (default: '#F0F').
+       * @param {Number} options.lineWidth - Line width (default: 2).
+       * @param {String} options.lineCap - Line cap (default: 'round').
+       * @param {String} options.lineJoin - Line join (default: 'round').
+       * @param {Number} options.miterLimit - Line miter (default: 10). Works only if the lineJoin attribute is "miter".
+       * @return jSketch
+       * @memberof jSketch
+       */
+      drawingDefaults: function(options) {
+        if (typeof options === 'undefined') options = {};
+        this.graphics.fillStyle   = typeof options.fillStyle   !== 'undefined' ? options.fillStyle   : '#F00';
+        this.graphics.strokeStyle = typeof options.strokeStyle !== 'undefined' ? options.strokeStyle : '#F0F';
+        this.graphics.lineWidth   = typeof options.lineWidth   !== 'undefined' ? options.lineWidth   : 2;
+        this.graphics.lineCap     = typeof options.lineCap     !== 'undefined' ? options.lineCap     : 'round';
+        this.graphics.lineJoin    = typeof options.lineJoin    !== 'undefined' ? options.lineJoin    : 'round';
+        this.graphics.miterLimit  = typeof options.miterLimit  !== 'undefined' ? options.miterLimit  : 10;
+        // Remember graphic options for later saveing/restoring drawing status.
+        this.graphics.options = Object.keys(options);
+        return this;
+      },
+      /**
        * Sets the dimensions of canvas.
        * @param {Number} width - New canvas width.
        * @param {Number} height - New canvas width.
@@ -88,6 +105,8 @@
         this.stageHeight = height;
         this.canvas.width  = width;
         this.canvas.height = height;
+        // On resizing we lost drawing options, so reset.
+        this.drawingDefaults();
         return this;
       },
       /**
@@ -100,7 +119,7 @@
         var oldFill = this.graphics.fillStyle;
         this.beginFill(color);
         this.graphics.fillRect(0,0,this.stageWidth,this.stageHeight);
-        this.beginFill(oldFill); // Restore old fill
+        this.endFill();
         return this;
       },
       /**

@@ -39,8 +39,8 @@
       // Set drawing context first.
       this.context(elem);
       // Scene defaults.
-      this.stageWidth  = elem.getAttribute("width");
-      this.stageHeight = elem.getAttribute("height");
+      this.stageWidth  = elem.width;
+      this.stageHeight = elem.height;
       // Drawing defaults.
       this.drawingDefaults(options);
       // Make room for storing some data such as brush type, colors, etc.
@@ -62,7 +62,7 @@
        * @memberof jSketch
        */
       context: function(elem) {
-        if (elem == null) throw("No canvas element specified.");
+        if (elem === null) throw("No canvas element specified.");
         // Save shortcuts: canvas (DOM elem) & graphics (2D canvas context).
         this.canvas = elem;
         this.graphics = elem.getContext("2d");

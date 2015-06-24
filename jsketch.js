@@ -116,7 +116,6 @@
        * @memberof jSketch
        */
       background: function(color) {
-        var oldFill = this.graphics.fillStyle;
         this.beginFill(color);
         this.graphics.fillRect(0,0,this.stageWidth,this.stageHeight);
         this.endFill();

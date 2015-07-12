@@ -351,6 +351,7 @@
       var touch = touches[i];
       upHandler(touch);
     }
+    e.preventDefault();
   };
 
   /**

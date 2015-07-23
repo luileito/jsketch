@@ -118,12 +118,13 @@
      */
     clear: function() {
       return this.each(function() {
-        var elem = $(this), data = elem.data(_ns), options = data.options;
-        data.sketch.clear();
-        data.strokes = [];
-        data.coords  = {};
-
-        if (typeof options.events.clear === 'function') {
+        var elem = $(this), data = elem.data(_ns) || {}, options = data.options;
+        if (data.sketch) {
+          data.sketch.clear();
+          data.strokes = [];
+          data.coords  = {};
+        }
+        if (options && typeof options.events.clear === 'function') {
           options.events.clear(elem, data);
         }
       });
@@ -139,10 +140,10 @@
      */
     reset: function(opts) {
       return this.each(function(){
-        var elem = $(this), data = elem.data(_ns), options = data.options;
+        var elem = $(this), data = elem.data(_ns) || {}, options = data.options;
         elem.sketchable('destroy').sketchable(opts);
 
-        if (typeof options.events.reset === 'function') {
+        if (options && typeof options.events.reset === 'function') {
           options.events.reset(elem, data);
         }
       });
@@ -155,7 +156,7 @@
      */
     destroy: function() {
       return this.each(function(){
-        var elem = $(this), data = elem.data(_ns), options = data.options;
+        var elem = $(this), data = elem.data(_ns) || {}, options = data.options;
         if (options.interactive) {
           elem.unbind("mouseup", mouseupHandler);
           elem.unbind("mousemove", mousemoveHandler);
@@ -166,7 +167,7 @@
         }
         elem.removeData(_ns);
 
-        if (typeof options.events.destroy === 'function') {
+        if (options && typeof options.events.destroy === 'function') {
           options.events.destroy(elem, data);
         }
       });
@@ -240,8 +241,10 @@
     // Indicate whether non-drawing strokes should be registered as well.
     // Notice that the last mouseUp stroke is never recorded, as the user has already finished drawing.
     mouseupMovements: false,
-    // Inidicate whether timestamps should be relative (start at time 0) or absolute (start at Unix epoch).
+    // Indicate whether timestamps should be relative (start at time 0) or absolute (start at Unix epoch).
     relTimestamps: false,
+    // Enable multitouch drawing.
+    multitouch: true,
     // Event callbacks.
     events: {
       // init: function(elem, data){ },
@@ -322,10 +325,15 @@
    * @private
    */
   function touchdownHandler(e) {
+    var elem = $(e.target), data = elem.data(_ns), options = data.options;
     var touches = e.originalEvent.changedTouches;
-    for (var i = 0; i < touches.length; i++) {
-      var touch = touches[i];
-      downHandler(touch);
+    if (options.multitouch) {
+      for (var i = 0; i < touches.length; i++) {
+        var touch = touches[i];
+        downHandler(touch);
+      }
+    } else {
+      downHandler(touches[0]);
     }
     e.preventDefault();
   };
@@ -334,10 +342,15 @@
    * @private
    */
   function touchmoveHandler(e) {
+    var elem = $(e.target), data = elem.data(_ns), options = data.options;
     var touches = e.originalEvent.changedTouches;
-    for (var i = 0; i < touches.length; i++) {
-      var touch = touches[i];
-      moveHandler(touch);
+    if (options.multitouch) {
+      for (var i = 0; i < touches.length; i++) {
+        var touch = touches[i];
+        moveHandler(touch);
+      }
+    } else {
+      moveHandler(touches[0]);
     }
     e.preventDefault();
   };
@@ -346,10 +359,15 @@
    * @private
    */
   function touchupHandler(e) {
+    var elem = $(e.target), data = elem.data(_ns), options = data.options;
     var touches = e.originalEvent.changedTouches;
-    for (var i = 0; i < touches.length; i++) {
-      var touch = touches[i];
-      upHandler(touch);
+    if (options.multitouch) {
+      for (var i = 0; i < touches.length; i++) {
+        var touch = touches[i];
+        upHandler(touch);
+      }
+    } else {
+      upHandler(touches[0]);
     }
     e.preventDefault();
   };

@@ -265,7 +265,6 @@
     }
   };
 
-
   /**
    * @private
    */
@@ -376,6 +375,9 @@
    * @private
    */
   function downHandler(e) {
+    // Don't handle right clicks.
+    if (e.which === 3) return false;
+
     var idx = e.identifier || 0;
     var elem = $(e.target), data = elem.data(_ns), options = data.options;
     data.sketch.isDrawing = true;

@@ -3,14 +3,14 @@
  */
 /**
  * @name $
- * @class 
- * See <a href="http://jquery.com/">the jQuery library</a> for full details.  
+ * @class
+ * See <a href="http://jquery.com/">the jQuery library</a> for full details.
  * This just documents the method that is added to jQuery by this plugin.
  */
 /**
  * @name $.fn
- * @class 
- * See <a href="http://jquery.com/">the jQuery library</a> for full details.  
+ * @class
+ * See <a href="http://jquery.com/">the jQuery library</a> for full details.
  * This just documents the method that is added to jQuery by this plugin.
  */
 ;(function($) {
@@ -23,12 +23,12 @@
    * var mc = new MementoCanvas( $('canvas-selector') );
    */
   var MementoCanvas = function($canvas) {
-    
+
     // Private stuff //////////////////////////////////////////////////////////
     var stack = [];
     var stpos = -1;
     var self  = this;
-    
+
     function prev() {
       if (stpos > 0) {
         stpos--;
@@ -59,8 +59,8 @@
         data.sketch.graphics.drawImage(snapshot, 0,0);
       });
     };
-    
-    // Key event manager. 
+
+    // Key event manager.
     // Undo: "Ctrl + Z"
     // Redo: "Ctrl + Y" or "Ctrl + Shift + Z"
     // TODO: decouple shortcut definition, perhaps via jquery.hotkeys plugin.
@@ -79,10 +79,10 @@
         }
       }
     };
-    
+
     // Public stuff ///////////////////////////////////////////////////////////
-    
-    /** 
+
+    /**
      * Goes back to the last saved state, if available.
      * @name undo
      * @memberOf MementoCanvas
@@ -90,10 +90,11 @@
     this.undo = function() {
       prev();
       $canvas.sketchable('handler', function(elem, data) {
-        data.strokes = stack[stpos].strokes.slice();
+        if (stack[stpos])
+          data.strokes = stack[stpos].strokes.slice();
       });
     };
-    /** 
+    /**
      * Goes forward to the last saved state, if available.
      * @name redo
      * @memberOf MementoCanvas
@@ -101,10 +102,11 @@
     this.redo = function() {
       next();
       $canvas.sketchable('handler', function(elem, data) {
-        data.strokes = stack[stpos].strokes.slice();
+        if (stack[stpos])
+          data.strokes = stack[stpos].strokes.slice();
       });
     };
-    /** 
+    /**
      * Resets stack.
      * @name reset
      * @memberOf MementoCanvas
@@ -113,7 +115,7 @@
       stack = [];
       stpos = -1;
     };
-    /** 
+    /**
      * Save state.
      * @name save
      * @memberOf MementoCanvas
@@ -125,7 +127,7 @@
         stack.push({ image: elem[0].toDataURL(), strokes: data.strokes.slice() });
       });
     };
-    /** 
+    /**
      * Init instance.
      * @name init
      * @memberOf MementoCanvas
@@ -135,7 +137,7 @@
       $(document).off("keypress", keyManager);
       $(document).on("keypress", keyManager);
     };
-    /** 
+    /**
      * Destroy instance.
      * @name destroy
      * @memberOf MementoCanvas
@@ -144,19 +146,19 @@
       $(document).off("keypress", keyManager);
       this.reset();
     };
-    
+
   };
-  
+
   // Bind plugin extension ////////////////////////////////////////////////////
-  
+
   var plugin = $.fn.sketchable;
   var availMethods = plugin('methods');
-  
+
   function configure(elem, opts) {
     var self = elem, options = $.extend(true, plugin.defaults, opts);
     // Actually this plugin is singleton, so exit early.
     if (!options.interactive) return opts;
-    
+
     var mc = new MementoCanvas(elem);
     var callbacks = {
       init: function(elem, data) {
@@ -171,7 +173,7 @@
         data.memento.destroy();
       }
     };
-    
+
     // A helper function to override user-defined event listeners.
     function override(ev) {
       if (options && options.events && typeof options.events[ev] === 'function') {
@@ -196,7 +198,7 @@
       }
       plugin.isMementoReady = true;
     }
-    
+
     // Expose public API for jquery.sketchable plugin.
     $.extend(availMethods, {
       undo: function() {
@@ -206,13 +208,13 @@
         mc.redo();
       }
     });
-    
+
     return plugin.defaults;
   };
-  
-  /** 
+
+  /**
    * Creates a new memento-capable jQuery.sketchable object.
-   * @param {String|Object} method name of the method to invoke, 
+   * @param {String|Object} method name of the method to invoke,
    *  or a configuration object.
    * @return jQuery
    * @class
@@ -225,5 +227,5 @@
     var conf = configure(this, opts);
     return initfn.call(this, conf);
   };
-  
+
 })(jQuery);

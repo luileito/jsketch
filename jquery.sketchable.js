@@ -161,9 +161,9 @@
           elem.unbind("mouseup", mouseupHandler);
           elem.unbind("mousemove", mousemoveHandler);
           elem.unbind("mousedown", mousedownHandler);
-          elem.unbind("touchstart", touchHandler);
-          elem.unbind("touchmove", touchHandler);
-          elem.unbind("touchend", touchHandler);
+          elem.unbind("touchstart", touchdownHandler);
+          elem.unbind("touchmove", touchmoveHandler);
+          elem.unbind("touchend", touchupHandler);
         }
         elem.removeData(_ns);
 

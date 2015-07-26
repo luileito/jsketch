@@ -41,7 +41,7 @@
       // Scene defaults.
       this.stageWidth  = elem.width;
       this.stageHeight = elem.height;
-      // Drawing defaults.
+      // Set drawing defaults.
       this.drawingDefaults(options);
       // Make room for storing some data such as brush type, colors, etc.
       this.data = {};
@@ -90,7 +90,14 @@
         this.graphics.lineJoin    = typeof options.lineJoin    !== 'undefined' ? options.lineJoin    : 'round';
         this.graphics.miterLimit  = typeof options.miterLimit  !== 'undefined' ? options.miterLimit  : 10;
         // Remember graphic options for later saveing/restoring drawing status.
-        this.graphics.options = Object.keys(options);
+        this.graphics.options = {
+          fillStyle:   this.graphics.fillStyle,
+          strokeStyle: this.graphics.strokeStyle,
+          lineWidth:   this.graphics.lineWidth,
+          lineCap:     this.graphics.lineCap,
+          lineJoin:    this.graphics.lineJoin,
+          miterLimit:  this.graphics.miterLimit
+        };
         return this;
       },
       /**
@@ -106,7 +113,7 @@
         this.canvas.width  = width;
         this.canvas.height = height;
         // On resizing we lost drawing options, so reset.
-        this.drawingDefaults();
+        this.restoreGraphics();
         return this;
       },
       /**
@@ -150,7 +157,7 @@
        * @memberof jSketch
        */
       endFill: function() {
-        this.graphics.fillStyle = this.data.fillStyle;
+        this.restoreGraphics();
         return this;
       },
       /**
@@ -366,7 +373,6 @@
       clear: function() {
         // Note: using 'this.canvas.width = this.canvas.width' resets _all_ styles, so better use clearRect.
         this.graphics.clearRect(0,0, this.stageWidth,this.stageHeight);
-        this.data = {};
         return this;
       },
       /**
@@ -393,12 +399,11 @@
        * @return jSketch
        * @memberof jSketch
        */
-      saveGraphics: function(propList) {
-        if (typeof propList === 'undefined') propList = this.graphics.options;
-        if (typeof propList === 'string') propList = propList.split(" ");
-        for (var p = 0; p < propList.length; p++) {
-          var prop = propList[p];
-          this.data[prop] = this.graphics[prop];
+      saveGraphics: function(options) {
+        if (typeof options === 'undefined') options = this.graphics.options;
+        else this.graphics.options = options;
+        for (var opt in options) {
+          this.data[opt] = options[opt];
         }
         return this;
       },
@@ -408,12 +413,11 @@
        * @return jSketch
        * @memberof jSketch
        */
-      restoreGraphics: function(propList) {
-        if (typeof propList === 'undefined') propList = this.graphics.options;
-        if (typeof propList === 'string') propList = propList.split(" ");
-        for (var p = 0; p < propList.length; p++) {
-          var prop = propList[p];
-          this.graphics[prop] = this.data[prop];
+      restoreGraphics: function(options) {
+        if (typeof options === 'undefined') options = this.graphics.options;
+        else this.graphics.options = options;
+        for (var opt in options) {
+          this.graphics[opt] = options[opt];
         }
         return this;
       },

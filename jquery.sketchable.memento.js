@@ -166,6 +166,9 @@
         data.memento.save();
         data.memento.init();
       },
+      clear: function(elem, data) {
+        data.memento.save();
+      },
       mouseup: function(elem, data, e) {
         data.memento.save();
       },
@@ -192,7 +195,7 @@
     // Avoid re-attaching the same callbacks more than once.
     if (!plugin.isMementoReady) {
       // Event order matters.
-      var events = 'init mouseup destroy'.split(" ");
+      var events = 'init mouseup clear destroy'.split(" ");
       for (var i = 0; i < events.length; i++) {
         override(events[i]);
       }

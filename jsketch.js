@@ -34,17 +34,15 @@
     var Sketch = function(elem, options){
       // Although discouraged, we can instantiate the class without arguments.
       if (!elem) return;
-      // We can pass default setup values.
-      if (typeof options === 'undefined') options = {};
       // Set drawing context first.
       this.context(elem);
       // Scene defaults.
       this.stageWidth  = elem.width;
       this.stageHeight = elem.height;
-      // Set drawing defaults.
-      this.drawingDefaults(options);
       // Make room for storing some data such as brush type, colors, etc.
       this.data = {};
+      // Set drawing defaults.
+      this.drawingDefaults(options);
       // Make constructor chainable.
       return this;
     };
@@ -83,21 +81,16 @@
        */
       drawingDefaults: function(options) {
         if (typeof options === 'undefined') options = {};
-        this.graphics.fillStyle   = typeof options.fillStyle   !== 'undefined' ? options.fillStyle   : '#F00';
-        this.graphics.strokeStyle = typeof options.strokeStyle !== 'undefined' ? options.strokeStyle : '#F0F';
-        this.graphics.lineWidth   = typeof options.lineWidth   !== 'undefined' ? options.lineWidth   : 2;
-        this.graphics.lineCap     = typeof options.lineCap     !== 'undefined' ? options.lineCap     : 'round';
-        this.graphics.lineJoin    = typeof options.lineJoin    !== 'undefined' ? options.lineJoin    : 'round';
-        this.graphics.miterLimit  = typeof options.miterLimit  !== 'undefined' ? options.miterLimit  : 10;
-        // Remember graphic options for later saveing/restoring drawing status.
-        this.graphics.options = {
-          fillStyle:   this.graphics.fillStyle,
-          strokeStyle: this.graphics.strokeStyle,
-          lineWidth:   this.graphics.lineWidth,
-          lineCap:     this.graphics.lineCap,
-          lineJoin:    this.graphics.lineJoin,
-          miterLimit:  this.graphics.miterLimit
-        };
+        if (typeof options.fillStyle   === 'undefined') options.fillStyle   = '#F00';
+        if (typeof options.strokeStyle === 'undefined') options.strokeStyle = '#F0F';
+        if (typeof options.lineWidth   === 'undefined') options.lineWidth   = 2;
+        if (typeof options.lineCap     === 'undefined') options.lineCap     = 'round';
+        if (typeof options.lineJoin    === 'undefined') options.lineJoin    = 'round';
+        if (typeof options.miterLimit  === 'undefined') options.miterLimit  = 10;
+        // Remember graphic options for later saving/restoring drawing status.
+        this.saveGraphics(options);
+        // Apply defaults.
+        this.restoreGraphics(options);
         return this;
       },
       /**
@@ -112,7 +105,7 @@
         this.stageHeight = height;
         this.canvas.width  = width;
         this.canvas.height = height;
-        // On resizing we lost drawing options, so reset.
+        // On resizing we lose drawing options, so restore them.
         this.restoreGraphics();
         return this;
       },
@@ -263,7 +256,6 @@
        */
       strokeRect: function(x,y,width,height) {
         this.graphics.beginPath();
-        //this.moveTo(x,y).lineTo(x+width,y).lineTo(x+width,y+height).lineTo(y,y+height).lineTo(x,y);
         this.graphics.strokeRect(x,y,width,height);
         this.graphics.closePath();
         return this;
@@ -344,7 +336,7 @@
       },
       /**
        * Sets brush to eraser mode.
-       * @param {Number} brushSize - Brush size.
+       * @param {Number} [brushSize] - Brush size.
        * @return jSketch
        * @memberof jSketch
        */
@@ -356,7 +348,7 @@
       },
       /**
        * Sets brush to pencil mode.
-       * @param {Number} brushSize - Brush size.
+       * @param {Number} [brushSize] - Brush size.
        * @return jSketch
        * @memberof jSketch
        */
@@ -395,27 +387,23 @@
       },
       /**
        * Saves given drawing settings.
-       * @param propList {Array|String} propList - Array or space-separated String.
+       * @param {Object} [options] - Graphics options.
        * @return jSketch
        * @memberof jSketch
        */
       saveGraphics: function(options) {
-        if (typeof options === 'undefined') options = this.graphics.options;
-        else this.graphics.options = options;
-        for (var opt in options) {
-          this.data[opt] = options[opt];
-        }
+        if (typeof options === 'undefined') options = this.data.options;
+        this.data.options = options;
         return this;
       },
       /**
        * Restores given drawing settings.
-       * @param propList {Array|String} propList - Array or space-separated String.
+       * @param {Object} [options] - Graphics options.
        * @return jSketch
        * @memberof jSketch
        */
       restoreGraphics: function(options) {
-        if (typeof options === 'undefined') options = this.graphics.options;
-        else this.graphics.options = options;
+        if (typeof options === 'undefined') options = this.data.options;
         for (var opt in options) {
           this.graphics[opt] = options[opt];
         }

@@ -25,7 +25,7 @@
   var methods = {
     /**
      * Initializes the selected jQuery objects.
-     * @param {Object} opts plugin configuration (see defaults).
+     * @param {Object} opts - Plugin configuration (see defaults).
      * @return jQuery
      * @ignore
      * @namespace methods.init
@@ -74,11 +74,11 @@
     },
     /**
      * Changes config on the fly of an existing sketchable element.
-     * @param {Object} opts plugin configuration (see defaults).
+     * @param {Object} opts - Plugin configuration (see defaults).
      * @return jQuery
      * @namespace methods.config
      * @example
-     * $(selector).sketchable('config', { interactive: false }); // Then:
+     * $(selector).sketchable('config', { interactive: false }); // Later on:
      * $(selector).sketchable('config', { interactive: true });
      */
     config: function(opts) {
@@ -146,7 +146,7 @@
     },
     /**
      * Reinitializes a sketchable canvas with given opts.
-     * @param {Object} opts - Configuration options.
+     * @param {Object} opts - Plugin configuration (see defaults).
      * @return jQuery
      * @namespace methods.reset
      * @example

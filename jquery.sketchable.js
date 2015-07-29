@@ -73,6 +73,21 @@
       });
     },
     /**
+     * Changes config on the fly of an existing sketchable element.
+     * @param {Object} opts plugin configuration (see defaults).
+     * @return jQuery
+     * @namespace methods.config
+     * @example
+     * $(selector).sketchable('config', { interactive: false }); // Then:
+     * $(selector).sketchable('config', { interactive: true });
+     */
+    config: function(opts) {
+      return this.each(function(){
+        var elem = $(this), data = elem.data(_ns);
+        data.options = $.extend(true, {}, $.fn.sketchable.defaults, opts || {});
+      });
+    },
+    /**
      * Gets/Sets drawing data strokes sequence.
      * @param {Array} arr - Multidimensional array of [x,y,time,status] tuples; status = 0 (pen down) or 1 (pen up).
      * @return Strokes object on get, jQuery on set (with the new data attached)

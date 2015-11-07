@@ -164,11 +164,15 @@
        * @memberof jSketch
        */
       lineStyle: function(color,thickness,capStyle,joinStyle,miter) {
-        this.graphics.strokeStyle = color     || this.graphics.strokeStyle;
-        this.graphics.lineWidth   = thickness || this.graphics.lineWidth;
-        this.graphics.lineCap     = capStyle  || this.graphics.lineCap;
-        this.graphics.lineJoin    = joinStyle || this.graphics.lineJoin;
-        this.graphics.miterLimit  = miter     || this.graphics.miterLimit;
+        var options = {
+          strokeStyle: color     || this.graphics.strokeStyle,
+          lineWidth:   thickness || this.graphics.lineWidth,
+          lineCap:     capStyle  || this.graphics.lineCap,
+          lineJoin:    joinStyle || this.graphics.lineJoin,
+          miterLimit:  miter     || this.graphics.miterLimit
+        };
+        this.saveGraphics(options);
+        this.restoreGraphics(options);
         return this;
       },
       /**

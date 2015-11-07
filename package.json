@@ -1,6 +1,6 @@
 {
   "name": "jsketch",
-  "version": "1.8",
+  "version": "1.8.0",
   "description": "jSketch drawing lib",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

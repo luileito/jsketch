@@ -21,7 +21,7 @@
  * // Switching between contexts removes the need of having to reinstantiate the jSketch class.
  * brush.context(canvas2).beginFill('#5F7').fillCircle(30,30,8).endFill();
  */
-(function(window){
+;(function(window){
     /**
      * @constructor
      * @param {Object} elem - MUST be a DOM element

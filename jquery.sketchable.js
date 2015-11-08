@@ -51,8 +51,6 @@
           }
         }
         var sketch = new jSketch(this, options.graphics);
-        // Flag drawing state on a per-canvas basis.
-        sketch.isDrawing = false;
         // Reconfigure element data.
         elem.data(_ns, {
           // All strokes will be stored here.

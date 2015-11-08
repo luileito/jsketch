@@ -231,6 +231,7 @@
    *   interactive: true,
    *   mouseupMovements: false,
    *   relTimestamps: false,
+   *   multitouch: true,
    *   events: {
    *     init: function(elem, data){ },
    *     clear: function(elem, data){ },

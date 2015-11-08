@@ -334,20 +334,29 @@
     upHandler(e);
   };
 
-  /**
-   * @private
-   */
-  function touchdownHandler(e) {
+  function execTouchEvent(e, callback) {
     var elem = $(e.target), data = elem.data(_ns), options = data.options;
     var touches = e.originalEvent.changedTouches;
     if (options.multitouch) {
       for (var i = 0; i < touches.length; i++) {
         var touch = touches[i];
-        downHandler(touch);
+        // Add the type of event to the touch object.
+        touch.type = e.type;
+        callback(touch);
       }
     } else {
-      downHandler(touches[0]);
+      var touch = touches[0];
+      // Add the type of event to the touch object.
+      touch.type = e.type;
+      callback(touch);
     }
+  };
+
+  /**
+   * @private
+   */
+  function touchdownHandler(e) {
+    execTouchEvent(e, downHandler);
     e.preventDefault();
   };
 
@@ -355,16 +364,7 @@
    * @private
    */
   function touchmoveHandler(e) {
-    var elem = $(e.target), data = elem.data(_ns), options = data.options;
-    var touches = e.originalEvent.changedTouches;
-    if (options.multitouch) {
-      for (var i = 0; i < touches.length; i++) {
-        var touch = touches[i];
-        moveHandler(touch);
-      }
-    } else {
-      moveHandler(touches[0]);
-    }
+    execTouchEvent(e, moveHandler);
     e.preventDefault();
   };
 
@@ -372,16 +372,7 @@
    * @private
    */
   function touchupHandler(e) {
-    var elem = $(e.target), data = elem.data(_ns), options = data.options;
-    var touches = e.originalEvent.changedTouches;
-    if (options.multitouch) {
-      for (var i = 0; i < touches.length; i++) {
-        var touch = touches[i];
-        upHandler(touch);
-      }
-    } else {
-      upHandler(touches[0]);
-    }
+    execTouchEvent(e, upHandler);
     e.preventDefault();
   };
 

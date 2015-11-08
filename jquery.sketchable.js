@@ -49,6 +49,10 @@
             // Fix Chrome "bug".
             this.onselectstart = function(){ return false };
           }
+          if (options.cssCursors) {
+            // Visually indicate whether this element is interactive or not.
+            elem[0].style.cursor = options.interactive ? "pointer" : "not-allowed";
+          }
         }
         var sketch = new jSketch(this, options.graphics);
         // Reconfigure element data.
@@ -230,6 +234,7 @@
    *   mouseupMovements: false,
    *   relTimestamps: false,
    *   multitouch: true,
+   *   cssCursors: true,
    *   events: {
    *     init: function(elem, data){ },
    *     clear: function(elem, data){ },
@@ -259,6 +264,8 @@
     relTimestamps: false,
     // Enable multitouch drawing.
     multitouch: true,
+    // Display CSS cursors, mainly to indicate whether the element is interactive or not.
+    cssCursors: true,
     // Event callbacks.
     events: {
       // init: function(elem, data){ },

@@ -55,6 +55,9 @@
       // Manipulate canvas via jQuery sketchable API.
       // This way, we don't lose default drawing settings et al.
       $canvas.sketchable('handler', function(elem, data){
+        //data.sketch.clear().drawImage(snapshot.src);
+        // Note: jSketch.drawImage after clear creates some flickering,
+        // so use the native HTMLCanvasElement.drawImage method instead.
         data.sketch.clear();
         data.sketch.graphics.drawImage(snapshot, 0,0);
       });
@@ -150,19 +153,18 @@
   };
 
   // Bind plugin extension ////////////////////////////////////////////////////
-
-  var plugin = $.fn.sketchable;
+  var namespace    = "sketchable";
+  var plugin       = $.fn.sketchable;
   var availMethods = plugin('methods');
 
   function configure(elem, opts) {
-    var self = elem, options = $.extend(true, plugin.defaults, opts);
+    var options = $.extend(true, {}, plugin.defaults, opts);
     // Actually this plugin is singleton, so exit early.
     if (!options.interactive) return opts;
 
-    var mc = new MementoCanvas(elem);
     var callbacks = {
       init: function(elem, data) {
-        data.memento = mc;
+        data.memento = new MementoCanvas(elem);
         data.memento.save();
         data.memento.init();
       },
@@ -184,8 +186,8 @@
         options.events[ev] = function() {
           // Exec original function first, then exec our callback.
           var args = Array.prototype.slice.call(arguments, 0);
-          fn.apply(self, args);
-          callbacks[ev].apply(self, args);
+          fn.apply(elem, args);
+          callbacks[ev].apply(elem, args);
         }
       } else {
         plugin.defaults.events[ev] = callbacks[ev];
@@ -205,10 +207,12 @@
     // Expose public API for jquery.sketchable plugin.
     $.extend(availMethods, {
       undo: function() {
-        mc.undo();
+        var elem = $(this), data = elem.data(namespace);
+        data.memento.undo();
       },
       redo: function() {
-        mc.redo();
+        var elem = $(this), data = elem.data(namespace);
+        data.memento.redo();
       }
     });
 
@@ -227,8 +231,11 @@
    */
   var initfn = availMethods.init;
   availMethods.init = function(opts) {
-    var conf = configure(this, opts);
-    return initfn.call(this, conf);
+    return this.each(function(){
+      var elem = $(this);
+      var conf = configure(elem, opts);
+      initfn.call(elem, conf);
+    });
   };
 
 })(jQuery);

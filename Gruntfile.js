@@ -8,6 +8,14 @@ module.exports = function(grunt) {
       full: {
         src: [
           'jsketch.js',
+          'sketchable.js',
+          'sketchable.memento.js',
+        ],
+        dest: 'dist/sketchable.full.js'
+      },
+      jqFull: {
+        src: [
+          'jsketch.js',
           'jquery.sketchable.js',
           'jquery.sketchable.memento.js',
         ],
@@ -23,15 +31,33 @@ module.exports = function(grunt) {
       },
       sketchable: {
         files: {
-          'dist/jquery.sketchable.min.js': [ 'jquery.sketchable.js' ]
+          'dist/sketchable.min.js': [ 'sketchable.js' ]
         }
       },
       memento: {
         files: {
-          'dist/jquery.sketchable.memento.min.js': [ 'jquery.sketchable.memento.js' ]
+          'dist/sketchable.memento.min.js': [ 'sketchable.memento.js' ]
         }
       },
       full: {
+        options: {
+          banner: '/*! <%= pkg.description %> (all in one) | v<%= pkg.version %> | <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+        },
+        files: {
+          'dist/sketchable.full.min.js': [ '<%= concat.full.dest %>' ]
+        }
+      },
+      jqSketchable: {
+        files: {
+          'dist/jquery.sketchable.min.js': [ 'jquery.sketchable.js' ]
+        }
+      },
+      jqMemento: {
+        files: {
+          'dist/jquery.sketchable.memento.min.js': [ 'jquery.sketchable.memento.js' ]
+        }
+      },
+      jqFull: {
         options: {
           banner: '/*! <%= pkg.description %> (all in one) | v<%= pkg.version %> | <%= grunt.template.today("yyyy-mm-dd") %> */\n'
         },
@@ -53,9 +79,16 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-clean');
 
-  grunt.registerTask('full',        [ 'concat:full', 'uglify:full', 'clean' ]);
+  grunt.registerTask('full',        [ 'concat:full', 'uglify:full', 'concat:jqFull', 'uglify:jqFull', 'clean' ]);
   grunt.registerTask('jsketch',     [ 'uglify:jsketch', 'clean' ]);
-  grunt.registerTask('sketchable',  [ 'uglify:sketchable', 'clean' ]);
-  grunt.registerTask('memento',     [ 'uglify:memento', 'clean' ]);
-  grunt.registerTask('default',     [ 'concat:full', 'uglify:full', 'uglify:jsketch', 'uglify:sketchable', 'uglify:memento', 'clean' ]);
+  grunt.registerTask('sketchable',  [ 'uglify:sketchable', 'uglify:jqSketchable', 'clean' ]);
+  grunt.registerTask('memento',     [ 'uglify:memento', 'uglify:jqMemento', 'clean' ]);
+
+  grunt.registerTask('default',     [
+                                      'concat:full', 'uglify:full', 'concat:jqFull', 'uglify:jqFull',
+                                      'uglify:jsketch',
+                                      'uglify:sketchable', 'uglify:jqSketchable',
+                                      'uglify:memento', 'uglify:jqMemento',
+                                      'clean'
+                                    ]);
 };

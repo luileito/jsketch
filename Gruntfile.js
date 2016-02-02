@@ -8,6 +8,7 @@ module.exports = function(grunt) {
       full: {
         src: [
           'jsketch.js',
+          'sketchable.utils.js',
           'sketchable.js',
           'sketchable.memento.js',
         ],

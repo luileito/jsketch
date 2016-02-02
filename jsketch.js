@@ -347,7 +347,7 @@
       eraser: function(brushSize) {
         if (typeof brushSize === 'undefined') brushSize = 15;
         this.graphics.globalCompositeOperation = "destination-out";
-        this.graphics.lineWidth = brushSize;
+        this.lineStyle(null, brushSize);
         return this;
       },
       /**
@@ -357,8 +357,9 @@
        * @memberof jSketch
        */
       pencil: function(brushSize) {
-        if (typeof brushSize !== 'undefined') this.graphics.lineWidth = brushSize;
+        if (typeof brushSize === 'undefined') brushSize = 2;
         this.graphics.globalCompositeOperation = "source-over";
+        this.lineStyle(null, brushSize);
         return this;
       },
       /**

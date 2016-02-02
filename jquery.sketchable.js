@@ -390,8 +390,13 @@
     // Don't handle right clicks.
     if (e.which === 3) return false;
 
-    var idx = e.identifier || 0;
-    var elem = $(e.target), data = elem.data(_ns), options = data.options;
+    var idx     = e.identifier || 0,
+        elem    = $(e.target),
+        data    = elem.data(_ns),
+        options = data.options;
+    // Exit early if interactivity is disabled.
+    if (!options.interactive) return;
+
     data.sketch.isDrawing = true;
     var p = getMousePos(e);
     // Mark visually 1st point of stroke.
@@ -418,8 +423,13 @@
    * @private
    */
   function moveHandler(e) {
-    var idx = e.identifier || 0;
-    var elem = $(e.target), data = elem.data(_ns), options = data.options;
+    var idx     = e.identifier || 0,
+        elem    = $(e.target),
+        data    = elem.data(_ns),
+        options = data.options;
+    // Exit early if interactivity is disabled.
+    if (!options.interactive) return;
+
     //if (!options.mouseupMovements && !data.sketch.isDrawing) return;
     // This would grab all penup strokes AFTER drawing something on the canvas for the first time.
     if ( (!options.mouseupMovements || data.strokes.length === 0) && !data.sketch.isDrawing ) return;
@@ -440,8 +450,13 @@
    * @private
    */
   function upHandler(e) {
-    var idx = e.identifier || 0;
-    var elem = $(e.target), data = elem.data(_ns), options = data.options;
+    var idx     = e.identifier || 0,
+        elem    = $(e.target),
+        data    = elem.data(_ns),
+        options = data.options;
+    // Exit early if interactivity is disabled.
+    if (!options.interactive) return;
+
     data.sketch.isDrawing = false;
     data.strokes.push(data.coords[idx]);
     data.coords[idx] = [];

@@ -86,10 +86,9 @@ module.exports = function(grunt) {
   grunt.registerTask('memento',     [ 'uglify:memento', 'uglify:jqMemento', 'clean' ]);
 
   grunt.registerTask('default',     [
-                                      'concat:full', 'uglify:full', 'concat:jqFull', 'uglify:jqFull',
-                                      'uglify:jsketch',
-                                      'uglify:sketchable', 'uglify:jqSketchable',
-                                      'uglify:memento', 'uglify:jqMemento',
-                                      'clean'
+                                      'full',
+                                      'jsketch',
+                                      'sketchable',
+                                      'memento',
                                     ]);
 };

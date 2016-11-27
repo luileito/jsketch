@@ -190,7 +190,7 @@
           callbacks[ev].apply(elem, args);
         }
       } else {
-        plugin.defaults.events[ev] = callbacks[ev];
+        options.events[ev] = callbacks[ev];
       }
     };
 
@@ -216,7 +216,7 @@
       }
     });
 
-    return plugin.defaults;
+    return options;
   };
 
   /**

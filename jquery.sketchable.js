@@ -76,6 +76,7 @@
     },
     /**
      * Changes config on the fly of an existing sketchable element.
+     * Previous options are retained. To completely reconfigure them just use the reset method.
      * @param {Object} opts - Plugin configuration (see defaults).
      * @return jQuery
      * @namespace methods.config
@@ -86,7 +87,7 @@
     config: function(opts) {
       return this.each(function(){
         var elem = $(this), data = elem.data(_ns);
-        data.options = $.extend(true, {}, $.fn.sketchable.defaults, opts || {});
+        data.options = $.extend(true, opts || {}, $.fn.sketchable.defaults, data.options);
       });
     },
     /**

@@ -49,10 +49,7 @@
             // Fix Chrome "bug".
             this.onselectstart = function(){ return false };
           }
-          if (options.cssCursors) {
-            // Visually indicate whether this element is interactive or not.
-            elem[0].style.cursor = options.interactive ? "pointer" : "not-allowed";
-          }
+          postProcess(elem, options);
         }
         var sketch = new jSketch(this, options.graphics);
         // Reconfigure element data.
@@ -88,6 +85,7 @@
       return this.each(function(){
         var elem = $(this), data = elem.data(_ns);
         data.options = $.extend(true, {}, $.fn.sketchable.defaults, data.options, opts || {});
+        postProcess(elem);
       });
     },
     /**
@@ -284,6 +282,17 @@
       lineCap: "round",
       lineJoin: "round",
       miterLimit: 10
+    }
+  };
+
+  /**
+   * @private
+   */
+  function postProcess(elem, options) {
+    if (!options) options = elem.data(_ns).options;
+    if (options.cssCursors) {
+      // Visually indicate whether this element is interactive or not.
+      elem[0].style.cursor = options.interactive ? "pointer" : "not-allowed";
     }
   };
 

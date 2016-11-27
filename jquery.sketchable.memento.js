@@ -16,6 +16,8 @@
 ;(function($) {
 
   /**
+   * This plugin implements the <a href="https://en.wikipedia.org/wiki/Memento_pattern">Memento pattern</a>.
+   * This plugin automatically modifies the jSketch instances, so no need to configure it.
    * @name MementoCanvas
    * @class
    * @return Object

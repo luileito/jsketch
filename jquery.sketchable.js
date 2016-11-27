@@ -87,7 +87,7 @@
     config: function(opts) {
       return this.each(function(){
         var elem = $(this), data = elem.data(_ns);
-        data.options = $.extend(true, opts || {}, $.fn.sketchable.defaults, data.options);
+        data.options = $.extend(true, {}, $.fn.sketchable.defaults, data.options, opts || {});
       });
     },
     /**

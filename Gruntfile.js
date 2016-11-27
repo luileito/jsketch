@@ -63,7 +63,7 @@ module.exports = function(grunt) {
           banner: '/*! <%= pkg.description %> (all in one) | v<%= pkg.version %> | <%= grunt.template.today("yyyy-mm-dd") %> */\n'
         },
         files: {
-          'dist/jquery.sketchable.full.min.js': [ '<%= concat.full.dest %>' ]
+          'dist/jquery.sketchable.full.min.js': [ '<%= concat.jqFull.dest %>' ]
         }
       }
     },

@@ -1,5 +1,5 @@
 /*!
- * jQuery sketchable | v1.8 | Luis A. Leiva | MIT license
+ * jQuery sketchable | v1.8.1 | Luis A. Leiva | MIT license
  * A jQuery plugin for the jSketch drawing library.
  */
 /**
@@ -197,8 +197,8 @@
    * @param {String|Object} method - Method to invoke, or a configuration object.
    * @return jQuery
    * @class
-   * @version 1.8
-   * @date 9 Jul 2014
+   * @version 1.8.1
+   * @date 28 Nov 2016
    * @author Luis A. Leiva
    * @license MIT license
    * @example

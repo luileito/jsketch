@@ -1,5 +1,5 @@
 /*!
- * Memento plugin for sketchable | v1.1 | Luis A. Leiva | MIT license
+ * Memento plugin for sketchable | v1.2 | Luis A. Leiva | MIT license
  */
 /*
   Requires sketchable.utils.js to be loaded first.
@@ -7,8 +7,11 @@
 */
 ;(function(window) {
   /**
+   * This plugin implements the <a href="https://en.wikipedia.org/wiki/Memento_pattern">Memento pattern</a>.
+   * This plugin automatically modifies the jSketch instances, so no need to configure it.
    * @name MementoCanvas
    * @class
+   * @version 1.2
    * @return Object
    * @example
    * var mc = new MementoCanvas( $('canvas-selector') );

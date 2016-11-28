@@ -1,5 +1,5 @@
 /*!
- * Memento plugin for jQuery sketchable | v1.1 | Luis A. Leiva | MIT license
+ * Memento plugin for jQuery sketchable | v1.2 | Luis A. Leiva | MIT license
  */
 /**
  * @name $
@@ -20,6 +20,8 @@
    * This plugin automatically modifies the jSketch instances, so no need to configure it.
    * @name MementoCanvas
    * @class
+   * @version 1.2
+   * @date 28 Nov 2016
    * @return Object
    * @example
    * var mc = new MementoCanvas( $('canvas-selector') );

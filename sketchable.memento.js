@@ -170,7 +170,7 @@
         data.memento.init();
       },
       clear: function(elem, data) {
-        data.memento.destroy();
+        data.memento.reset();
       },
       mouseup: function(elem, data, e) {
         data.memento.save();

@@ -214,6 +214,10 @@
       redo: function() {
         var elem = this.elem, data = dataBind(elem)[namespace];
         data.memento.redo();
+      },
+      save: function() {
+        var elem = this.elem, data = dataBind(elem)[namespace];
+        data.memento.save();
       }
     });
 

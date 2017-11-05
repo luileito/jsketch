@@ -217,7 +217,11 @@
       redo: function() {
         var elem = $(this), data = elem.data(namespace);
         data.memento.redo();
-      }
+      },
+      save: function() {
+        var elem = $(this), data = elem.data(namespace);
+        data.memento.save();
+      },
     });
 
     return options;

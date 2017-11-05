@@ -174,6 +174,7 @@
       },
       clear: function(elem, data) {
         data.memento.reset();
+        data.memento.save();
       },
       mouseup: function(elem, data, e) {
         data.memento.save();

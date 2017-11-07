@@ -199,14 +199,10 @@
       }
     };
 
-    // Avoid re-attaching the same callbacks more than once.
-    if (!plugin.isMementoReady) {
-      // Event order matters.
-      var events = 'init mouseup clear destroy'.split(" ");
-      for (var i = 0; i < events.length; i++) {
-        override(events[i]);
-      }
-      plugin.isMementoReady = true;
+    // Event order matters.
+    var events = 'init mouseup clear destroy'.split(" ");
+    for (var i = 0; i < events.length; i++) {
+      override(events[i]);
     }
 
     // Expose public API for jquery.sketchable plugin.

@@ -309,13 +309,15 @@
         this.graphics.closePath();
         return this;
       },
-      // experimental
-      radialCircle: function(x,y,radius,color,glowSize){
-        var g = this.graphics.createRadialGradient(x,y,radius,x,y,glowSize);
-        g.addColorStop(0,color);
-        g.addColorStop(1.0,"rgba(0,0,0,0)");
-        this.graphics.fillStyle = g;
-        this.fillCircle(x,y,radius);
+      /**
+       * Experimental.
+       * @ignore
+       */
+      radialCircle: function(x,y,radius,glowSize,color1,color2) {
+        var g = this.graphics.createRadialGradient(x,y,radius,x,y, glowSize || 5);
+        g.addColorStop(0, color1 || this.graphics.fillStyle);
+        g.addColorStop(1, color2 || 'white');
+        this.beginFill(g).fillCircle(x,y,radius).endFill();
         return this;
       },
       /**

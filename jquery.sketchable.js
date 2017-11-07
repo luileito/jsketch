@@ -411,7 +411,7 @@
     var p = getMousePos(e);
     // Mark visually 1st point of stroke.
     if (options.graphics.firstPointSize > 0) {
-      data.sketch.fillCircle(p.x, p.y, options.graphics.firstPointSize);
+      data.sketch.beginFill(options.graphics.fillStyle).fillCircle(p.x, p.y, options.graphics.firstPointSize).endFill();
     }
     // Ensure that coords is properly initialized.
     if (!data.coords[idx]) {

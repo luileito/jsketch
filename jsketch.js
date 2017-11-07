@@ -90,7 +90,7 @@
         // Remember graphic options for later saving/restoring drawing status.
         this.saveGraphics(options);
         // Apply defaults.
-        this.restoreGraphics(options);
+        this.restoreGraphics();
         return this;
       },
       /**
@@ -172,7 +172,7 @@
           miterLimit:  miter     || this.graphics.miterLimit
         };
         this.saveGraphics(options);
-        this.restoreGraphics(options);
+        this.restoreGraphics();
         return this;
       },
       /**
@@ -397,8 +397,7 @@
        * @memberof jSketch
        */
       saveGraphics: function(options) {
-        if (typeof options === 'undefined') options = this.data.options;
-        this.data.options = options;
+        if (typeof options !== 'undefined') this.data.options = options;
         return this;
       },
       /**

@@ -59,13 +59,13 @@ var deepExtend = function(myObj) {
   myObj = myObj || {};
   for (var i = 1; i < arguments.length; i++) {
     var obj = arguments[i];
-    if (!obj) continue;
     for (var key in obj) {
       if (obj.hasOwnProperty(key)) {
-        if (typeof obj[key] === 'object')
-          deepExtend(myObj[key], obj[key]);
-        else
+        if (typeof obj[key] === 'object') {
+          myObj[key] = deepExtend(myObj[key], obj[key]);
+        } else {
           myObj[key] = obj[key];
+        }
       }
     }
   }

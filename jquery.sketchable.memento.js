@@ -140,8 +140,8 @@
      * @memberOf MementoCanvas
      */
     this.init = function() {
-      $(document).off("keypress", keyManager);
-      $(document).on("keypress", keyManager);
+      $(document).off('keypress', keyManager);
+      $(document).on('keypress', keyManager);
     };
     /**
      * Destroy instance.
@@ -149,14 +149,14 @@
      * @memberOf MementoCanvas
      */
     this.destroy = function() {
-      $(document).off("keypress", keyManager);
+      $(document).off('keypress', keyManager);
       this.reset();
     };
 
   };
 
   // Bind plugin extension ////////////////////////////////////////////////////
-  var namespace    = "sketchable";
+  var namespace    = 'sketchable';
   var plugin       = $.fn.sketchable;
   var availMethods = plugin('methods');
 
@@ -200,7 +200,7 @@
 
     // Event order matters.
     // Init must go first, since it's called when instantiating the plugin.
-    var events = 'init mouseup clear destroy'.split(" ");
+    var events = 'init mouseup clear destroy'.split(' ');
     for (var i = 0; i < events.length; i++) {
       override(events[i]);
     }

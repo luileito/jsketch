@@ -1,5 +1,5 @@
 /*!
- * jSketch 0.8 | Luis A. Leiva | MIT license
+ * jSketch 0.9 | Luis A. Leiva | MIT license
  * A simple JavaScript library for drawing facilities on HTML5 canvas.
  */
 /**
@@ -8,8 +8,7 @@
  * such as function chainability and old-school AS3-like notation.
  * @name jSketch
  * @class
- * @version 0.8
- * @date 9 Jul 2014
+ * @version 0.9
  * @author Luis A. Leiva
  * @license MIT license
  * @example
@@ -21,17 +20,17 @@
  * // Switching between contexts removes the need of having to reinstantiate the jSketch class.
  * brush.context(canvas2).beginFill('#5F7').fillCircle(30,30,8).endFill();
  */
-;(function(window){
+;(function(window) {
     /**
      * @constructor
      * @param {Object} elem - MUST be a DOM element
      * @param {Object} options - Configuration
      */
-    var jSketch = function(elem, options){
+    var jSketch = function(elem, options) {
       return new Sketch(elem, options);
     };
     // Base class, private.
-    var Sketch = function(elem, options){
+    var Sketch = function(elem, options) {
       // Although discouraged, we can instantiate the class without arguments.
       if (!elem) return;
       // Set drawing context first.
@@ -60,10 +59,10 @@
        * @memberof jSketch
        */
       context: function(elem) {
-        if (elem === null) throw("No canvas element specified.");
+        if (elem === null) throw('No canvas element specified.');
         // Save shortcuts: canvas (DOM elem) & graphics (2D canvas context).
         this.canvas = elem;
-        this.graphics = elem.getContext("2d");
+        this.graphics = elem.getContext('2d');
         // Always allow chainability.
         return this;
       },
@@ -100,7 +99,7 @@
        * @return jSketch
        * @memberof jSketch
        */
-      size: function(width,height) {
+      size: function(width, height) {
         this.stageWidth  = width;
         this.stageHeight = height;
         this.canvas.width  = width;
@@ -117,7 +116,7 @@
        */
       background: function(color) {
         this.beginFill(color);
-        this.graphics.fillRect(0,0,this.stageWidth,this.stageHeight);
+        this.graphics.fillRect(0,0, this.stageWidth,this.stageHeight);
         this.endFill();
         return this;
       },
@@ -129,7 +128,7 @@
        * @return jSketch
        * @memberof jSketch
        */
-      stage: function(width,height,bgcolor) {
+      stage: function(width, height, bgcolor) {
         this.size(width,height).background(bgcolor);
         return this;
       },
@@ -163,7 +162,7 @@
        * @return jSketch
        * @memberof jSketch
        */
-      lineStyle: function(color,thickness,capStyle,joinStyle,miter) {
+      lineStyle: function(color, thickness, capStyle, joinStyle, miter) {
         var options = {
           strokeStyle: color     || this.graphics.strokeStyle,
           lineWidth:   thickness || this.graphics.lineWidth,
@@ -182,7 +181,7 @@
        * @return jSketch
        * @memberof jSketch
        */
-      moveTo: function(x,y) {
+      moveTo: function(x, y) {
         this.graphics.moveTo(x,y);
         return this;
       },
@@ -193,7 +192,7 @@
        * @return jSketch
        * @memberof jSketch
        */
-      lineTo: function(x,y) {
+      lineTo: function(x, y) {
         this.graphics.lineTo(x,y);
         return this;
       },
@@ -206,7 +205,7 @@
        * @return jSketch
        * @memberof jSketch
        */
-      line: function(x1,y1,x2,y2) {
+      line: function(x1,y1, x2,y2) {
         this.graphics.moveTo(x1,y1);
         this.lineTo(x2,y2);
         return this;
@@ -220,8 +219,8 @@
        * @return jSketch
        * @memberof jSketch
        */
-      curveTo: function(x,y,cpx,cpy) {
-        this.graphics.quadraticCurveTo(cpx,cpy,x,y);
+      curveTo: function(x,y, cpx,cpy) {
+        this.graphics.quadraticCurveTo(cpx,cpy, x,y);
         return this;
       },
       /**
@@ -235,9 +234,9 @@
        * @return jSketch
        * @memberof jSketch
        */
-      curve: function(x1,y1,x2,y2,cpx,cpy) {
+      curve: function(x1,y1, x2,y2, cpx,cpy) {
         this.graphics.moveTo(x1,y1);
-        this.curveTo(x2,y2,cpx,cpy);
+        this.curveTo(x2,y2, cpx,cpy);
         return this;
       },
       /**
@@ -258,9 +257,9 @@
        * @return jSketch
        * @memberof jSketch
        */
-      strokeRect: function(x,y,width,height) {
+      strokeRect: function(x,y, width,height) {
         this.graphics.beginPath();
-        this.graphics.strokeRect(x,y,width,height);
+        this.graphics.strokeRect(x,y, width,height);
         this.graphics.closePath();
         return this;
       },
@@ -273,9 +272,9 @@
        * @return jSketch
        * @memberof jSketch
        */
-      fillRect: function(x,y,width,height) {
+      fillRect: function(x,y, width,height) {
         this.graphics.beginPath();
-        this.graphics.fillRect(x,y,width,height);
+        this.graphics.fillRect(x,y, width,height);
         this.graphics.closePath();
         return this;
       },
@@ -287,9 +286,9 @@
        * @return jSketch
        * @memberof jSketch
        */
-      strokeCircle: function(x,y,radius) {
+      strokeCircle: function(x,y, radius) {
         this.graphics.beginPath();
-        this.graphics.arc(x,y, radius, 0, Math.PI * 2, false);
+        this.graphics.arc(x,y, radius, 0, 2*Math.PI, false);
         this.graphics.stroke();
         this.graphics.closePath();
         return this;
@@ -302,9 +301,9 @@
        * @return jSketch
        * @memberof jSketch
        */
-      fillCircle: function(x,y,radius) {
+      fillCircle: function(x,y, radius) {
         this.graphics.beginPath();
-        this.graphics.arc(x,y, radius, 0, Math.PI * 2, false);
+        this.graphics.arc(x,y, radius, 0, 2*Math.PI, false);
         this.graphics.fill();
         this.graphics.closePath();
         return this;
@@ -313,11 +312,17 @@
        * Experimental.
        * @ignore
        */
-      radialCircle: function(x,y,radius,glowSize,color1,color2) {
-        var g = this.graphics.createRadialGradient(x,y,radius,x,y, glowSize || 5);
-        g.addColorStop(0, color1 || this.graphics.fillStyle);
-        g.addColorStop(1, color2 || 'white');
-        this.beginFill(g).fillCircle(x,y,radius).endFill();
+      radialCircle: function(x,y, radius, glowSize, colors) {
+        var g = this.graphics.createRadialGradient(x,y, radius, x,y, glowSize || 5);
+        if (colors.constructor.name !== 'array') {
+          colors = [this.graphics.fillStyle, 'white'];
+        } else {
+          for (var s = 0; s < colors.length; s++) {
+            var color = colors[i];
+            g.addColorStop(i, color);
+          }
+        }
+        this.beginFill(g).fillCircle(x,y, radius).endFill();
         return this;
       },
       /**
@@ -348,7 +353,7 @@
        */
       eraser: function(brushSize) {
         if (typeof brushSize === 'undefined') brushSize = 15;
-        this.graphics.globalCompositeOperation = "destination-out";
+        this.graphics.globalCompositeOperation = 'destination-out';
         this.lineStyle(null, brushSize);
         return this;
       },
@@ -360,7 +365,7 @@
        */
       pencil: function(brushSize) {
         if (typeof brushSize === 'undefined') brushSize = 2;
-        this.graphics.globalCompositeOperation = "source-over";
+        this.graphics.globalCompositeOperation = 'source-over';
         this.lineStyle(null, brushSize);
         return this;
       },

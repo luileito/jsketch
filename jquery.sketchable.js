@@ -17,7 +17,7 @@
  */
 ;(function($){
   // Custom namespace ID.
-  var _ns = "sketchable";
+  var _ns = 'sketchable';
   /**
    * jQuery sketchable plugin API.
    * @namespace methods
@@ -40,12 +40,12 @@
         if (!data) {
           // Attach event listeners.
           if (options.interactive) {
-            elem.bind("mousedown", mousedownHandler);
-            elem.bind("mousemove", mousemoveHandler);
-            elem.bind("mouseup", mouseupHandler);
-            elem.bind("touchstart", touchdownHandler);
-            elem.bind("touchmove", touchmoveHandler);
-            elem.bind("touchend", touchupHandler);
+            elem.bind('mousedown', mousedownHandler);
+            elem.bind('mousemove', mousemoveHandler);
+            elem.bind('mouseup', mouseupHandler);
+            elem.bind('touchstart', touchdownHandler);
+            elem.bind('touchmove', touchmoveHandler);
+            elem.bind('touchend', touchupHandler);
             // Fix Chrome "bug".
             this.onselectstart = function(){ return false };
           }
@@ -174,12 +174,12 @@
       return this.each(function(){
         var elem = $(this), data = elem.data(_ns) || {}, options = data.options;
         if (options.interactive) {
-          elem.unbind("mouseup", mouseupHandler);
-          elem.unbind("mousemove", mousemoveHandler);
-          elem.unbind("mousedown", mousedownHandler);
-          elem.unbind("touchstart", touchdownHandler);
-          elem.unbind("touchmove", touchmoveHandler);
-          elem.unbind("touchend", touchupHandler);
+          elem.unbind('mouseup', mouseupHandler);
+          elem.unbind('mousemove', mousemoveHandler);
+          elem.unbind('mousedown', mousedownHandler);
+          elem.unbind('touchstart', touchdownHandler);
+          elem.unbind('touchmove', touchmoveHandler);
+          elem.unbind('touchend', touchupHandler);
         }
         elem.removeData(_ns);
 
@@ -209,7 +209,7 @@
   $.fn.sketchable = function(method) {
     // These "magic" keywords return internal plugin methods,
     // so that they can be easily extended/overriden.
-    if ("methods functions hooks".split(" ").indexOf(method) > -1) {
+    if ('methods functions hooks'.split(' ').indexOf(method) > -1) {
       return methods;
     } else if (methods[method]) {
       return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
@@ -247,8 +247,8 @@
    *     lineWidth: 3,
    *     strokeStyle: '#F0F',
    *     fillStyle: '#F0F',
-   *     lineCap: "round",
-   *     lineJoin: "round",
+   *     lineCap: 'round',
+   *     lineJoin: 'round',
    *     miterLimit: 10
    *   }
    * });
@@ -279,8 +279,8 @@
       lineWidth: 3,
       strokeStyle: '#F0F',
       fillStyle: '#F0F',
-      lineCap: "round",
-      lineJoin: "round",
+      lineCap: 'round',
+      lineJoin: 'round',
       miterLimit: 10
     }
   };
@@ -292,7 +292,7 @@
     if (!options) options = elem.data(_ns).options;
     if (options.cssCursors) {
       // Visually indicate whether this element is interactive or not.
-      elem[0].style.cursor = options.interactive ? "pointer" : "not-allowed";
+      elem[0].style.cursor = options.interactive ? 'pointer' : 'not-allowed';
     }
   };
 

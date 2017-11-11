@@ -131,8 +131,8 @@
      * @memberOf MementoCanvas
      */
     this.init = function() {
-      Event.remove(document, "keypress", keyManager);
-      Event.add(document, "keypress", keyManager);
+      Event.remove(document, 'keypress', keyManager);
+      Event.add(document, 'keypress', keyManager);
     };
     /**
      * Destroy instance.
@@ -140,14 +140,14 @@
      * @memberOf MementoCanvas
      */
     this.destroy = function() {
-      Event.remove(document, "keypress", keyManager);
+      Event.remove(document, 'keypress', keyManager);
       this.reset();
     };
 
   };
 
   // Bind plugin extension ////////////////////////////////////////////////////
-  var namespace    = "sketchable";
+  var namespace    = 'sketchable';
   var availMethods = Sketchable.fn;
   var defaults     = Sketchable.fn.defaults;
 
@@ -191,7 +191,7 @@
 
     // Event order matters.
     // Init must go first, since it's called when instantiating the plugin.
-    var events = 'init mouseup clear destroy'.split(" ");
+    var events = 'init mouseup clear destroy'.split(' ');
     for (var i = 0; i < events.length; i++) {
       override(events[i]);
     }

@@ -8,7 +8,7 @@
 */
 ;(function(window){
   // Custom namespace ID.
-  var _ns = "sketchable";
+  var _ns = 'sketchable';
   /**
    * Creates a <tt>sketchable</tt> instance.
    * This is a plugin for the <tt>jSketch</tt> drawing class.
@@ -66,18 +66,18 @@
       if (!data) {
         // Attach event listeners.
         if (options.interactive) {
-          Event.add(elem, "mousedown", mousedownHandler);
-          Event.add(elem, "mousemove", mousemoveHandler);
-          Event.add(elem, "mouseup", mouseupHandler);
-          Event.add(elem, "touchstart", touchdownHandler);
-          Event.add(elem, "touchmove", touchmoveHandler);
-          Event.add(elem, "touchend", touchupHandler);
+          Event.add(elem, 'mousedown', mousedownHandler);
+          Event.add(elem, 'mousemove', mousemoveHandler);
+          Event.add(elem, 'mouseup', mouseupHandler);
+          Event.add(elem, 'touchstart', touchdownHandler);
+          Event.add(elem, 'touchmove', touchmoveHandler);
+          Event.add(elem, 'touchend', touchupHandler);
           // Fix Chrome "bug".
           this.onselectstart = function(){ return false };
         }
         if (options.cssCursors) {
           // Visually indicate whether this element is interactive or not.
-          elem.style.cursor = options.interactive ? "pointer" : "not-allowed";
+          elem.style.cursor = options.interactive ? 'pointer' : 'not-allowed';
         }
       }
       var sketch = new jSketch(elem, options.graphics);
@@ -196,12 +196,12 @@
     destroy: function() {
       var elem = this.elem, data = dataBind(elem)[_ns], options = data.options;
       if (options.interactive) {
-        Event.remove(elem, "mouseup", mouseupHandler);
-        Event.remove(elem, "mousemove", mousemoveHandler);
-        Event.remove(elem, "mousedown", mousedownHandler);
-        Event.remove(elem, "touchstart", touchdownHandler);
-        Event.remove(elem, "touchmove", touchmoveHandler);
-        Event.remove(elem, "touchend", touchupHandler);
+        Event.remove(elem, 'mouseup', mouseupHandler);
+        Event.remove(elem, 'mousemove', mousemoveHandler);
+        Event.remove(elem, 'mousedown', mousedownHandler);
+        Event.remove(elem, 'touchstart', touchdownHandler);
+        Event.remove(elem, 'touchmove', touchmoveHandler);
+        Event.remove(elem, 'touchend', touchupHandler);
       }
       dataBind(elem)[_ns] = null;
 
@@ -239,8 +239,8 @@
    *     lineWidth: 3,
    *     strokeStyle: '#F0F',
    *     fillStyle: '#F0F',
-   *     lineCap: "round",
-   *     lineJoin: "round",
+   *     lineCap: 'round',
+   *     lineJoin: 'round',
    *     miterLimit: 10
    *   }
    * });
@@ -271,8 +271,8 @@
       lineWidth: 3,
       strokeStyle: '#F0F',
       fillStyle: '#F0F',
-      lineCap: "round",
-      lineJoin: "round",
+      lineCap: 'round',
+      lineJoin: 'round',
       miterLimit: 10
     }
   };

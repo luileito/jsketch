@@ -140,7 +140,6 @@
      * @memberOf MementoCanvas
      */
     this.init = function() {
-      // Prevent subsequent instances to re-attach this event to the document.
       $(document).off("keypress", keyManager);
       $(document).on("keypress", keyManager);
     };
@@ -176,7 +175,7 @@
         data.memento.reset();
         data.memento.save();
       },
-      mouseup: function(elem, data, e) {
+      mouseup: function(elem, data, evt) {
         data.memento.save();
       },
       destroy: function(elem, data) {
@@ -200,6 +199,7 @@
     };
 
     // Event order matters.
+    // Init must go first, since it's called when instantiating the plugin.
     var events = 'init mouseup clear destroy'.split(" ");
     for (var i = 0; i < events.length; i++) {
       override(events[i]);
@@ -236,7 +236,7 @@
    */
   var initfn = availMethods.init;
   availMethods.init = function(opts) {
-    return this.each(function(){
+    return this.each(function() {
       var elem = $(this);
       var conf = configure(elem, opts);
       initfn.call(elem, conf);

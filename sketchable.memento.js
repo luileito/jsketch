@@ -6,6 +6,7 @@
   globals: Event, dataBind, deepExtend.
 */
 ;(function(window) {
+
   /**
    * This plugin implements the <a href="https://en.wikipedia.org/wiki/Memento_pattern">Memento pattern</a>.
    * This plugin automatically modifies the jSketch instances, so no need to configure it.
@@ -16,11 +17,6 @@
    * @example
    * var mc = new MementoCanvas( $('canvas-selector') );
    */
-
-//  // TODO: Extend Sketchable class.
-//  MementoCanvas.prototype = new Sketchable(elem, opts);
-//  MementoCanvas.constructor = Sketchable;
-
   var MementoCanvas = function(sketchable) {
 
     // Private stuff //////////////////////////////////////////////////////////
@@ -70,11 +66,11 @@
       if (e.ctrlKey) {
         switch (e.which) {
           case 26: // Z
-            if (e.shiftKey) sketchable.redo();
-            else sketchable.undo();
+            if (e.shiftKey) self.redo();
+            else self.undo();
             break;
           case 25: // Y
-            sketchable.redo();
+            self.redo();
             break;
           default:
             break;
@@ -135,7 +131,6 @@
      * @memberOf MementoCanvas
      */
     this.init = function() {
-      // Prevent subsequent instances to re-attach this event to the document.
       Event.remove(document, "keypress", keyManager);
       Event.add(document, "keypress", keyManager);
     };
@@ -157,11 +152,9 @@
   var defaults     = Sketchable.fn.defaults;
 
   function configure(sketchable, opts) {
-    var options = deepExtend(defaults, opts);
+    var options = deepExtend({}, defaults, opts);
     // Actually this plugin is singleton, so exit early.
     if (!options.interactive) return opts;
-
-    var elem = sketchable.elem;
 
     var callbacks = {
       init: function(elem, data) {
@@ -173,7 +166,7 @@
         data.memento.reset();
         data.memento.save();
       },
-      mouseup: function(elem, data, e) {
+      mouseup: function(elem, data, evt) {
         data.memento.save();
       },
       destroy: function(elem, data) {
@@ -188,8 +181,8 @@
         options.events[ev] = function() {
           // Exec original function first, then exec our callback.
           var args = Array.prototype.slice.call(arguments, 0);
-          fn.apply(elem, args);
-          callbacks[ev].apply(elem, args);
+          fn.apply(sketchable, args);
+          callbacks[ev].apply(sketchable, args);
         }
       } else {
         defaults.events[ev] = callbacks[ev];
@@ -197,6 +190,7 @@
     };
 
     // Event order matters.
+    // Init must go first, since it's called when instantiating the plugin.
     var events = 'init mouseup clear destroy'.split(" ");
     for (var i = 0; i < events.length; i++) {
       override(events[i]);
@@ -222,10 +216,10 @@
   };
 
   /**
-   * Creates a new memento-capable jQuery.sketchable object.
+   * Creates a new memento-capable sketchable object.
    * @param {String|Object} method name of the method to invoke,
    *  or a configuration object.
-   * @return jQuery
+   * @return Sketchable
    * @class
    * @example
    * $(selector).sketchable();
@@ -233,9 +227,9 @@
    */
   var initfn = availMethods.init;
   availMethods.init = function(opts) {
+    // Here `this` is a Sketchable instance.
     var conf = configure(this, opts);
-    initfn.call(this, conf);
-    return this;
+    return initfn.call(this, conf);
   };
 
 })(this);

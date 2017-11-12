@@ -1,9 +1,11 @@
 {
   "name": "jsketch",
-  "version": "1.8.0",
+  "version": "2.0.0",
   "description": "jSketch drawing lib",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dist": "grunt",
+    "docs": "jsdoc --debug -c jsdoc.json && cp -rn figs/ docs/ || echo [sudo] npm i -g jsdoc"
   },
   "repository": {
     "type": "git",

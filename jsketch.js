@@ -2,6 +2,7 @@
  * jSketch 0.9 | Luis A. Leiva | MIT license
  * A simple JavaScript library for drawing facilities on HTML5 canvas.
  */
+
 /**
  * A simple JavaScript library for drawing facilities on HTML5 canvas.
  * This class is mostly a wrapper for the HTML5 canvas API with some syntactic sugar,
@@ -16,7 +17,7 @@
  * var canvas2 = document.getElementById('bar');
  * // Instantiate once, reuse everywhere.
  * var brush = new jSketch(canvas1).lineStyle('red').moveTo(50,50).lineTo(10,10).stroke();
- * // Actually, .moveTo(50,50).lineTo(10,10) can be just .line(50,50, 10,10)
+ * // Actually, `.moveTo(50,50).lineTo(10,10)` can be just `.line(50,50, 10,10)`.
  * // Switching between contexts removes the need of having to reinstantiate the jSketch class.
  * brush.context(canvas2).beginFill('#5F7').fillCircle(30,30,8).endFill();
  */
@@ -110,7 +111,7 @@
       },
       /**
        * Sets the background color of canvas.
-       * @param {Number|String} color - An HTML color.
+       * @param {String} color - An HTML color.
        * @return jSketch
        * @memberof jSketch
        */
@@ -124,7 +125,7 @@
        * Shortcut for setting the size + background color.
        * @param {Number} width - New canvas width.
        * @param {Number} height - New canvas width.
-       * @param {Number|String} bgcolor - An HTML color.
+       * @param {String} bgcolor - An HTML color.
        * @return jSketch
        * @memberof jSketch
        */
@@ -134,7 +135,7 @@
       },
       /**
        * Sets the fill color.
-       * @param {Number|String} color - An HTML color.
+       * @param {String} color - An HTML color.
        * @return jSketch
        * @memberof jSketch
        */
@@ -154,7 +155,7 @@
       },
       /**
        * Sets the line style.
-       * @param {Number|String} color - An HTML color.
+       * @param {String} color - An HTML color.
        * @param {Number} thickness - Line thickness.
        * @param {String} capStyle - Style of line cap.
        * @param {String} joinStyle - Style of line join.
@@ -347,7 +348,7 @@
       },
       /**
        * Sets brush to eraser mode.
-       * @param {Number} [brushSize] - Brush size.
+       * @param {Number} [brushSize] - Brush size. Default: 15.
        * @return jSketch
        * @memberof jSketch
        */
@@ -359,7 +360,7 @@
       },
       /**
        * Sets brush to pencil mode.
-       * @param {Number} [brushSize] - Brush size.
+       * @param {Number} [brushSize] - Brush size. Default: 2.
        * @return jSketch
        * @memberof jSketch
        */
@@ -422,7 +423,7 @@
       },
       /**
        * Draws an image.
-       * @param {Number} src - Image source path.
+       * @param {String} src - Image source path.
        * @param {Number} [x] - Horizontal coordinate.
        * @param {Number} [y] - Vertical coordinate.
        * @return jSketch

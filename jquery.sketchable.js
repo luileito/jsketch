@@ -1,59 +1,57 @@
 /*!
- * jQuery sketchable | v1.8.1 | Luis A. Leiva | MIT license
+ * jQuery sketchable | v2.0 | Luis A. Leiva | MIT license
  * A jQuery plugin for the jSketch drawing library.
  */
+
 /**
- * @name $
- * @class
- * @ignore
- * @description This just documents the method that is added to jQuery by this plugin.
- * See <a href="http://jquery.com/">the jQuery library</a> for full details.
+ * @method $
+ * @description jQuery constructor. See {@link https://jquery.com}
+ * @param {String} selector - jQuery selector.
+ * @return {Object} jQuery
  */
 /**
- * @name $.fn
- * @memberof $
- * @description This just documents the method that is added to jQuery by this plugin.
- * See <a href="http://jquery.com/">the jQuery library</a> for full details.
+ * @namespace $.fn
+ * @description jQuery prototype. See {@link https://learn.jquery.com/plugins/}
  */
-;(function($){
-  // Custom namespace ID.
-  var _ns = 'sketchable';
-  /**
-   * jQuery sketchable plugin API.
-   * @namespace methods
-   */
+
+/* eslint-env browser */
+;(function($) {
+
+  // Custom namespace ID, for private data bindind.
+  var namespace = 'sketchable';
+
+  // Begin jQuery Sketchable plugin API.
   var methods = {
     /**
-     * Initializes the selected jQuery objects.
-     * @param {Object} opts - Plugin configuration (see defaults).
+     * Initialize the selected jQuery objects.
+     * @param {Object} [options] - Configuration (default: {@link $.fn.sketchable.defaults}).
      * @return jQuery
+     * @memberof $.fn.sketchable
      * @ignore
-     * @namespace methods.init
-     * @example $(selector).sketchable();
+     * @protected
      */
     init: function(opts) {
-      // Options will be available for all plugin methods.
       var options = $.extend(true, {}, $.fn.sketchable.defaults, opts || {});
+
       return this.each(function() {
-        var elem = $(this), data = elem.data(_ns);
+        var elem = $(this), data = elem.data(namespace);
         // Check if element is not initialized yet.
         if (!data) {
           // Attach event listeners.
-          if (options.interactive) {
-            elem.bind('mousedown', mousedownHandler);
-            elem.bind('mousemove', mousemoveHandler);
-            elem.bind('mouseup', mouseupHandler);
-            elem.bind('touchstart', touchdownHandler);
-            elem.bind('touchmove', touchmoveHandler);
-            elem.bind('touchend', touchupHandler);
-            // Fix Chrome "bug".
-            this.onselectstart = function(){ return false };
-          }
+          elem.bind('mousedown', mousedownHandler);
+          elem.bind('mousemove', mousemoveHandler);
+          elem.bind('mouseup', mouseupHandler);
+          elem.bind('touchstart', touchdownHandler);
+          elem.bind('touchmove', touchmoveHandler);
+          elem.bind('touchend', touchupHandler);
+          // Fix unwanted highlight "bug". Note: `this` is the actual DOM element.
+          this.onselectstart = function() { return false };
           postProcess(elem, options);
         }
+
         var sketch = new jSketch(this, options.graphics);
         // Reconfigure element data.
-        elem.data(_ns, {
+        elem.data(namespace, {
           // All strokes will be stored here.
           strokes: [],
           // This will store one stroke per touching finger.
@@ -65,76 +63,93 @@
           // Save also a pointer to the given options.
           options: options
         });
+
         // Trigger init event.
-        if (typeof options.events.init === 'function') {
-          options.events.init(elem, elem.data(_ns));
+        if (options.events && typeof options.events.init === 'function') {
+          options.events.init(elem, elem.data(namespace));
+        }
+        // Initialize plugins.
+        for (var name in $.fn.sketchable.plugins) {
+          $.fn.sketchable.plugins[name](elem);
         }
       });
     },
     /**
-     * Changes config on the fly of an existing sketchable element.
-     * Previous options are retained. To completely reconfigure them just use the reset method.
-     * @param {Object} opts - Plugin configuration (see defaults).
+     * Change configuration of an existing jQuery Sketchable element.
+     * @param {Object} [options] - Configuration (default: {@link $.fn.sketchable.defaults}).
      * @return jQuery
-     * @namespace methods.config
+     * @memberof $.fn.sketchable
      * @example
-     * $(selector).sketchable('config', { interactive: false }); // Later on:
-     * $(selector).sketchable('config', { interactive: true });
+     * var $canvas = $('canvas').sketchable('config', { interactive: false });
+     * // Update later on:
+     * $canvas.sketchable('config', { interactive: true });
      */
     config: function(opts) {
-      return this.each(function(){
-        var elem = $(this), data = elem.data(_ns);
-        data.options = $.extend(true, {}, $.fn.sketchable.defaults, data.options, opts || {});
-        postProcess(elem);
-      });
+      if (opts) { // setter
+        return this.each(function() {
+          var elem = $(this), data = elem.data(namespace);
+          data.options = $.extend(true, {}, $.fn.sketchable.defaults, data.options, opts);
+          postProcess(elem);
+        });
+      } else { // getter
+        return $(this).data(namespace);
+      }
     },
     /**
-     * Gets/Sets drawing data strokes sequence.
-     * @param {Array} arr - Multidimensional array of [x,y,time,status] tuples; status = 0 (pen down) or 1 (pen up).
-     * @return Strokes object on get, jQuery on set (with the new data attached)
-     * @namespace methods.strokes
+     * Get/Set drawing data strokes sequence.
+     * @param {Array} [arr] - Multidimensional array of [x,y,time,status] tuples; status = 0 (pen down) or 1 (pen up).
+     * @return Strokes object on get, jQuery instance on set (with the new data attached).
+     * @memberof $.fn.sketchable
      * @example
-     * $(selector).sketchable('strokes'); // Getter
-     * $(selector).sketchable('strokes', [ [arr1], ..., [arrN] ]); // Setter
+     * // Getter: read associated strokes.
+     * $('canvas').sketchable('strokes');
+     * // Setter: replace associated strokes.
+     * $('canvas').sketchable('strokes', [ [arr1], ..., [arrN] ]);
      */
     strokes: function(arr) {
       if (arr) { // setter
         return this.each(function() {
-          var elem = $(this), data = elem.data(_ns);
+          var elem = $(this), data = elem.data(namespace);
           data.strokes = arr;
         });
       } else { // getter
-        var data = $(this).data(_ns);
+        var data = $(this).data(namespace);
         return data.strokes;
       }
     },
     /**
-     * Allows low-level manipulation of the sketchable canvas.
-     * @param {Function} callback - Callback function, invoked with 2 arguments: elem (jQuery element) and data (jQuery element data).
+     * Allow low-level manipulation of the sketchable canvas.
+     * @param {Function} callback - Callback function, invoked with 2 arguments: elem (CANVAS element) and data (private element data).
      * @return jQuery
-     * @namespace methods.handler
+     * @memberof $.fn.sketchable
      * @example
-     * $(selector).sketchable('handler', function(elem, data){
+     * $('canvas').sketchable('handler', function(elem, data) {
      *   // do something with elem or data
      * });
      */
     handler: function(callback) {
       return this.each(function() {
-        var elem = $(this), data = elem.data(_ns);
+        var elem = $(this), data = elem.data(namespace);
         callback(elem, data);
       });
     },
     /**
-     * Clears canvas (together with strokes data).
-     * If you need to clear canvas only, just invoke <tt>data.sketch.clear()</tt> via <tt>$(selector).sketchable('handler')</tt>.
-     * @see methods.handler
+     * Clears canvas <b>together with</b> associated strokes data.
      * @return jQuery
-     * @namespace methods.clear
-     * @example $(selector).sketchable('clear');
+     * @memberof $.fn.sketchable
+     * @see $.fn.sketchable.handler
+     * @example
+     * var $canvas = $('canvas').sketchable();
+     * // This will remove strokes data as well.
+     * $canvas.clear();
+     * // If you only need to clear the canvas, just do:
+     * $canvas.sketchable('handler', function(elem, data) {
+     *   data.sketch.clear();
+     * });
      */
     clear: function() {
       return this.each(function() {
-        var elem = $(this), data = elem.data(_ns) || {}, options = data.options;
+        var elem = $(this), data = elem.data(namespace) || {}, options = data.options;
         if (data.sketch) {
           data.sketch.clear();
           data.strokes = [];
@@ -146,17 +161,21 @@
       });
     },
     /**
-     * Reinitializes a sketchable canvas with given opts.
-     * @param {Object} opts - Plugin configuration (see defaults).
+     * Reinitialize a sketchable canvas with given configuration options.
+     * @param {Object} [options] - Configuration (default: {@link $.fn.sketchable.defaults}).
      * @return jQuery
-     * @namespace methods.reset
+     * @memberof $.fn.sketchable
      * @example
-     * $(selector).sketchable('reset');
-     * $(selector).sketchable('reset', {interactive:false});
+     * var $canvas = $('canvas').sketchable();
+     * // Reset default state.
+     * $canvas.sketchable('reset');
+     * // Reset with custom configuration.
+     * $canvas.sketchable('reset', { interactive:false });
      */
     reset: function(opts) {
-      return this.each(function(){
-        var elem = $(this), data = elem.data(_ns) || {}, options = data.options;
+      return this.each(function() {
+        var elem = $(this), data = elem.data(namespace) || {}, options = data.options;
+
         elem.sketchable('destroy').sketchable(opts);
 
         if (options && typeof options.events.reset === 'function') {
@@ -165,83 +184,115 @@
       });
     },
     /**
-     * Destroys sketchable canvas (together with strokes data and events).
+     * Destroy sketchable canvas, together with strokes data and associated events.
      * @return jQuery
-     * @namespace methods.destroy
-     * @example $(selector).sketchable('destroy');
+     * @memberof $.fn.sketchable
+     * @example
+     * var $canvas = $('canvas').sketchable();
+     * // This will leave the canvas element intact.
+     * $canvas.sketchable('destroy');
      */
     destroy: function() {
-      return this.each(function(){
-        var elem = $(this), data = elem.data(_ns) || {}, options = data.options;
-        if (options.interactive) {
-          elem.unbind('mouseup', mouseupHandler);
-          elem.unbind('mousemove', mousemoveHandler);
-          elem.unbind('mousedown', mousedownHandler);
-          elem.unbind('touchstart', touchdownHandler);
-          elem.unbind('touchmove', touchmoveHandler);
-          elem.unbind('touchend', touchupHandler);
-        }
-        elem.removeData(_ns);
+      return this.each(function() {
+        var elem = $(this), data = elem.data(namespace) || {}, options = data.options;
+
+        elem.unbind('mouseup', mouseupHandler);
+        elem.unbind('mousemove', mousemoveHandler);
+        elem.unbind('mousedown', mousedownHandler);
+        elem.unbind('touchstart', touchdownHandler);
+        elem.unbind('touchmove', touchmoveHandler);
+        elem.unbind('touchend', touchupHandler);
+
+        elem.removeData(namespace);
 
         if (options && typeof options.events.destroy === 'function') {
           options.events.destroy(elem, data);
         }
       });
     }
-
   };
 
   /**
-   * Creates a <tt>jQuery.sketchable</tt> instance.
-   * This is a jQuery plugin for the <tt>jSketch</tt> drawing class.
+   * Create a <tt>jQuery Sketchable</tt> instance.
+   * This is a jQuery wrapper for the <tt>jSketch</tt> drawing class.
+   * @namespace $.fn.sketchable
    * @param {String|Object} method - Method to invoke, or a configuration object.
    * @return jQuery
-   * @class
-   * @version 1.8.1
-   * @date 28 Nov 2016
+   * @version 1.9
    * @author Luis A. Leiva
    * @license MIT license
    * @example
-   * $(selector).sketchable();
-   * $(selector).sketchable({interactive:false});
-   * @see methods
+   * $('canvas').sketchable();
+   * $('canvas').sketchable({ interactive:false });
    */
   $.fn.sketchable = function(method) {
-    // These "magic" keywords return internal plugin methods,
-    // so that they can be easily extended/overriden.
-    if ('methods functions hooks'.split(' ').indexOf(method) > -1) {
-      return methods;
+    if (typeof method === 'object' || !method) {
+      return methods.init.apply(this, arguments);
     } else if (methods[method]) {
       return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-    } else if (typeof method === 'object' || !method) {
-      return methods.init.apply(this, arguments);
     } else {
-      $.error('Method '+ method +' does not exist. See jQuery.sketchable("methods").');
+      $.error('Unknown method: ' + method);
     }
     return this;
   };
 
   /**
-   * Default configuration.
-   * Note that mouse* callbacks are triggered only if <tt>interactive</tt> is set to <tt>true</tt>.
-   * @name defaults
-   * @default
-   * @memberof $.fn.sketchable
+   * Public API. Provides access to all methods of jQuery Sketchable instances.<br>
+   * Note: This is equivalent to accessing `Sketchable.prototype` in the non-jQuery version.
+   * @namespace $.fn.sketchable.api
+   * @type {Object}
+   * @see Sketchable.prototype
+   */
+  $.fn.sketchable.api = methods;
+
+  /**
+   * Plugins store.
+   * @namespace $.fn.sketchable.plugins
+   * @type {Object}
    * @example
-   * $(selector).sketchable({
+   * // All plugins are created after instance initialization:
+   * $.fn.sketchable.plugins['your-awesome-plugin'] = function($instance) {
+   *   // Do something with the jQuery Sketchable instance.
+   * }
+   */
+  $.fn.sketchable.plugins = {};
+
+  /**
+   * Default configuration.
+   * Note that `events.mouse*` callbacks are triggered only if <tt>interactive</tt> is set to <tt>true</tt>.
+   * @namespace $.fn.sketchable.defaults
+   * @type {Object}
+   * @example
+   * // The following is the default configuration:
+   * new Sketchable('canvas', {
    *   interactive: true,
    *   mouseupMovements: false,
    *   relTimestamps: false,
-   *   multitouch: true,
+   *   multitouch: false,
    *   cssCursors: true,
+   *   // Event hooks.
    *   events: {
-   *     init: function(elem, data){ },
-   *     clear: function(elem, data){ },
-   *     destroy: function(elem, data){ },
-   *     mousedown: function(elem, data, evt){ },
-   *     mousemove: function(elem, data, evt){ },
-   *     mouseup: function(elem, data, evt){ },
+   *     init: function(elem, data) {
+   *       // Called when the Sketchable instance is created.
+   *     },
+   *     destroy: function(elem, data) {
+   *       // Called when the Sketchable instance is destroyed.
+   *     },
+   *     clear: function(elem, data) {
+   *       // Called when the canvas is cleared.
+   *       // This event includes clearing strokes data, too.
+   *     },
+   *     mousedown: function(elem, data, evt) {
+   *       // Called when the user clicks or taps on the canvas.
+   *     },
+   *     mousemove: function(elem, data, evt) {
+   *       // Called when the user moves the mouse or finger over the canvas.
+   *     },
+   *     mouseup: function(elem, data, evt) {
+   *       // Called when the user lifts the mouse or finger off the canvas.
+   *     },
    *   },
+   *   // Drawing options, to be used in jSketch lib.
    *   graphics: {
    *     firstPointSize: 3,
    *     lineWidth: 3,
@@ -265,15 +316,16 @@
     multitouch: true,
     // Display CSS cursors, mainly to indicate whether the element is interactive or not.
     cssCursors: true,
-    // Event callbacks.
+    // Event hooks.
     events: {
-      // init: function(elem, data){ },
-      // clear: function(elem, data){ },
-      // destroy: function(elem, data){ },
-      // mousedown: function(elem, data, evt){ },
-      // mousemove: function(elem, data, evt){ },
-      // mouseup: function(elem, data, evt){ },
+      // init: function(elem, data) { },
+      // clear: function(elem, data) { },
+      // destroy: function(elem, data) { },
+      // mousedown: function(elem, data, evt) { },
+      // mousemove: function(elem, data, evt) { },
+      // mouseup: function(elem, data, evt) { },
     },
+    // Drawing options, to be used in jSketch lib.
     graphics: {
       firstPointSize: 3,
       lineWidth: 3,
@@ -289,7 +341,7 @@
    * @private
    */
   function postProcess(elem, options) {
-    if (!options) options = elem.data(_ns).options;
+    if (!options) options = elem.data(namespace).options;
     if (options.cssCursors) {
       // Visually indicate whether this element is interactive or not.
       elem[0].style.cursor = options.interactive ? 'pointer' : 'not-allowed';
@@ -351,9 +403,12 @@
     upHandler(e);
   };
 
+  /**
+   * @private
+   */
   function execTouchEvent(e, callback) {
-    var elem = $(e.target), data = elem.data(_ns), options = data.options;
-    var touches = e.originalEvent.changedTouches;
+    var elem = $(e.target), data = elem.data(namespace), options = data.options;
+    var touches = e.originalEvent.touches;
     if (options.multitouch) {
       for (var i = 0; i < touches.length; i++) {
         var touch = touches[i];
@@ -402,7 +457,7 @@
 
     var idx     = e.identifier || 0,
         elem    = $(e.target),
-        data    = elem.data(_ns),
+        data    = elem.data(namespace),
         options = data.options;
     // Exit early if interactivity is disabled.
     if (!options.interactive) return;
@@ -433,11 +488,9 @@
    * @private
    */
   function moveHandler(e) {
-    var idx     = e.identifier || 0,
-        elem    = $(e.target),
-        data    = elem.data(_ns),
-        options = data.options;
-    // Exit early if interactivity is disabled.
+    var idx = e.identifier || 0;
+    var elem = $(e.target), data = elem.data(namespace), options = data.options;
+
     if (!options.interactive) return;
 
     //if (!options.mouseupMovements && !data.sketch.isDrawing) return;
@@ -460,11 +513,9 @@
    * @private
    */
   function upHandler(e) {
-    var idx     = e.identifier || 0,
-        elem    = $(e.target),
-        data    = elem.data(_ns),
-        options = data.options;
-    // Exit early if interactivity is disabled.
+    var idx = e.identifier || 0;
+    var elem = $(e.target), data = elem.data(namespace), options = data.options;
+
     if (!options.interactive) return;
 
     data.sketch.isDrawing = false;

@@ -408,8 +408,9 @@
    */
   function execTouchEvent(e, callback) {
     var elem = $(e.target), data = elem.data(namespace), options = data.options;
-    var touches = e.originalEvent.touches;
     if (options.multitouch) {
+      // Track all fingers.
+      var touches = e.originalEvent.changedTouches;
       for (var i = 0; i < touches.length; i++) {
         var touch = touches[i];
         // Add the type of event to the touch object.
@@ -417,7 +418,8 @@
         callback(touch);
       }
     } else {
-      var touch = touches[0];
+      // Track only the current finger.
+      var touch = e.originalEvent.touches[0];
       // Add the type of event to the touch object.
       touch.type = e.type;
       callback(touch);

@@ -315,13 +315,12 @@
        */
       radialCircle: function(x,y, radius, glowSize, colors) {
         var g = this.graphics.createRadialGradient(x,y, radius, x,y, glowSize || 5);
-        if (colors.constructor.name !== 'array') {
+        if (!colors || colors.constructor.name !== 'array') {
           colors = [this.graphics.fillStyle, 'white'];
-        } else {
-          for (var s = 0; s < colors.length; s++) {
-            var color = colors[i];
-            g.addColorStop(i, color);
-          }
+        }
+        for (var s = 0; s < colors.length; s++) {
+          var color = colors[s];
+          g.addColorStop(s, color);
         }
         this.beginFill(g).fillCircle(x,y, radius).endFill();
         return this;

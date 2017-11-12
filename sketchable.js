@@ -265,6 +265,7 @@
    *   relTimestamps: false,
    *   multitouch: false,
    *   cssCursors: true,
+   *   filterCoords: false,
    *   // Event hooks.
    *   events: {
    *     init: function(elem, data) {
@@ -311,6 +312,9 @@
     multitouch: true,
     // Display CSS cursors, mainly to indicate whether the element is interactive or not.
     cssCursors: true,
+    // Remove duplicated consecutive points; e.g. `(1,2)(1,2)(5,5)(1,2)` becomes `(1,2)(5,5)(1,2)`.
+    // This is useful for touchscreens, where the same event is registered more than once.
+    filterCoords: false,
     // Event hooks.
     events: {
       // init: function(elem, data) { },
@@ -370,16 +374,28 @@
     if (!data.coords[idx]) {
       data.coords[idx] = [];
     }
+    // Use pointer for easy handling.
+    var coords = data.coords[idx];
 
     var time = (new Date).getTime();
     if (data.options.relTimestamps) {
       // The first timestamp is relative to initialization time;
       // thus fix it so that it is relative to the timestamp of the first stroke.
-      if (data.strokes.length === 0 && data.coords[idx].length === 0) data.timestamp = time;
+      if (data.strokes.length === 0 && coords.length === 0) data.timestamp = time;
       time -= data.timestamp;
     }
 
-    data.coords[idx].push([ pt.x, pt.y, time, +data.sketch.isDrawing ]);
+    coords.push([ pt.x, pt.y, time, +data.sketch.isDrawing ]);
+
+    // Check if consecutive points should be removed.
+    if (data.options.filterCoords && coords.length > 1) {
+      var lastIndex = coords.length - 1;
+      var lastCoord = coords[lastIndex];
+      var currCoord = coords[lastIndex - 1];
+      if (lastCoord[0] == currCoord[0] && lastCoord[1] == currCoord[1]) {
+        coords.splice(lastIndex, 1);
+      }
+    }
   };
 
   /**

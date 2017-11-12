@@ -170,6 +170,8 @@
         data.memento.reset();
       },
       mouseup: function(elem, data, evt) {
+        // Don't store multitouch events separately.
+        if (evt.type.indexOf('touch') === 0 && evt.identifier > 0) return;
         data.memento.save();
       },
       destroy: function(elem, data) {

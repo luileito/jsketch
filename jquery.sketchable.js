@@ -44,8 +44,7 @@
           elem.bind('touchstart', touchdownHandler);
           elem.bind('touchmove', touchmoveHandler);
           elem.bind('touchend', touchupHandler);
-          // Fix unwanted highlight "bug". Note: `this` is the actual DOM element.
-          this.onselectstart = function() { return false };
+
           postProcess(elem, options);
         }
 
@@ -350,6 +349,8 @@
       // Visually indicate whether this element is interactive or not.
       elem[0].style.cursor = options.interactive ? 'pointer' : 'not-allowed';
     }
+    // Fix unwanted highlight "bug". Note: `this` is the actual DOM element.
+    this.onselectstart = function() { return false };
   };
 
   /**

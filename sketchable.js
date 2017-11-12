@@ -69,13 +69,8 @@
         Event.add(elem, 'touchstart', touchdownHandler);
         Event.add(elem, 'touchmove', touchmoveHandler);
         Event.add(elem, 'touchend', touchupHandler);
-        // Fix unwanted highlight "bug".
-        elem.onselectstart = function() { return false };
 
-        if (options.cssCursors) {
-          // Visually indicate whether this element is interactive or not.
-          elem.style.cursor = options.interactive ? 'pointer' : 'not-allowed';
-        }
+        postProcess(elem, options);
       }
 
       var sketch = new jSketch(elem, options.graphics);
@@ -120,6 +115,7 @@
       var elem = this.elem, data = dataBind(elem)[namespace];
       if (options) { // setter
         data.options = deepExtend({}, Sketchable.prototype.defaults, options || {});
+        postProcess(elem);
         return this;
       } else { // getter
         return data;
@@ -353,6 +349,19 @@
       top:  Math.round(top),
       left: Math.round(left)
     }
+  };
+
+  /**
+   * @private
+   */
+  function postProcess(elem, options) {
+    if (!options) options = dataBind(elem)[namespace].options;
+    if (options.cssCursors) {
+      // Visually indicate whether this element is interactive or not.
+      elem.style.cursor = options.interactive ? 'pointer' : 'not-allowed';
+    }
+    // Fix unwanted highlight "bug".
+    elem.onselectstart = function() { return false };
   };
 
   /**

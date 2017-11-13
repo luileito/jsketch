@@ -84,8 +84,6 @@
         timestamp: (new Date).getTime(),
         // Save a pointer to the drawing canvas (jSketch instance).
         sketch: sketch,
-        // Save a pointer to the drawing canvas (jSketch instance).
-        sketchable: this,
         // Save also a pointer to the given options.
         options: options
       };

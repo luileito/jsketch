@@ -207,7 +207,7 @@
     }
 
     // Expose public API: all Sketchable instances will have these methods.
-    deepExtend(instance, {
+    deepExtend(Sketchable.prototype, {
       /**
        * Goes back to the previous CANVAS state, if available.
        * @memberof Sketchable

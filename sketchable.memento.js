@@ -60,12 +60,14 @@
     function restore(snapshot) {
       // Manipulate canvas via jQuery sketchable API.
       // This way, we don't lose default drawing settings et al.
-      instance.handler(function(elem, data){
+      instance.handler(function(elem, data) {
         //data.sketch.clear().drawImage(snapshot.src);
         // Note: jSketch.drawImage after clear creates some flickering,
         // so use the native HTMLCanvasElement.drawImage method instead.
         data.sketch.clear();
         data.sketch.graphics.drawImage(snapshot, 0,0);
+        // Update strokes.
+        data.strokes = stack[stpos].strokes.slice();
       });
     };
     /**
@@ -98,10 +100,6 @@
      */
     this.undo = function() {
       prev();
-      instance.handler(function(elem, data) {
-        if (stack[stpos])
-          data.strokes = stack[stpos].strokes.slice();
-      });
       return this;
     };
     /**
@@ -110,10 +108,6 @@
      */
     this.redo = function() {
       next();
-      instance.handler(function(elem, data) {
-        if (stack[stpos])
-          data.strokes = stack[stpos].strokes.slice();
-      });
       return this;
     };
     /**
@@ -127,12 +121,19 @@
     };
     /**
      * Save current state.
+     * @param {Object} evt DOM event.
+     * @return {MementoCanvas} Class instance.
      */
-    this.save = function() {
-      stpos++;
-      if (stpos < stack.length) stack.length = stpos;
+    this.save = function(evt) {
       instance.handler(function(elem, data) {
-        stack.push({ image: elem.toDataURL(), strokes: data.strokes.slice() });
+        // With multitouch events, only the first event should be used to store a snapshot.
+        // Then, the subsequent multitouch events must update current strokes data.
+        if (evt && evt.identifier > 0) {
+          stack[stpos].strokes = data.strokes.slice();
+        } else {
+          stack.push({ image: elem.toDataURL(), strokes: data.strokes.slice() });
+          stpos++;
+        }
       });
       return this;
     };
@@ -167,12 +168,10 @@
 
     var callbacks = {
       clear: function(elem, data) {
-        data.memento.reset();
+        data.memento.reset().save();
       },
       mouseup: function(elem, data, evt) {
-        // Don't store multitouch events separately.
-        if (evt.type.indexOf('touch') === 0 && evt.identifier > 0) return;
-        data.memento.save();
+        data.memento.save(evt);
       },
       destroy: function(elem, data) {
         data.memento.destroy();
@@ -211,6 +210,7 @@
       /**
        * Goes back to the previous CANVAS state, if available.
        * @memberof Sketchable
+       * @example sketchableInstance.undo();
        */
       undo: function() {
         var elem = this.elem, data = dataBind(elem)[namespace];
@@ -219,6 +219,7 @@
       /**
        * Goes forward to the previous CANVAS state, if available.
        * @memberof Sketchable
+       * @example sketchableInstance.redo();
        */
       redo: function() {
         var elem = this.elem, data = dataBind(elem)[namespace];
@@ -227,6 +228,7 @@
       /**
        * Save a snapshot of the current CANVAS status.
        * @memberof Sketchable
+       * @example sketchableInstance.save();
        */
       save: function() {
         var elem = this.elem, data = dataBind(elem)[namespace];

@@ -182,8 +182,8 @@
     // A helper function to override user-defined event listeners.
     function override(ev) {
       // Flag event override so that it doesn't get fired more than once.
-      if (config.options.$$bound) return;
-      config.options.$$bound = true;
+      if (config.options[ev + '$bound']) return;
+      config.options[ev + '$bound'] = true;
 
       if (config.options.events && typeof config.options.events[ev] === 'function') {
         // User has defined this event, so wrap it.

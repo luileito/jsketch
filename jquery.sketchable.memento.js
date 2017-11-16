@@ -122,13 +122,13 @@
      * @return {MementoCanvas} Class instance.
      */
     this.save = function(evt) {
-      $instance.handler(function(elem, data) {
+      $instance.sketchable('handler', function(elem, data) {
         // With multitouch events, only the first event should be used to store a snapshot.
         // Then, the subsequent multitouch events must update current strokes data.
         if (evt && evt.identifier > 0) {
           stack[stpos].strokes = data.strokes.slice();
         } else {
-          stack.push({ image: elem.toDataURL(), strokes: data.strokes.slice() });
+          stack.push({ image: elem[0].toDataURL(), strokes: data.strokes.slice() });
           stpos++;
         }
       });

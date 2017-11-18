@@ -1,5 +1,5 @@
 /*!
- * jQuery sketchable | v2.0 | Luis A. Leiva | MIT license
+ * jQuery sketchable | v2.1 | Luis A. Leiva | MIT license
  * A jQuery plugin for the jSketch drawing library.
  */
 
@@ -15,13 +15,14 @@
  */
 
 /* eslint-env browser */
+/* global jQuery */
 ;(function($) {
 
   // Custom namespace ID, for private data bindind.
   var namespace = 'sketchable';
 
   // Begin jQuery Sketchable plugin API.
-  var methods = {
+  var api = {
     /**
      * Initialize the selected jQuery objects.
      * @param {Object} [options] - Configuration (default: {@link $.fn.sketchable.defaults}).
@@ -217,7 +218,7 @@
    * @namespace $.fn.sketchable
    * @param {String|Object} method - Method to invoke, or a configuration object.
    * @return jQuery
-   * @version 1.9
+   * @version 2.1
    * @author Luis A. Leiva
    * @license MIT license
    * @example
@@ -225,10 +226,17 @@
    * $('canvas').sketchable({ interactive:false });
    */
   $.fn.sketchable = function(method) {
+    var args = Array.prototype.slice.call(arguments, 1);
     if (typeof method === 'object' || !method) {
-      return methods.init.apply(this, arguments);
-    } else if (methods[method]) {
-      return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+      // Constructor.
+      return api.init.apply(this, arguments);
+    } else if (method.indexOf('.') > -1) {
+      // Plugin method.
+      var actualMethod = locate(api, method);
+      return actualMethod.apply(this, args);
+    } else if (api[method]) {
+      // Instance method.
+      return api[method].apply(this, args);
     } else {
       $.error('Unknown method: ' + method);
     }
@@ -242,7 +250,7 @@
    * @type {Object}
    * @see Sketchable.prototype
    */
-  $.fn.sketchable.api = methods;
+  $.fn.sketchable.api = api;
 
   /**
    * Plugins store.
@@ -263,11 +271,11 @@
    * @type {Object}
    * @example
    * // The following is the default configuration:
-   * new Sketchable('canvas', {
+   * $('canvas').sketchable({
    *   interactive: true,
    *   mouseupMovements: false,
    *   relTimestamps: false,
-   *   multitouch: false,
+   *   multitouch: true,
    *   cssCursors: true,
    *   filterCoords: false,
    *   // Event hooks.
@@ -356,6 +364,18 @@
   /**
    * @private
    */
+  function locate(obj, path) {
+    path = path.split('.');
+    for (var i = 0; i < path.length; i++) {
+      var key = path[i];
+      obj = obj[key];
+    }
+    return obj;
+  }
+
+  /**
+   * @private
+   */
   function getMousePos(e) {
     var elem = $(e.target), pos = elem.offset();
     return {
@@ -368,11 +388,7 @@
    * @private
    */
   function saveMousePos(idx, data, pt) {
-    // Ensure that coords is properly initialized.
-    if (!data.coords[idx]) {
-      data.coords[idx] = [];
-    }
-    // Use pointer for easy handling.
+    // Current coords are already initialized.
     var coords = data.coords[idx];
 
     var time = (new Date).getTime();
@@ -423,30 +439,6 @@
   /**
    * @private
    */
-  function execTouchEvent(e, callback) {
-    var elem = $(e.target), data = elem.data(namespace), options = data.options;
-    if (options.multitouch) {
-      // Track all fingers.
-      var touches = e.originalEvent.changedTouches;
-      for (var i = 0; i < touches.length; i++) {
-        var touch = touches[i];
-        // Add event type and finger ID.
-        touch.type = e.type;
-        touch.identifier = i;
-        callback(touch);
-      }
-    } else {
-      // Track only the current finger.
-      var touch = e.originalEvent.touches[0];
-      touch.type = e.type;
-      touch.identifier = 0;
-      callback(touch);
-    }
-  };
-
-  /**
-   * @private
-   */
   function touchdownHandler(e) {
     execTouchEvent(e, downHandler);
     e.preventDefault();
@@ -483,20 +475,21 @@
     if (!options.interactive) return;
 
     data.sketch.isDrawing = true;
+
     var p = getMousePos(e);
     // Mark visually 1st point of stroke.
     if (options.graphics.firstPointSize > 0) {
       data.sketch.beginFill(options.graphics.fillStyle).fillCircle(p.x, p.y, options.graphics.firstPointSize).endFill();
     }
+
     // Ensure that coords is properly initialized.
-    if (!data.coords[idx]) {
-      data.coords[idx] = [];
-    }
+    var coords = data.coords[idx];
+    if (!coords) coords = [];
     // Don't mix mouseup and mousedown in the same stroke.
-    if (data.coords[idx].length > 0) {
-      data.strokes.push(data.coords[idx]);
-      data.coords[idx] = [];
-    }
+    if (coords.length > 0) data.strokes.push(coords);
+    // In any case, ensure that coords is  properly reset/initialized.
+    data.coords[idx] = [];
+
     saveMousePos(idx, data, p);
 
     if (typeof options.events.mousedown === 'function') {
@@ -508,20 +501,31 @@
    * @private
    */
   function moveHandler(e) {
-    var idx = e.identifier || 0;
-    var elem = $(e.target), data = elem.data(namespace), options = data.options;
-
+    var idx     = e.identifier || 0,
+        elem    = $(e.target),
+        data    = elem.data(namespace),
+        options = data.options;
+    // Exit early if interactivity is disabled.
     if (!options.interactive) return;
-
-    //if (!options.mouseupMovements && !data.sketch.isDrawing) return;
-    // This would grab all penup strokes AFTER drawing something on the canvas for the first time.
+    // Grab penup strokes AFTER drawing something on the canvas for the first time.
     if ( (!options.mouseupMovements || data.strokes.length === 0) && !data.sketch.isDrawing ) return;
 
     var p = getMousePos(e);
-    if (data.sketch.isDrawing) {
-      var last = data.coords[idx][ data.coords[idx].length - 1 ];
-      data.sketch.beginPath().line(last[0], last[1], p.x, p.y).stroke().closePath();
+
+    var coords = data.coords[idx];
+    var last = coords[coords.length - 1];
+    if (last) {
+      var brush = data.sketch.beginPath();
+      if (data.sketch.isDrawing) {
+        // Style for regular, pendown strokes.
+        brush.lineStyle(options.graphics.strokeStyle, options.graphics.lineWidth);
+      } else if (options.mouseupMovements.visible !== false) {
+        // Style for penup strokes.
+        brush.lineStyle(options.mouseupMovements.strokeStyle || '#DDD', options.mouseupMovements.lineWidth || 1);
+      }
+      brush.line(last[0], last[1], p.x, p.y).stroke().closePath();
     }
+
     saveMousePos(idx, data, p);
 
     if (typeof options.events.mousemove === 'function') {
@@ -533,17 +537,44 @@
    * @private
    */
   function upHandler(e) {
-    var idx = e.identifier || 0;
-    var elem = $(e.target), data = elem.data(namespace), options = data.options;
-
+    var idx     = e.identifier || 0,
+        elem    = $(e.target),
+        data    = elem.data(namespace),
+        options = data.options;
+    // Exit early if interactivity is disabled.
     if (!options.interactive) return;
 
     data.sketch.isDrawing = false;
+
     data.strokes.push(data.coords[idx]);
     data.coords[idx] = [];
 
     if (typeof options.events.mouseup === 'function') {
       options.events.mouseup(elem, data, e);
+    }
+  };
+
+  /**
+   * @private
+   */
+  function execTouchEvent(e, callback) {
+    var elem = $(e.target), data = elem.data(namespace), options = data.options;
+    if (options.multitouch) {
+      // Track all fingers.
+      var touches = e.originalEvent.changedTouches;
+      for (var i = 0; i < touches.length; i++) {
+        var touch = touches[i];
+        // Add event type and finger ID.
+        touch.type = e.type;
+        touch.identifier = i;
+        callback(touch);
+      }
+    } else {
+      // Track only the current finger.
+      var touch = e.originalEvent.touches[0];
+      touch.type = e.type;
+      touch.identifier = 0;
+      callback(touch);
     }
   };
 

@@ -1,5 +1,5 @@
 /*!
- * Sketchable | v2.0 | Luis A. Leiva | MIT license
+ * Sketchable | v2.1 | Luis A. Leiva | MIT license
  * A plugin for the jSketch drawing library.
  */
 
@@ -21,7 +21,7 @@
    * @param {Object} [options] - Configuration (default: {@link Sketchable#defaults}).
    * @class
    * @global
-   * @version 1.9
+   * @version 2.1
    * @author Luis A. Leiva
    * @license MIT
    * @example
@@ -84,6 +84,10 @@
         timestamp: (new Date).getTime(),
         // Save a pointer to the drawing canvas (jSketch instance).
         sketch: sketch,
+        // Save also a pointer to the Sketchable instance.
+        // In the jQuery version this is not needed,
+        // since we access the instance via `$('selector').sketchable('method')`.
+        instance: this,
         // Save also a pointer to the given options.
         options: options
       };
@@ -112,7 +116,7 @@
     config: function(options) {
       var elem = this.elem, data = dataBind(elem)[namespace];
       if (options) { // setter
-        data.options = deepExtend({}, Sketchable.prototype.defaults, options || {});
+        data.options = deepExtend({}, Sketchable.prototype.defaults, data.options, options);
         postProcess(elem);
         return this;
       } else { // getter
@@ -253,11 +257,11 @@
    * @static
    * @example
    * // The following is the default configuration:
-   * new Sketchable('canvas', {
+   * new Sketchable('#canvasId', {
    *   interactive: true,
    *   mouseupMovements: false,
    *   relTimestamps: false,
-   *   multitouch: false,
+   *   multitouch: true,
    *   cssCursors: true,
    *   filterCoords: false,
    *   // Event hooks.
@@ -292,7 +296,7 @@
    *     lineJoin: 'round',
    *     miterLimit: 10
    *   }
-   * });
+   * };
    */
   Sketchable.prototype.defaults = {
     // In interactive mode, it's possible to draw via mouse/pen/touch input.
@@ -300,7 +304,7 @@
     // Indicate whether non-drawing strokes should be registered as well.
     // Notice that the last mouseUp stroke is never recorded, as the user has already finished drawing.
     mouseupMovements: false,
-    // Inidicate whether timestamps should be relative (start at time 0) or absolute (start at Unix epoch).
+    // Indicate whether timestamps should be relative (start at time 0) or absolute (start at Unix epoch).
     relTimestamps: false,
     // Enable multitouch drawing.
     multitouch: true,
@@ -377,11 +381,7 @@
    * @private
    */
   function saveMousePos(idx, data, pt) {
-    // Ensure that coords is properly initialized.
-    if (!data.coords[idx]) {
-      data.coords[idx] = [];
-    }
-    // Use pointer for easy handling.
+    // Current coords are already initialized.
     var coords = data.coords[idx];
 
     var time = (new Date).getTime();
@@ -432,31 +432,6 @@
   /**
    * @private
    */
-  function execTouchEvent(e, callback) {
-    var elem = e.target, data = dataBind(elem)[namespace], options = data.options;
-    if (options.multitouch) {
-      // Track all fingers.
-      var touches = e.changedTouches;
-      for (var i = 0; i < touches.length; i++) {
-        var touch = touches[i];
-        // Add event type and finger ID.
-        touch.type = e.type;
-        touch.identifier = i;
-        callback(touch);
-      }
-    } else {
-      // Track only the current finger.
-      var touch = e.touches[0];
-      touch.type = e.type;
-      touch.identifier = 0;
-      callback(touch);
-    }
-    e.preventDefault();
-  };
-
-  /**
-   * @private
-   */
   function touchdownHandler(e) {
     execTouchEvent(e, downHandler);
     e.preventDefault();
@@ -485,26 +460,29 @@
     // Don't handle right clicks.
     if (Event.isRightClick(e)) return false;
 
-    var idx = e.identifier || 0;
-    var elem = e.target, data = dataBind(elem)[namespace], options = data.options;
+    var idx     = e.identifier || 0,
+        elem    = e.target,
+        data    = dataBind(elem)[namespace],
+        options = data.options;
     // Exit early if interactivity is disabled.
     if (!options.interactive) return;
 
     data.sketch.isDrawing = true;
+
     var p = getMousePos(e);
     // Mark visually 1st point of stroke.
     if (options.graphics.firstPointSize > 0) {
       data.sketch.beginFill(options.graphics.fillStyle).fillCircle(p.x, p.y, options.graphics.firstPointSize).endFill();
     }
+
     // Ensure that coords is properly initialized.
-    if (!data.coords[idx]) {
-      data.coords[idx] = [];
-    }
+    var coords = data.coords[idx];
+    if (!coords) coords = [];
     // Don't mix mouseup and mousedown in the same stroke.
-    if (data.coords[idx].length > 0) {
-      data.strokes.push(data.coords[idx]);
-      data.coords[idx] = [];
-    }
+    if (coords.length > 0) data.strokes.push(coords);
+    // In any case, ensure that coords is  properly reset/initialized.
+    data.coords[idx] = [];
+
     saveMousePos(idx, data, p);
 
     if (typeof options.events.mousedown === 'function') {
@@ -516,19 +494,31 @@
    * @private
    */
   function moveHandler(e) {
-    var idx = e.identifier || 0;
-    var elem = e.target, data = dataBind(elem)[namespace], options = data.options;
-
+    var idx     = e.identifier || 0
+        elem    = e.target,
+        data    = dataBind(elem)[namespace],
+        options = data.options;
+    // Exit early if interactivity is disabled.
     if (!options.interactive) return;
-    //if (!options.mouseupMovements && !data.sketch.isDrawing) return;
-    // This would grab all penup strokes AFTER drawing something on the canvas for the first time.
+    // Grab penup strokes AFTER drawing something on the canvas for the first time.
     if ( (!options.mouseupMovements || data.strokes.length === 0) && !data.sketch.isDrawing ) return;
 
     var p = getMousePos(e);
-    if (data.sketch.isDrawing) {
-      var last = data.coords[idx][ data.coords[idx].length - 1 ];
-      data.sketch.beginPath().line(last[0], last[1], p.x, p.y).stroke().closePath();
+
+    var coords = data.coords[idx];
+    var last = coords[coords.length - 1];
+    if (last) {
+      var brush = data.sketch.beginPath();
+      if (data.sketch.isDrawing) {
+        // Style for regular, pendown strokes.
+        brush.lineStyle(options.graphics.strokeStyle, options.graphics.lineWidth);
+      } else if (options.mouseupMovements.visible !== false) {
+        // Style for penup strokes.
+        brush.lineStyle(options.mouseupMovements.strokeStyle || '#DDD', options.mouseupMovements.lineWidth || 1);
+      }
+      brush.line(last[0], last[1], p.x, p.y).stroke().closePath();
     }
+
     saveMousePos(idx, data, p);
 
     if (typeof options.events.mousemove === 'function') {
@@ -540,18 +530,46 @@
    * @private
    */
   function upHandler(e) {
-    var idx = e.identifier || 0;
-    var elem = e.target, data = dataBind(elem)[namespace], options = data.options;
-
+    var idx     = e.identifier || 0
+        elem    = e.target,
+        data    = dataBind(elem)[namespace],
+        options = data.options;
+    // Exit early if interactivity is disabled.
     if (!options.interactive) return;
 
     data.sketch.isDrawing = false;
+
     data.strokes.push(data.coords[idx]);
     data.coords[idx] = [];
 
     if (typeof options.events.mouseup === 'function') {
       options.events.mouseup(elem, data, e);
     }
+  };
+
+  /**
+   * @private
+   */
+  function execTouchEvent(e, callback) {
+    var elem = e.target, data = dataBind(elem)[namespace], options = data.options;
+    if (options.multitouch) {
+      // Track all fingers.
+      var touches = e.changedTouches;
+      for (var i = 0; i < touches.length; i++) {
+        var touch = touches[i];
+        // Add event type and finger ID.
+        touch.type = e.type;
+        touch.identifier = i;
+        callback(touch);
+      }
+    } else {
+      // Track only the current finger.
+      var touch = e.touches[0];
+      touch.type = e.type;
+      touch.identifier = 0;
+      callback(touch);
+    }
+    e.preventDefault();
   };
 
   // Expose.

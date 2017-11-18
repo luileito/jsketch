@@ -1,5 +1,5 @@
 /*!
- * Memento plugin for Sketchable | v2.0 | Luis A. Leiva | MIT license
+ * Memento plugin for Sketchable | v2.1 | Luis A. Leiva | MIT license
  */
 
 // XXX: Requires `sketchable.utils.js` to be loaded first.
@@ -15,7 +15,7 @@
    * This class implements the <a href="https://en.wikipedia.org/wiki/Memento_pattern">Memento pattern</a>
    * and is part of the {@link Sketchable.plugins.memento} plugin.
    * @class
-   * @version 2.0
+   * @version 2.1
    * @example
    * var sketcher = new Sketchable('canvas');
    * // This is internally done by the plugin, plus some checks:
@@ -27,38 +27,13 @@
     var stpos = -1;
     var self  = this;
     /**
+     * Update state.
+     * @param {Image} snapshot Image object.
+     * @param {Array} strokes Strokes associated with snapshot.
      * @private
      */
-    function prev() {
-      if (stpos > 0) {
-        stpos--;
-        var snapshot = new Image();
-        snapshot.src = stack[stpos].image;
-        snapshot.onload = function() {
-          restore(this);
-        };
-      }
-    };
-    /**
-     * @private
-     */
-    function next() {
-      if (stpos < stack.length - 1) {
-        stpos++;
-        var snapshot = new Image();
-        snapshot.src = stack[stpos].image;
-        snapshot.onload = function() {
-          restore(this);
-        };
-      }
-    };
-    /**
-     * Snashot restorer.
-     * @param {String} snapshot Base64 image.
-     * @private
-     */
-    function restore(snapshot) {
-      // Manipulate canvas via jQuery sketchable API.
+    function draw(snapshot, strokes) {
+      // Manipulate canvas via Sketchable API.
       // This way, we don't lose default drawing settings et al.
       instance.handler(function(elem, data) {
         //data.sketch.clear().drawImage(snapshot.src);
@@ -67,9 +42,9 @@
         data.sketch.clear();
         data.sketch.graphics.drawImage(snapshot, 0,0);
         // Update strokes.
-        data.strokes = stack[stpos].strokes.slice();
+        data.strokes = strokes.slice();
       });
-    };
+    }
     /**
      * Key event manager.
      *  - Undo: "Ctrl + Z"
@@ -92,14 +67,16 @@
             break;
         }
       }
-    };
-
+    }
     /**
      * Goes back to the last saved state, if available.
      * @return {MementoCanvas} Class instance.
      */
     this.undo = function() {
-      prev();
+      if (stpos > 0) {
+        stpos--;
+        this.restore();
+      }
       return this;
     };
     /**
@@ -107,7 +84,10 @@
      * @return {MementoCanvas} Class instance.
      */
     this.redo = function() {
-      next();
+      if (stpos < stack.length - 1) {
+        stpos++;
+        this.restore();
+      }
       return this;
     };
     /**
@@ -117,7 +97,8 @@
     this.reset = function() {
       stack = [];
       stpos = -1;
-      return this;
+      // Save blank state afterward.
+      return this.save();
     };
     /**
      * Save current state.
@@ -138,13 +119,36 @@
       return this;
     };
     /**
+     * Read current state: `{ image:String, strokes:Array }`.
+     * @return {Object}
+     */
+    this.state = function() {
+      // Create a fresh copy of the current state.
+      return JSON.parse(JSON.stringify(stack[stpos]));
+    };
+    /**
+     * Restore state.
+     * @param {Object} state Canvas state: `{ image:String, strokes:Array }`. Default: current state.
+     * @private
+     */
+    this.restore = function(state) {
+      if (!state) state = stack[stpos];
+
+      var snapshot = new Image();
+      snapshot.src = state.image;
+      snapshot.onload = function() {
+        draw(this, state.strokes);
+      };
+    };
+    /**
      * Init instance. Currently just (re)attach key event listeners.
      * @return {MementoCanvas} Class instance.
      */
     this.init = function() {
       Event.remove(document, 'keypress', keyManager);
       Event.add(document, 'keypress', keyManager);
-      return this;
+      // Save blank state to begin with.
+      return this.save();
     };
     /**
      * Destroy instance: reset state and remove key event listeners.
@@ -155,11 +159,11 @@
       return this.reset();
     };
 
-  };
+  }
 
   /**
-   * Memento plugin constructor for jQuery Sketchable instances.
-   * @param {Object} sketchable - An Sketchable instance.
+   * Memento plugin constructor for Sketchable instances.
+   * @param {Object} sketchable Sketchable instance.
    * @memberof Sketchable#plugins
    */
   Sketchable.prototype.plugins.memento = function(instance) {
@@ -168,7 +172,7 @@
 
     var callbacks = {
       clear: function(elem, data) {
-        data.memento.reset().save();
+        data.memento.reset();
       },
       mouseup: function(elem, data, evt) {
         data.memento.save(evt);
@@ -179,24 +183,24 @@
     };
 
     // A helper function to override user-defined event listeners.
-    function override(ev) {
+    function override(evName) {
       // Flag event override so that it doesn't get fired more than once.
-      if (config.options[ev + '$bound']) return;
-      config.options[ev + '$bound'] = true;
+      if (config.options['_bound$' + evName]) return;
+      config.options['_bound$' + evName] = true;
 
-      if (config.options.events && typeof config.options.events[ev] === 'function') {
+      if (config.options.events && typeof config.options.events[evName] === 'function') {
         // User has defined this event, so wrap it.
-        var fn = config.options.events[ev];
-        config.options.events[ev] = function() {
+        var fn = config.options.events[evName];
+        config.options.events[evName] = function() {
           // Exec original function first, then exec our callback.
           fn.apply(instance, arguments);
-          callbacks[ev].apply(instance, arguments);
+          callbacks[evName].apply(instance, arguments);
         }
       } else {
         // User has not defined this event, so attach our callback.
-        config.options.events[ev] = callbacks[ev];
+        config.options.events[evName] = callbacks[evName];
       }
-    };
+    }
 
     // Note: the init event is used to create Sketchable instances,
     // therefore it should NOT be overriden.
@@ -206,39 +210,68 @@
     }
 
     // Expose public API: all Sketchable instances will have these methods.
-    deepExtend(Sketchable.prototype, {
-      /**
-       * Goes back to the previous CANVAS state, if available.
-       * @memberof Sketchable
-       * @example sketchableInstance.undo();
-       */
-      undo: function() {
-        var elem = this.elem, data = dataBind(elem)[namespace];
-        data.memento.undo();
-      },
-      /**
-       * Goes forward to the previous CANVAS state, if available.
-       * @memberof Sketchable
-       * @example sketchableInstance.redo();
-       */
-      redo: function() {
-        var elem = this.elem, data = dataBind(elem)[namespace];
-        data.memento.redo();
-      },
-      /**
-       * Save a snapshot of the current CANVAS status.
-       * @memberof Sketchable
-       * @example sketchableInstance.save();
-       */
-      save: function() {
-        var elem = this.elem, data = dataBind(elem)[namespace];
-        data.memento.save();
+    deepExtend(instance, {
+      // Namespace methods to avoid collisions with other plugins.
+      memento: {
+        /**
+         * Goes back to the previous CANVAS state, if available.
+         * @return {MementoCanvas}
+         * @memberof Sketchable
+         * @example sketchableInstance.memento.undo();
+         */
+        undo: function() {
+          var data = dataBind(instance.elem)[namespace];
+          return data.memento.undo();
+        },
+        /**
+         * Goes forward to the previous CANVAS state, if available.
+         * @return {MementoCanvas}
+         * @memberof Sketchable
+         * @example sketchableInstance.memento.redo();
+         */
+        redo: function() {
+          var data = dataBind(instance.elem)[namespace];
+          return data.memento.redo();
+        },
+        /**
+         * Save a snapshot of the current CANVAS state.
+         * @return {MementoCanvas}
+         * @memberof Sketchable
+         * @example sketchableInstance.memento.save();
+         */
+        save: function() {
+          var data = dataBind(instance.elem)[namespace];
+          return data.memento.save();
+        },
+        /**
+         * Read current snapshot of the CANVAS state: `{ image:String, strokes:Array }`.
+         * @return {Object}
+         * @memberof Sketchable
+         * @example var state = sketchableInstance.memento.state();
+         */
+        state: function() {
+          var data = dataBind(instance.elem)[namespace];
+          return data.memento.state();
+        },
+        /**
+         * Restore a snapshot of the CANVAS.
+         * @param {Object} state
+         * @param {String} state.image Base64 image.
+         * @param {Array} state.strokes Associated strokes.
+         * @return {MementoCanvas}
+         * @memberof Sketchable
+         * @example sketchableInstance.memento.restore();
+         */
+        restore: function(state) {
+          var data = dataBind(instance.elem)[namespace];
+          return data.memento.restore(state);
+        }
       }
     });
 
     // Initialize plugin here.
     config.memento = new MementoCanvas(instance);
-    config.memento.init().save();
+    config.memento.init();
   };
 
 })(this);

@@ -1,5 +1,5 @@
-(function(){
-  var cache = [0], expando = 'data' + +(new Date);
+(function() {
+  var cache = [0], expando = 'data' + Date.now();
   function data(elem) {
     var cacheIndex     = elem[expando],
         nextCacheIndex = cache.length;
@@ -17,9 +17,11 @@
    * @example
    * var elem = document.getElementById('foo');
    * // Attach private data to element:
-   * dataBind(elem)['some-name'] = { value: 42 };
+   * dataBind(elem).someName = { value: 42 };
+   * dataBind(elem)['other-name'] = { value: 43 };
    * // Read private data from element:
-   * var dat = dataBind(elem)['some-name'];
+   * var some = dataBind(elem).someName;
+   * var other = dataBind(elem)['other-name'];
    */
   window.dataBind = data;
 })();

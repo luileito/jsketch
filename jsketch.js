@@ -1,5 +1,5 @@
 /*!
- * jSketch 0.9 | Luis A. Leiva | MIT license
+ * jSketch 1.0 | Luis A. Leiva | MIT license
  * A simple JavaScript library for drawing facilities on HTML5 canvas.
  */
 
@@ -9,7 +9,7 @@
  * such as function chainability and old-school AS3-like notation.
  * @name jSketch
  * @class
- * @version 0.9
+ * @version 1.0
  * @author Luis A. Leiva
  * @license MIT license
  * @example
@@ -19,32 +19,27 @@
  * var brush = new jSketch(canvas1).lineStyle('red').moveTo(50,50).lineTo(10,10).stroke();
  * // Actually, `.moveTo(50,50).lineTo(10,10)` can be just `.line(50,50, 10,10)`.
  * // Switching between contexts removes the need of having to reinstantiate the jSketch class.
- * brush.context(canvas2).beginFill('#5F7').fillCircle(30,30,8).endFill();
+ * brush.setContext(canvas2).beginFill('#5F7').fillCircle(30,30,8).endFill();
  */
 ;(function(window) {
     /**
      * @constructor
-     * @param {Object} elem - MUST be a DOM element
-     * @param {Object} options - Configuration
+     * @param {Object|Strig} elem - DOM element or selector.
+     * @param {Object} [options] - Configuration (default: {@link Sketchable#defaults}).
      */
-    var jSketch = function(elem, options) {
-      return new Sketch(elem, options);
-    };
-    // Base class, private.
-    var Sketch = function(elem, options) {
-      // Although discouraged, we can instantiate the class without arguments.
-      if (!elem) return;
+    function jSketch(elem, options) {
+      if (!elem) throw new Error('Sketchable requires a DOM element.');
+      if (typeof elem === 'string') elem = document.querySelector(elem);
       // Set drawing context first.
-      this.context(elem);
+      this.setContext(elem);
       // Scene defaults.
       this.stageWidth  = elem.width;
       this.stageHeight = elem.height;
-      // Make room for storing some data such as brush type, colors, etc.
+      // Make room for storing some data such as line type, colors, etc.
       this.data = {};
       // Set drawing defaults.
-      this.drawingDefaults(options);
-      // Make constructor chainable.
-      return this;
+      // All methods are chainable.
+      return this.setDefaults(options);
     };
    /**
     * jSketch methods (publicly extensible).
@@ -52,18 +47,18 @@
     * @memberof jSketch
     * @see jSketch
     */
-    jSketch.fn = Sketch.prototype = {
+    jSketch.prototype = {
       /**
        * Allows to change the drawing context at runtime.
        * @param {Object} elem - DOM element.
        * @return jSketch
        * @memberof jSketch
        */
-      context: function(elem) {
-        if (elem === null) throw('No canvas element specified.');
+      setContext: function(elem) {
+        if (!elem) throw new Error('No canvas element specified.');
         // Save shortcuts: canvas (DOM elem) & graphics (2D canvas context).
         this.canvas = elem;
-        this.graphics = elem.getContext('2d');
+        this.context = elem.getContext('2d');
         // Always allow chainability.
         return this;
       },
@@ -79,19 +74,15 @@
        * @return jSketch
        * @memberof jSketch
        */
-      drawingDefaults: function(options) {
-        if (typeof options === 'undefined') options = {};
-        if (typeof options.fillStyle   === 'undefined') options.fillStyle   = '#F00';
-        if (typeof options.strokeStyle === 'undefined') options.strokeStyle = '#F0F';
-        if (typeof options.lineWidth   === 'undefined') options.lineWidth   = 2;
-        if (typeof options.lineCap     === 'undefined') options.lineCap     = 'round';
-        if (typeof options.lineJoin    === 'undefined') options.lineJoin    = 'round';
-        if (typeof options.miterLimit  === 'undefined') options.miterLimit  = 10;
-        // Remember graphic options for later saving/restoring drawing status.
-        this.saveGraphics(options);
-        // Apply defaults.
-        this.restoreGraphics();
-        return this;
+      setDefaults: function(options) {
+        return this.saveGraphics({
+          fillStyle: options.fillStyle || '#F00',
+          strokeStyle: options.strokeStyle || '#F0F',
+          lineWidth: options.lineWidth || 2,
+          lineCap: options.lineCap || 'round',
+          lineJoin: options.lineJoin || 'round',
+          miterLimit: options.miterLimit || 10
+        }).restoreGraphics();
       },
       /**
        * Sets the dimensions of canvas.
@@ -117,7 +108,7 @@
        */
       background: function(color) {
         this.beginFill(color);
-        this.graphics.fillRect(0,0, this.stageWidth,this.stageHeight);
+        this.context.fillRect(0,0, this.stageWidth,this.stageHeight);
         this.endFill();
         return this;
       },
@@ -141,7 +132,7 @@
        */
       beginFill: function(color) {
         this.saveGraphics();
-        this.graphics.fillStyle = color;
+        this.context.fillStyle = color;
         return this;
       },
       /**
@@ -164,16 +155,13 @@
        * @memberof jSketch
        */
       lineStyle: function(color, thickness, capStyle, joinStyle, miter) {
-        var options = {
-          strokeStyle: color     || this.graphics.strokeStyle,
-          lineWidth:   thickness || this.graphics.lineWidth,
-          lineCap:     capStyle  || this.graphics.lineCap,
-          lineJoin:    joinStyle || this.graphics.lineJoin,
-          miterLimit:  miter     || this.graphics.miterLimit
-        };
-        this.saveGraphics(options);
-        this.restoreGraphics();
-        return this;
+        return this.saveGraphics({
+          strokeStyle: color     || this.data.strokeStyle,
+          lineWidth:   thickness || this.data.lineWidth,
+          lineCap:     capStyle  || this.data.lineCap,
+          lineJoin:    joinStyle || this.data.lineJoin,
+          miterLimit:  miter     || this.data.miterLimit
+        }).restoreGraphics();
       },
       /**
        * Move brush to a coordinate in canvas.
@@ -183,7 +171,7 @@
        * @memberof jSketch
        */
       moveTo: function(x, y) {
-        this.graphics.moveTo(x,y);
+        this.context.moveTo(x,y);
         return this;
       },
       /**
@@ -194,7 +182,7 @@
        * @memberof jSketch
        */
       lineTo: function(x, y) {
-        this.graphics.lineTo(x,y);
+        this.context.lineTo(x,y);
         return this;
       },
       /**
@@ -207,7 +195,7 @@
        * @memberof jSketch
        */
       line: function(x1,y1, x2,y2) {
-        this.graphics.moveTo(x1,y1);
+        this.context.moveTo(x1,y1);
         this.lineTo(x2,y2);
         return this;
       },
@@ -221,7 +209,7 @@
        * @memberof jSketch
        */
       curveTo: function(x,y, cpx,cpy) {
-        this.graphics.quadraticCurveTo(cpx,cpy, x,y);
+        this.context.quadraticCurveTo(cpx,cpy, x,y);
         return this;
       },
       /**
@@ -236,7 +224,7 @@
        * @memberof jSketch
        */
       curve: function(x1,y1, x2,y2, cpx,cpy) {
-        this.graphics.moveTo(x1,y1);
+        this.context.moveTo(x1,y1);
         this.curveTo(x2,y2, cpx,cpy);
         return this;
       },
@@ -246,7 +234,7 @@
        * @memberof jSketch
        */
       stroke: function() {
-        this.graphics.stroke();
+        this.context.stroke();
         return this;
       },
       /**
@@ -259,9 +247,9 @@
        * @memberof jSketch
        */
       strokeRect: function(x,y, width,height) {
-        this.graphics.beginPath();
-        this.graphics.strokeRect(x,y, width,height);
-        this.graphics.closePath();
+        this.context.beginPath();
+        this.context.strokeRect(x,y, width,height);
+        this.context.closePath();
         return this;
       },
       /**
@@ -274,9 +262,9 @@
        * @memberof jSketch
        */
       fillRect: function(x,y, width,height) {
-        this.graphics.beginPath();
-        this.graphics.fillRect(x,y, width,height);
-        this.graphics.closePath();
+        this.context.beginPath();
+        this.context.fillRect(x,y, width,height);
+        this.context.closePath();
         return this;
       },
       /**
@@ -288,10 +276,10 @@
        * @memberof jSketch
        */
       strokeCircle: function(x,y, radius) {
-        this.graphics.beginPath();
-        this.graphics.arc(x,y, radius, 0, 2*Math.PI, false);
-        this.graphics.stroke();
-        this.graphics.closePath();
+        this.context.beginPath();
+        this.context.arc(x,y, radius, 0, 2*Math.PI, false);
+        this.context.stroke();
+        this.context.closePath();
         return this;
       },
       /**
@@ -303,10 +291,10 @@
        * @memberof jSketch
        */
       fillCircle: function(x,y, radius) {
-        this.graphics.beginPath();
-        this.graphics.arc(x,y, radius, 0, 2*Math.PI, false);
-        this.graphics.fill();
-        this.graphics.closePath();
+        this.context.beginPath();
+        this.context.arc(x,y, radius, 0, 2*Math.PI, false);
+        this.context.fill();
+        this.context.closePath();
         return this;
       },
       /**
@@ -314,9 +302,9 @@
        * @ignore
        */
       radialCircle: function(x,y, radius, glowSize, colors) {
-        var g = this.graphics.createRadialGradient(x,y, radius, x,y, glowSize || 5);
+        var g = this.context.createRadialGradient(x,y, radius, x,y, glowSize || 5);
         if (!colors || colors.constructor.name !== 'array') {
-          colors = [this.graphics.fillStyle, 'white'];
+          colors = [this.context.fillStyle, 'white'];
         }
         for (var s = 0; s < colors.length; s++) {
           var color = colors[s];
@@ -332,7 +320,7 @@
        */
       beginPath: function() {
         this.saveGraphics();
-        this.graphics.beginPath();
+        this.context.beginPath();
         return this;
       },
       /**
@@ -341,32 +329,26 @@
        * @memberof jSketch
        */
       closePath: function() {
-        this.graphics.closePath();
+        this.context.closePath();
         this.restoreGraphics();
         return this;
       },
       /**
        * Sets brush to eraser mode.
-       * @param {Number} [brushSize] - Brush size. Default: 15.
        * @return jSketch
        * @memberof jSketch
        */
-      eraser: function(brushSize) {
-        if (typeof brushSize === 'undefined') brushSize = 15;
-        this.graphics.globalCompositeOperation = 'destination-out';
-        this.lineStyle(null, brushSize);
+      eraser: function() {
+        this.context.globalCompositeOperation = 'destination-out';
         return this;
       },
       /**
        * Sets brush to pencil mode.
-       * @param {Number} [brushSize] - Brush size. Default: 2.
        * @return jSketch
        * @memberof jSketch
        */
-      pencil: function(brushSize) {
-        if (typeof brushSize === 'undefined') brushSize = 2;
-        this.graphics.globalCompositeOperation = 'source-over';
-        this.lineStyle(null, brushSize);
+      pencil: function() {
+        this.context.globalCompositeOperation = 'source-over';
         return this;
       },
       /**
@@ -376,7 +358,7 @@
        */
       clear: function() {
         // Note: using 'this.canvas.width = this.canvas.width' resets _all_ styles, so better use clearRect.
-        this.graphics.clearRect(0,0, this.stageWidth,this.stageHeight);
+        this.context.clearRect(0,0, this.stageWidth,this.stageHeight);
         return this;
       },
       /**
@@ -385,7 +367,7 @@
        * @memberof jSketch
        */
       save: function() {
-        this.graphics.save();
+        this.context.save();
         return this;
       },
       /**
@@ -394,7 +376,7 @@
        * @memberof jSketch
        */
       restore: function() {
-        this.graphics.restore();
+        this.context.restore();
         return this;
       },
       /**
@@ -404,19 +386,19 @@
        * @memberof jSketch
        */
       saveGraphics: function(options) {
-        if (typeof options !== 'undefined') this.data.options = options;
+        for (var opt in options) {
+          this.data[opt] = options[opt];
+        }
         return this;
       },
       /**
        * Restores given drawing settings.
-       * @param {Object} [options] - Graphics options.
        * @return jSketch
        * @memberof jSketch
        */
-      restoreGraphics: function(options) {
-        if (typeof options === 'undefined') options = this.data.options;
-        for (var opt in options) {
-          this.graphics[opt] = options[opt];
+      restoreGraphics: function() {
+        for (var opt in this.data) {
+          this.context[opt] = this.data[opt];
         }
         return this;
       },
@@ -434,7 +416,7 @@
         var self = this, img = new Image();
         img.src = src;
         img.onload = function() {
-          self.graphics.drawImage(img, x,y);
+          self.context.drawImage(img, x,y);
         }
         return this;
       }

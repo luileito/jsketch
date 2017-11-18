@@ -40,7 +40,7 @@
         // Note: jSketch.drawImage after clear creates some flickering,
         // so use the native HTMLCanvasElement.drawImage method instead.
         data.sketch.clear();
-        data.sketch.graphics.drawImage(snapshot, 0,0);
+        data.sketch.context.drawImage(snapshot, 0,0);
         // Update strokes.
         data.strokes = strokes.slice();
       });

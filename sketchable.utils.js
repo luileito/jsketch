@@ -1,8 +1,10 @@
+/* eslint-env browser */
+
 (function() {
   var cache = [0], expando = 'data' + Date.now();
   function data(elem) {
     var cacheIndex     = elem[expando],
-        nextCacheIndex = cache.length;
+      nextCacheIndex = cache.length;
     if (!cacheIndex) {
       cacheIndex = elem[expando] = nextCacheIndex;
       cache[cacheIndex] = {};
@@ -31,7 +33,7 @@
  * @global
  * @module Event
  */
-var Event = {
+window.Event = {
   /**
    * Add event to DOM element.
    * @memberof module:Event
@@ -48,9 +50,11 @@ var Event = {
     if (elem.addEventListener) { // W3C standard
       elem.addEventListener(type, fn, false);
     } else if (elem.attachEvent) { // Old IE versions
-      elem.attachEvent("on"+type, fn);
+      elem.attachEvent('on'+type, fn);
     } else { // Really old browser
-      elem[type+fn] = function(){ fn(window.event); };
+      elem[type+fn] = function() {
+        fn(window.event);
+      };
     }
   },
   /**
@@ -68,7 +72,7 @@ var Event = {
     if (elem.removeEventListener) { // W3C standard
       elem.removeEventListener(type, fn, false);
     } else if (elem.detachEvent) { // Old IE versions
-      elem.detachEvent("on"+type, fn);
+      elem.detachEvent('on'+type, fn);
     } else { // Really old browser
       elem[type+fn] = null;
     }
@@ -89,7 +93,7 @@ var Event = {
     if (ev.which) return ev.which === 3;
     else if (ev.button) return e.button === 2;
     return false;
-  }
+  },
 
 };
 
@@ -109,7 +113,7 @@ var Event = {
  * // Now `ext` is `{ foo:1, bar: { a:false, b:false } }`
  * // and `one` is left intact.
  */
-var deepExtend = function(myObj) {
+window.deepExtend = function(myObj) {
   myObj = myObj || {};
   for (var i = 1; i < arguments.length; i++) {
     var obj = arguments[i];

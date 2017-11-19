@@ -16,6 +16,7 @@
    * and is part of the {@link Sketchable.plugins.memento} plugin.
    * @class
    * @version 2.1
+   * @param {Sketchable} instance Sketchable element.
    * @example
    * var sketcher = new Sketchable('canvas');
    * // This is internally done by the plugin, plus some checks:
@@ -40,7 +41,7 @@
         // Note: jSketch.drawImage after clear creates some flickering,
         // so use the native HTMLCanvasElement.drawImage method instead.
         data.sketch.clear();
-        data.sketch.context.drawImage(snapshot, 0,0);
+        data.sketch.context.drawImage(snapshot, 0, 0);
         // Update strokes.
         data.strokes = strokes.slice();
       });
@@ -56,15 +57,15 @@
     function keyManager(e) {
       if (e.ctrlKey) {
         switch (e.which) {
-          case 26: // Z
-            if (e.shiftKey) self.redo();
-            else self.undo();
-            break;
-          case 25: // Y
-            self.redo();
-            break;
-          default:
-            break;
+        case 26: // Z
+          if (e.shiftKey) self.redo();
+          else self.undo();
+          break;
+        case 25: // Y
+          self.redo();
+          break;
+        default:
+          break;
         }
       }
     }
@@ -112,7 +113,7 @@
         if (evt && evt.identifier > 0) {
           stack[stpos].strokes = data.strokes.slice();
         } else {
-          stack.push({ image: elem.toDataURL(), strokes: data.strokes.slice() });
+          stack.push({image: elem.toDataURL(), strokes: data.strokes.slice()});
           stpos++;
         }
       });
@@ -163,7 +164,7 @@
 
   /**
    * Memento plugin constructor for Sketchable instances.
-   * @param {Object} sketchable Sketchable instance.
+   * @param {Sketchable} instance Sketchable element.
    * @memberof Sketchable#plugins
    */
   Sketchable.prototype.plugins.memento = function(instance) {
@@ -179,7 +180,7 @@
       },
       destroy: function(elem, data) {
         data.memento.destroy();
-      }
+      },
     };
 
     // A helper function to override user-defined event listeners.
@@ -195,7 +196,7 @@
           // Exec original function first, then exec our callback.
           fn.apply(instance, arguments);
           callbacks[evName].apply(instance, arguments);
-        }
+        };
       } else {
         // User has not defined this event, so attach our callback.
         config.options.events[evName] = callbacks[evName];
@@ -265,8 +266,8 @@
         restore: function(state) {
           var data = dataBind(instance.elem)[namespace];
           return data.memento.restore(state);
-        }
-      }
+        },
+      },
     });
 
     // Initialize plugin here.

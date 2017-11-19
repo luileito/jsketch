@@ -50,15 +50,15 @@
   Sketchable.prototype = {
     /**
      * Initialize the selected CANVAS elements.
-     * @param {Object} [options] - Configuration (default: {@link Sketchable#defaults}).
-     * @return Sketchable
+     * @param {Object} [opts] - Configuration (default: {@link Sketchable#defaults}).
+     * @return {Sketchable}
      * @memberof Sketchable
      * @protected
      * @ignore
      */
-    init: function(options) {
+    init: function(opts) {
       // Options will be available for all plugin methods.
-      var options = deepExtend({}, Sketchable.prototype.defaults, options || {});
+      var options = deepExtend({}, Sketchable.prototype.defaults, opts || {});
       var elem = this.elem, data = dataBind(elem)[namespace];
       // Check if element is not initialized yet.
       if (!data) {
@@ -73,7 +73,7 @@
         postProcess(elem, options);
       }
 
-      var sketch = new jSketch(elem, options.graphics);
+      var sketch = new jSketch(elem, options.graphics); // eslint-disable-line new-cap
       // Reconfigure element data.
       dataBind(elem)[namespace] = data = {
         // All strokes will be stored here.
@@ -89,34 +89,33 @@
         // since we access the instance via `$('selector').sketchable('method')`.
         instance: this,
         // Save also a pointer to the given options.
-        options: options
+        options: options,
       };
 
       // Trigger init event.
-      if (typeof options.events.init === 'function') {
+      if (typeof options.events.init === 'function')
         options.events.init(elem, data);
-      }
+
       // Initialize plugins.
-      for (var name in this.plugins) {
-        this.plugins[name](this);
-      }
+      for (var name in this.plugins) this.plugins[name](this);
       // Make methods chainable.
       return this;
     },
     /**
      * Change configuration of an existing Sketchable instance.
-     * @param {Object} [options] - Configuration (default: {@link Sketchable#defaults}).
-     * @return Sketchable
+     * @param {Object} [opts] - Configuration (default: {@link Sketchable#defaults}).
+     * @return {Sketchable}
      * @memberof Sketchable
      * @example
      * var sketcher = new Sketchable('canvas').config({ interactive: false });
      * // Update later on:
      * sketcher.config({ interactive: true });
      */
-    config: function(options) {
+    config: function(opts) {
       var elem = this.elem, data = dataBind(elem)[namespace];
-      if (options) { // setter
-        data.options = deepExtend({}, Sketchable.prototype.defaults, data.options, options);
+
+      if (opts) { // setter
+        data.options = deepExtend({}, Sketchable.prototype.defaults, data.options, opts);
         postProcess(elem);
         return this;
       } else { // getter
@@ -126,7 +125,7 @@
     /**
      * Get/Set drawing data strokes sequence.
      * @param {Array} [arr] - Multidimensional array of [x,y,time,status] tuples; status = 0 (pen down) or 1 (pen up).
-     * @return Strokes object on get, Sketchable instance on set (with the new data attached).
+     * @return {Array|Sketchable} Strokes object on get, Sketchable instance on set (with the new data attached).
      * @memberof Sketchable
      * @example
      * // Getter: read associated strokes.
@@ -135,20 +134,19 @@
      * new Sketchable('canvas').strokes([ [arr1], ..., [arrN] ]);
      */
     strokes: function(arr) {
-      var elem = this.elem;
+      var elem = this.elem, data = dataBind(elem)[namespace];
+
       if (arr) { // setter
-        var data = dataBind(elem)[namespace];
         data.strokes = arr;
         return this;
       } else { // getter
-        var data = dataBind(elem)[namespace];
         return data.strokes;
       }
     },
     /**
      * Allows low-level manipulation of the sketchable canvas.
      * @param {Function} callback - Callback function, invoked with 2 arguments: elem (CANVAS element) and data (private element data).
-     * @return Sketchable
+     * @return {Sketchable}
      * @memberof Sketchable
      * @example
      * new Sketchable('canvas').handler(function(elem, data) {
@@ -159,12 +157,13 @@
       var elem = this.elem, data = dataBind(elem)[namespace];
 
       callback(elem, data);
+
       return this;
     },
     /**
      * Clears canvas <b>together with</b> associated strokes data.
      * @see Sketchable.handler
-     * @return Sketchable
+     * @return {Sketchable}
      * @memberof Sketchable
      * @example
      * var sketcher = new Sketchable('canvas');
@@ -182,15 +181,15 @@
       data.strokes = [];
       data.coords  = {};
 
-      if (typeof options.events.clear === 'function') {
+      if (typeof options.events.clear === 'function')
         options.events.clear(elem, data);
-      }
+
       return this;
     },
     /**
      * Reinitializes a sketchable canvas with given configuration options.
-     * @param {Object} [options] - Configuration (default: {@link Sketchable#defaults}).
-     * @return Sketchable
+     * @param {Object} [opts] - Configuration (default: {@link Sketchable#defaults}).
+     * @return {Sketchable}
      * @memberof Sketchable
      * @example
      * // Reset default state.
@@ -198,19 +197,19 @@
      * // Reset with custom configuration.
      * new Sketchable('canvas').reset({ interactive:false });
      */
-    reset: function(options) {
+    reset: function(opts) {
       var elem = this.elem, data = dataBind(elem)[namespace], options = data.options;
 
-      this.destroy().init(options);
+      this.destroy().init(opts);
 
-      if (typeof options.events.reset === 'function') {
+      if (typeof options.events.reset === 'function')
         options.events.reset(elem, data);
-      }
+
       return this;
     },
     /**
      * Destroys sketchable canvas, together with strokes data and associated events.
-     * @return Sketchable
+     * @return {Sketchable}
      * @memberof Sketchable
      * @example
      * // This will leave the canvas element intact.
@@ -228,11 +227,11 @@
 
       dataBind(elem)[namespace] = null;
 
-      if (typeof options.events.destroy === 'function') {
+      if (typeof options.events.destroy === 'function')
         options.events.destroy(elem, data);
-      }
+
       return this;
-    }
+    },
 
   };
 
@@ -333,12 +332,12 @@
       fillStyle: '#F0F',
       lineCap: 'round',
       lineJoin: 'round',
-      miterLimit: 10
-    }
+      miterLimit: 10,
+    },
   };
 
   /**
-   * @private
+   * @ignore
    */
   function offset(el) {
     var box     = el.getBoundingClientRect();
@@ -351,13 +350,13 @@
     var top  = box.top  + scrollTop  - clientTop;
     var left = box.left + scrollLeft - clientLeft;
     return {
-      top:  Math.round(top),
-      left: Math.round(left)
-    }
+      top: Math.round(top),
+      left: Math.round(left),
+    };
   };
 
   /**
-   * @private
+   * @ignore
    */
   function postProcess(elem, options) {
     if (!options) options = dataBind(elem)[namespace].options;
@@ -366,22 +365,24 @@
       elem.style.cursor = options.interactive ? 'pointer' : 'not-allowed';
     }
     // Fix unwanted highlight "bug".
-    elem.onselectstart = function() { return false };
+    elem.onselectstart = function() {
+      return false;
+    };
   };
 
   /**
-   * @private
+   * @ignore
    */
   function getMousePos(e) {
     var elem = e.target, pos = offset(elem);
     return {
       x: Math.round(e.pageX - pos.left),
-      y: Math.round(e.pageY - pos.top)
-    }
+      y: Math.round(e.pageY - pos.top),
+    };
   };
 
   /**
-   * @private
+   * @ignore
    */
   function saveMousePos(idx, data, pt) {
     // Current coords are already initialized.
@@ -395,7 +396,7 @@
       time -= data.timestamp;
     }
 
-    coords.push([ pt.x, pt.y, time, +data.sketch.isDrawing ]);
+    coords.push([pt.x, pt.y, time, +data.sketch.isDrawing]);
 
     // Check if consecutive points should be removed.
     if (data.options.filterCoords && coords.length > 1) {
@@ -409,7 +410,7 @@
   };
 
   /**
-   * @private
+   * @ignore
    */
   function mousedownHandler(e) {
     if (e.touches) return false;
@@ -417,7 +418,7 @@
   };
 
   /**
-   * @private
+   * @ignore
    */
   function mousemoveHandler(e) {
     if (e.touches) return false;
@@ -425,7 +426,7 @@
   };
 
   /**
-   * @private
+   * @ignore
    */
   function mouseupHandler(e) {
     if (e.touches) return false;
@@ -433,7 +434,7 @@
   };
 
   /**
-   * @private
+   * @ignore
    */
   function touchdownHandler(e) {
     execTouchEvent(e, downHandler);
@@ -441,7 +442,7 @@
   };
 
   /**
-   * @private
+   * @ignore
    */
   function touchmoveHandler(e) {
     execTouchEvent(e, moveHandler);
@@ -449,7 +450,7 @@
   };
 
   /**
-   * @private
+   * @ignore
    */
   function touchupHandler(e) {
     execTouchEvent(e, upHandler);
@@ -457,16 +458,16 @@
   };
 
   /**
-   * @private
+   * @ignore
    */
   function downHandler(e) {
     // Don't handle right clicks.
     if (Event.isRightClick(e)) return false;
 
     var idx     = e.identifier || 0,
-        elem    = e.target,
-        data    = dataBind(elem)[namespace],
-        options = data.options;
+      elem    = e.target,
+      data    = dataBind(elem)[namespace],
+      options = data.options;
     // Exit early if interactivity is disabled.
     if (!options.interactive) return;
 
@@ -477,7 +478,10 @@
 
     // Mark visually 1st point of stroke.
     if (options.graphics.firstPointSize > 0) {
-      data.sketch.beginFill(options.graphics.fillStyle).fillCircle(p.x, p.y, options.graphics.firstPointSize).endFill();
+      data.sketch
+          .beginFill(options.graphics.fillStyle)
+          .fillCircle(p.x, p.y, options.graphics.firstPointSize)
+          .endFill();
     }
 
     data.sketch.isDrawing = true;
@@ -493,19 +497,18 @@
 
     saveMousePos(idx, data, p);
 
-    if (typeof options.events.mousedown === 'function') {
+    if (typeof options.events.mousedown === 'function')
       options.events.mousedown(elem, data, e);
-    }
   };
 
   /**
-   * @private
+   * @ignore
    */
   function moveHandler(e) {
-    var idx     = e.identifier || 0
-        elem    = e.target,
-        data    = dataBind(elem)[namespace],
-        options = data.options;
+    var idx     = e.identifier || 0,
+      elem    = e.target,
+      data    = dataBind(elem)[namespace],
+      options = data.options;
     // Exit early if interactivity is disabled.
     if (!options.interactive) return;
     // Grab penup strokes AFTER drawing something on the canvas for the first time.
@@ -532,19 +535,18 @@
 
     saveMousePos(idx, data, p);
 
-    if (typeof options.events.mousemove === 'function') {
+    if (typeof options.events.mousemove === 'function')
       options.events.mousemove(elem, data, e);
-    }
   };
 
   /**
-   * @private
+   * @ignore
    */
   function upHandler(e) {
-    var idx     = e.identifier || 0
-        elem    = e.target,
-        data    = dataBind(elem)[namespace],
-        options = data.options;
+    var idx     = e.identifier || 0,
+      elem    = e.target,
+      data    = dataBind(elem)[namespace],
+      options = data.options;
     // Exit early if interactivity is disabled.
     if (!options.interactive) return;
 
@@ -557,13 +559,12 @@
     data.strokes.push(data.coords[idx]);
     data.coords[idx] = [];
 
-    if (typeof options.events.mouseup === 'function') {
+    if (typeof options.events.mouseup === 'function')
       options.events.mouseup(elem, data, e);
-    }
   };
 
   /**
-   * @private
+   * @ignore
    */
   function execTouchEvent(e, callback) {
     var elem = e.target, data = dataBind(elem)[namespace], options = data.options;

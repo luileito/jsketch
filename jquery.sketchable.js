@@ -6,7 +6,7 @@
 /**
  * @method $
  * @description jQuery constructor. See {@link https://jquery.com}
- * @param {String} selector - jQuery selector.
+ * @param {String} selector jQuery selector.
  * @return {Object} jQuery
  */
 /**
@@ -25,7 +25,7 @@
   var api = {
     /**
      * Initialize the selected jQuery objects.
-     * @param {Object} [options] - Configuration (default: {@link $.fn.sketchable.defaults}).
+     * @param {Object} [opts] Configuration (default: {@link $.fn.sketchable.defaults}).
      * @return jQuery
      * @memberof $.fn.sketchable
      * @ignore
@@ -49,7 +49,7 @@
           postProcess(elem, options);
         }
 
-        var sketch = new jSketch(this, options.graphics);
+        var sketch = new jSketch(this, options.graphics); // eslint-disable-line new-cap
         // Reconfigure element data.
         elem.data(namespace, {
           // All strokes will be stored here.
@@ -61,22 +61,20 @@
           // Save a pointer to the drawing canvas (jSketch instance).
           sketch: sketch,
           // Save also a pointer to the given options.
-          options: options
+          options: options,
         });
 
         // Trigger init event.
-        if (options.events && typeof options.events.init === 'function') {
+        if (typeof options.events.init === 'function')
           options.events.init(elem, elem.data(namespace));
-        }
         // Initialize plugins.
-        for (var name in $.fn.sketchable.plugins) {
+        for (var name in $.fn.sketchable.plugins)
           $.fn.sketchable.plugins[name](elem);
-        }
       });
     },
     /**
      * Change configuration of an existing jQuery Sketchable element.
-     * @param {Object} [options] - Configuration (default: {@link $.fn.sketchable.defaults}).
+     * @param {Object} [opts] Configuration (default: {@link $.fn.sketchable.defaults}).
      * @return jQuery
      * @memberof $.fn.sketchable
      * @example
@@ -97,7 +95,7 @@
     },
     /**
      * Get/Set drawing data strokes sequence.
-     * @param {Array} [arr] - Multidimensional array of [x,y,time,status] tuples; status = 0 (pen down) or 1 (pen up).
+     * @param {Array} [arr] Multidimensional array of [x,y,time,status] tuples; status = 0 (pen down) or 1 (pen up).
      * @return Strokes object on get, jQuery instance on set (with the new data attached).
      * @memberof $.fn.sketchable
      * @example
@@ -119,7 +117,7 @@
     },
     /**
      * Allow low-level manipulation of the sketchable canvas.
-     * @param {Function} callback - Callback function, invoked with 2 arguments: elem (CANVAS element) and data (private element data).
+     * @param {Function} callback Callback function, invoked with 2 arguments: elem (CANVAS element) and data (private element data).
      * @return jQuery
      * @memberof $.fn.sketchable
      * @example
@@ -149,20 +147,20 @@
      */
     clear: function() {
       return this.each(function() {
-        var elem = $(this), data = elem.data(namespace) || {}, options = data.options;
+        var elem = $(this), data = elem.data(namespace), options = data.options;
         if (data.sketch) {
           data.sketch.clear();
           data.strokes = [];
           data.coords  = {};
         }
-        if (options && typeof options.events.clear === 'function') {
+
+        if (typeof options.events.clear === 'function')
           options.events.clear(elem, data);
-        }
       });
     },
     /**
      * Reinitialize a sketchable canvas with given configuration options.
-     * @param {Object} [options] - Configuration (default: {@link $.fn.sketchable.defaults}).
+     * @param {Object} [opts] Configuration (default: {@link $.fn.sketchable.defaults}).
      * @return jQuery
      * @memberof $.fn.sketchable
      * @example
@@ -174,13 +172,12 @@
      */
     reset: function(opts) {
       return this.each(function() {
-        var elem = $(this), data = elem.data(namespace) || {}, options = data.options;
+        var elem = $(this), data = elem.data(namespace), options = data.options;
 
         elem.sketchable('destroy').sketchable(opts);
 
-        if (options && typeof options.events.reset === 'function') {
+        if (typeof options.events.reset === 'function')
           options.events.reset(elem, data);
-        }
       });
     },
     /**
@@ -194,7 +191,7 @@
      */
     destroy: function() {
       return this.each(function() {
-        var elem = $(this), data = elem.data(namespace) || {}, options = data.options;
+        var elem = $(this), data = elem.data(namespace), options = data.options;
 
         elem.unbind('mouseup', mouseupHandler);
         elem.unbind('mousemove', mousemoveHandler);
@@ -205,18 +202,17 @@
 
         elem.removeData(namespace);
 
-        if (options && typeof options.events.destroy === 'function') {
+        if (options && typeof options.events.destroy === 'function')
           options.events.destroy(elem, data);
-        }
       });
-    }
+    },
   };
 
   /**
    * Create a <tt>jQuery Sketchable</tt> instance.
    * This is a jQuery wrapper for the <tt>jSketch</tt> drawing class.
    * @namespace $.fn.sketchable
-   * @param {String|Object} method - Method to invoke, or a configuration object.
+   * @param {String|Object} method Method to invoke, or a configuration object.
    * @return jQuery
    * @version 2.1
    * @author Luis A. Leiva
@@ -347,8 +343,8 @@
       fillStyle: '#F0F',
       lineCap: 'round',
       lineJoin: 'round',
-      miterLimit: 10
-    }
+      miterLimit: 10,
+    },
   };
 
   /**
@@ -361,7 +357,9 @@
       elem[0].style.cursor = options.interactive ? 'pointer' : 'not-allowed';
     }
     // Fix unwanted highlight "bug". Note: `this` is the actual DOM element.
-    this.onselectstart = function() { return false };
+    this.onselectstart = function() {
+      return false;
+    };
   };
 
   /**
@@ -383,8 +381,8 @@
     var elem = $(e.target), pos = elem.offset();
     return {
       x: Math.round(e.pageX - pos.left),
-      y: Math.round(e.pageY - pos.top)
-    }
+      y: Math.round(e.pageY - pos.top),
+    };
   };
 
   /**
@@ -402,7 +400,7 @@
       time -= data.timestamp;
     }
 
-    coords.push([ pt.x, pt.y, time, +data.sketch.isDrawing ]);
+    coords.push([pt.x, pt.y, time, +data.sketch.isDrawing]);
 
     // Check if consecutive points should be removed.
     if (data.options.filterCoords && coords.length > 1) {
@@ -471,9 +469,9 @@
     if (e.which === 3) return false;
 
     var idx     = e.identifier || 0,
-        elem    = $(e.target),
-        data    = elem.data(namespace),
-        options = data.options;
+      elem    = $(e.target),
+      data    = elem.data(namespace),
+      options = data.options;
     // Exit early if interactivity is disabled.
     if (!options.interactive) return;
 
@@ -484,7 +482,10 @@
 
     // Mark visually 1st point of stroke.
     if (options.graphics.firstPointSize > 0) {
-      data.sketch.beginFill(options.graphics.fillStyle).fillCircle(p.x, p.y, options.graphics.firstPointSize).endFill();
+      data.sketch
+          .beginFill(options.graphics.fillStyle)
+          .fillCircle(p.x, p.y, options.graphics.firstPointSize)
+          .endFill();
     }
 
     data.sketch.isDrawing = true;
@@ -500,9 +501,8 @@
 
     saveMousePos(idx, data, p);
 
-    if (typeof options.events.mousedown === 'function') {
+    if (typeof options.events.mousedown === 'function')
       options.events.mousedown(elem, data, e);
-    }
   };
 
   /**
@@ -510,9 +510,9 @@
    */
   function moveHandler(e) {
     var idx     = e.identifier || 0,
-        elem    = $(e.target),
-        data    = elem.data(namespace),
-        options = data.options;
+      elem    = $(e.target),
+      data    = elem.data(namespace),
+      options = data.options;
     // Exit early if interactivity is disabled.
     if (!options.interactive) return;
     // Grab penup strokes AFTER drawing something on the canvas for the first time.
@@ -539,9 +539,8 @@
 
     saveMousePos(idx, data, p);
 
-    if (typeof options.events.mousemove === 'function') {
+    if (typeof options.events.mousemove === 'function')
       options.events.mousemove(elem, data, e);
-    }
   };
 
   /**
@@ -549,9 +548,9 @@
    */
   function upHandler(e) {
     var idx     = e.identifier || 0,
-        elem    = $(e.target),
-        data    = elem.data(namespace),
-        options = data.options;
+      elem    = $(e.target),
+      data    = elem.data(namespace),
+      options = data.options;
     // Exit early if interactivity is disabled.
     if (!options.interactive) return;
 
@@ -564,9 +563,8 @@
     data.strokes.push(data.coords[idx]);
     data.coords[idx] = [];
 
-    if (typeof options.events.mouseup === 'function') {
+    if (typeof options.events.mouseup === 'function')
       options.events.mouseup(elem, data, e);
-    }
   };
 
   /**

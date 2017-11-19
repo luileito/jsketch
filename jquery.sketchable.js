@@ -474,13 +474,15 @@
     // Exit early if interactivity is disabled.
     if (!options.interactive) return;
 
-    data.sketch.isDrawing = true;
-
     var p = getMousePos(e);
+
     // Mark visually 1st point of stroke.
     if (options.graphics.firstPointSize > 0) {
       data.sketch.beginFill(options.graphics.fillStyle).fillCircle(p.x, p.y, options.graphics.firstPointSize).endFill();
     }
+
+    data.sketch.isDrawing = true;
+    data.sketch.beginPath();
 
     // Ensure that coords is properly initialized.
     var coords = data.coords[idx];
@@ -515,7 +517,7 @@
     var coords = data.coords[idx];
     var last = coords[coords.length - 1];
     if (last) {
-      var brush = data.sketch.beginPath();
+      var brush = data.sketch;
       if (data.sketch.isDrawing) {
         // Style for regular, pendown strokes.
         brush.lineStyle(options.graphics.strokeStyle, options.graphics.lineWidth);
@@ -523,7 +525,7 @@
         // Style for penup strokes.
         brush.lineStyle(options.mouseupMovements.strokeStyle || '#DDD', options.mouseupMovements.lineWidth || 1);
       }
-      brush.line(last[0], last[1], p.x, p.y).stroke().closePath();
+      brush.line(last[0], last[1], p.x, p.y).stroke();
     }
 
     saveMousePos(idx, data, p);
@@ -545,6 +547,7 @@
     if (!options.interactive) return;
 
     data.sketch.isDrawing = false;
+    data.sketch.closePath();
 
     data.strokes.push(data.coords[idx]);
     data.coords[idx] = [];

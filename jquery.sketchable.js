@@ -332,8 +332,11 @@
       // init: function(elem, data) { },
       // clear: function(elem, data) { },
       // destroy: function(elem, data) { },
+      // mousedownBefore: function(elem, data, evt) { },
       // mousedown: function(elem, data, evt) { },
+      // mousemoveBefore: function(elem, data, evt) { },
       // mousemove: function(elem, data, evt) { },
+      // mouseupBefore: function(elem, data, evt) { },
       // mouseup: function(elem, data, evt) { },
     },
     // Drawing options, to be used in jSketch lib.
@@ -476,6 +479,9 @@
 
     var p = getMousePos(e);
 
+    if (typeof options.events.mousedownBefore === 'function')
+      options.events.mousedownBefore(elem, data, e);
+
     // Mark visually 1st point of stroke.
     if (options.graphics.firstPointSize > 0) {
       data.sketch.beginFill(options.graphics.fillStyle).fillCircle(p.x, p.y, options.graphics.firstPointSize).endFill();
@@ -514,6 +520,9 @@
 
     var p = getMousePos(e);
 
+    if (typeof options.events.mousemoveBefore === 'function')
+      options.events.mousemoveBefore(elem, data, e);
+
     var coords = data.coords[idx];
     var last = coords[coords.length - 1];
     if (last) {
@@ -545,6 +554,9 @@
         options = data.options;
     // Exit early if interactivity is disabled.
     if (!options.interactive) return;
+
+    if (typeof options.events.mouseupBefore === 'function')
+      options.events.mouseupBefore(elem, data, e);
 
     data.sketch.isDrawing = false;
     data.sketch.closePath();

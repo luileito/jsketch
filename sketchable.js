@@ -17,8 +17,8 @@
   /**
    * Initialize the plugin: make CANVAS elements drawable.<br>
    * Contrary to the jQuery version, only one element can be passed in at a time.
-   * @param {Object|Strig} elem - DOM element or selector.
-   * @param {Object} [options] - Configuration (default: {@link Sketchable#defaults}).
+   * @param {Object|Strig} elem DOM element or selector.
+   * @param {Object} [options] Configuration (default: {@link Sketchable#defaults}).
    * @class
    * @global
    * @version 2.1
@@ -50,7 +50,7 @@
   Sketchable.prototype = {
     /**
      * Initialize the selected CANVAS elements.
-     * @param {Object} [opts] - Configuration (default: {@link Sketchable#defaults}).
+     * @param {Object} [opts] Configuration (default: {@link Sketchable#defaults}).
      * @return {Sketchable}
      * @memberof Sketchable
      * @protected
@@ -103,11 +103,11 @@
     },
     /**
      * Change configuration of an existing Sketchable instance.
-     * @param {Object} [opts] - Configuration (default: {@link Sketchable#defaults}).
+     * @param {Object} [opts] Configuration (default: {@link Sketchable#defaults}).
      * @return {Sketchable}
      * @memberof Sketchable
      * @example
-     * var sketcher = new Sketchable('canvas').config({ interactive: false });
+     * var sketcher = new Sketchable('#my-canvas', { interactive: false });
      * // Update later on:
      * sketcher.config({ interactive: true });
      */
@@ -124,14 +124,15 @@
     },
     /**
      * Get/Set drawing data strokes sequence.
-     * @param {Array} [arr] - Multidimensional array of [x,y,time,status] tuples; status = 0 (pen down) or 1 (pen up).
+     * @param {Array} [arr] Multidimensional array of [x,y,time,status] tuples; status = 0 (pen down) or 1 (pen up).
      * @return {Array|Sketchable} Strokes object on get, Sketchable instance on set (with the new data attached).
      * @memberof Sketchable
      * @example
+     * var sketcher = new Sketchable('#my-canvas');
      * // Getter: read associated strokes.
-     * new Sketchable('canvas').strokes();
+     * var strokes = sketcher.strokes();
      * // Setter: replace associated strokes.
-     * new Sketchable('canvas').strokes([ [arr1], ..., [arrN] ]);
+     * sketcher.strokes([ [arr1], ..., [arrN] ]);
      */
     strokes: function(arr) {
       var elem = this.elem, data = dataBind(elem)[namespace];
@@ -145,11 +146,12 @@
     },
     /**
      * Allows low-level manipulation of the sketchable canvas.
-     * @param {Function} callback - Callback function, invoked with 2 arguments: elem (CANVAS element) and data (private element data).
+     * @param {Function} callback Callback function, invoked with 2 arguments: elem (CANVAS element) and data (private element data).
      * @return {Sketchable}
      * @memberof Sketchable
      * @example
-     * new Sketchable('canvas').handler(function(elem, data) {
+     * var sketcher = new Sketchable('#my-canvas');
+     * sketcher.handler(function(elem, data) {
      *   // do something with elem or data
      * });
      */
@@ -166,8 +168,8 @@
      * @return {Sketchable}
      * @memberof Sketchable
      * @example
-     * var sketcher = new Sketchable('canvas');
-     * // This will remove strokes data as well.
+     * var sketcher = new Sketchable('#my-canvas');
+     * // Warning: This will remove strokes data as well.
      * sketcher.clear();
      * // If you only need to clear the canvas, just do:
      * sketcher.handler(function(elem, data) {
@@ -188,14 +190,15 @@
     },
     /**
      * Reinitializes a sketchable canvas with given configuration options.
-     * @param {Object} [opts] - Configuration (default: {@link Sketchable#defaults}).
+     * @param {Object} [opts] Configuration (default: {@link Sketchable#defaults}).
      * @return {Sketchable}
      * @memberof Sketchable
      * @example
+     * var sketcher = new Sketchable('#my-canvas');
      * // Reset default state.
-     * new Sketchable('canvas').reset();
+     * sketcher.reset();
      * // Reset with custom configuration.
-     * new Sketchable('canvas').reset({ interactive:false });
+     * sketcher.reset({ interactive:false });
      */
     reset: function(opts) {
       var elem = this.elem, data = dataBind(elem)[namespace], options = data.options;
@@ -212,8 +215,9 @@
      * @return {Sketchable}
      * @memberof Sketchable
      * @example
+     * var sketcher = new Sketchable('#my-canvas');
      * // This will leave the canvas element intact.
-     * new Sketchable('canvas').destroy();
+     * sketcher.destroy();
      */
     destroy: function() {
       var elem = this.elem, data = dataBind(elem)[namespace], options = data.options;
@@ -241,7 +245,7 @@
    * @type {Object}
    * @static
    * @example
-   * // All plugins are created after instance initialization:
+   * // Note: All plugins are created after instance initialization.
    * Sketchable.prototype.plugins['your-awesome-plugin'] = function(instance) {
    *   // Do something with the Sketchable instance.
    * }
@@ -464,7 +468,7 @@
     // Don't handle right clicks.
     if (Event.isRightClick(e)) return false;
 
-    var idx     = e.identifier || 0,
+    var idx   = e.identifier || 0,
       elem    = e.target,
       data    = dataBind(elem)[namespace],
       options = data.options;
@@ -505,7 +509,7 @@
    * @ignore
    */
   function moveHandler(e) {
-    var idx     = e.identifier || 0,
+    var idx   = e.identifier || 0,
       elem    = e.target,
       data    = dataBind(elem)[namespace],
       options = data.options;
@@ -543,7 +547,7 @@
    * @ignore
    */
   function upHandler(e) {
-    var idx     = e.identifier || 0,
+    var idx   = e.identifier || 0,
       elem    = e.target,
       data    = dataBind(elem)[namespace],
       options = data.options;

@@ -100,7 +100,7 @@
      * @memberof $.fn.sketchable
      * @example
      * // Getter: read associated strokes.
-     * $('canvas').sketchable('strokes');
+     * var strokes = $('canvas').sketchable('strokes');
      * // Setter: replace associated strokes.
      * $('canvas').sketchable('strokes', [ [arr1], ..., [arrN] ]);
      */
@@ -468,7 +468,7 @@
     // Don't handle right clicks.
     if (e.which === 3) return false;
 
-    var idx     = e.identifier || 0,
+    var idx   = e.identifier || 0,
       elem    = $(e.target),
       data    = elem.data(namespace),
       options = data.options;
@@ -509,7 +509,7 @@
    * @private
    */
   function moveHandler(e) {
-    var idx     = e.identifier || 0,
+    var idx   = e.identifier || 0,
       elem    = $(e.target),
       data    = elem.data(namespace),
       options = data.options;
@@ -547,7 +547,7 @@
    * @private
    */
   function upHandler(e) {
-    var idx     = e.identifier || 0,
+    var idx   = e.identifier || 0,
       elem    = $(e.target),
       data    = elem.data(namespace),
       options = data.options;

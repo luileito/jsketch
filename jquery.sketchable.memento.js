@@ -233,7 +233,7 @@
           return data.memento.redo();
         },
         /**
-         * Save a snapshot of the current CANVAS status.
+         * Save a snapshot of the current CANVAS.
          * @return {MementoCanvas}
          * @memberof $.fn.sketchable
          * @example jqueryElem.sketchable('memento.save');
@@ -243,9 +243,9 @@
           return data.memento.save();
         },
         /**
-         * Read current snapshot of the CANVAS state: `{ image:String, strokes:Array }`.
+         * Read current CANVAS state: `{ image:String, strokes:Array }`.
          * @return {Object}
-         * @memberof Sketchable
+         * @memberof $.fn.sketchable
          * @example var state = jqueryElem.sketchable('memento.state');
          */
         state: function() {
@@ -253,12 +253,12 @@
           return data.memento.state();
         },
         /**
-         * Restore a snapshot of the CANVAS.
+         * Restore a CANVAS state.
          * @param {Object} state
          * @param {String} state.image Base64 image.
          * @param {Array} state.strokes Associated strokes.
          * @return {MementoCanvas}
-         * @memberof Sketchable
+         * @memberof $.fn.sketchable
          * @example jqueryElem.sketchable('memento.restore', state);
          */
         restore: function(state) {

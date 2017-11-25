@@ -301,8 +301,9 @@
      * @ignore
      */
     radialCircle: function(x, y, radius, glowSize, colors) {
-      var g = this.context.createRadialGradient(x, y, radius, x, y, glowSize || 5);
-      if (!colors || colors.constructor.name !== 'array') {
+      if (typeof glowSize === 'undefined' || glowSize < 0) glowSize = 1;
+      var g = this.context.createRadialGradient(x, y, radius, x, y, glowSize);
+      if (!colors || colors.constructor.name.toLowerCase() !== 'array') {
         colors = [this.context.fillStyle, 'white'];
       }
       for (var s = 0; s < colors.length; s++) {

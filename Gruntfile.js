@@ -11,6 +11,7 @@ module.exports = function(grunt) {
           'sketchable.utils.js',
           'sketchable.js',
           'sketchable.memento.js',
+          'sketchable.animate.js',
         ],
         dest: 'dist/sketchable.full.js'
       },
@@ -19,6 +20,7 @@ module.exports = function(grunt) {
           'jsketch.js',
           'jquery.sketchable.js',
           'jquery.sketchable.memento.js',
+          'jquery.sketchable.animate.js',
         ],
         dest: 'dist/jquery.sketchable.full.js'
       }
@@ -40,6 +42,11 @@ module.exports = function(grunt) {
           'dist/sketchable.memento.min.js': [ 'sketchable.memento.js' ]
         }
       },
+      animate: {
+        files: {
+          'dist/sketchable.animate.min.js': [ 'sketchable.animate.js' ]
+        }
+      },
       full: {
         options: {
           banner: '/*! <%= pkg.description %> (all in one) | v<%= pkg.version %> | <%= grunt.template.today("yyyy-mm-dd") %> */\n'
@@ -56,6 +63,11 @@ module.exports = function(grunt) {
       jqMemento: {
         files: {
           'dist/jquery.sketchable.memento.min.js': [ 'jquery.sketchable.memento.js' ]
+        }
+      },
+      jqAnimate: {
+        files: {
+          'dist/jquery.sketchable.animate.min.js': [ 'jquery.sketchable.animate.js' ]
         }
       },
       jqFull: {
@@ -84,11 +96,13 @@ module.exports = function(grunt) {
   grunt.registerTask('jsketch',     [ 'uglify:jsketch', 'clean' ]);
   grunt.registerTask('sketchable',  [ 'uglify:sketchable', 'uglify:jqSketchable', 'clean' ]);
   grunt.registerTask('memento',     [ 'uglify:memento', 'uglify:jqMemento', 'clean' ]);
+  grunt.registerTask('animate',     [ 'uglify:animate', 'uglify:jqAnimate', 'clean' ]);
 
   grunt.registerTask('default',     [
                                       'full',
                                       'jsketch',
                                       'sketchable',
                                       'memento',
+                                      'animate',
                                     ]);
 };

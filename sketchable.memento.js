@@ -222,7 +222,8 @@
          */
         undo: function() {
           var data = dataBind(instance.elem)[namespace];
-          return data.memento.undo();
+          data.memento.undo();
+          return instance;
         },
         /**
          * Goes forward to the previous CANVAS state, if available.
@@ -232,7 +233,8 @@
          */
         redo: function() {
           var data = dataBind(instance.elem)[namespace];
-          return data.memento.redo();
+          data.memento.redo();
+          return instance;
         },
         /**
          * Save a snapshot of the current CANVAS.
@@ -242,7 +244,8 @@
          */
         save: function() {
           var data = dataBind(instance.elem)[namespace];
-          return data.memento.save();
+          data.memento.save();
+          return instance;
         },
         /**
          * Read current CANVAS state: `{ image:String, strokes:Array }`.
@@ -252,7 +255,8 @@
          */
         state: function() {
           var data = dataBind(instance.elem)[namespace];
-          return data.memento.state();
+          data.memento.state();
+          return instance;
         },
         /**
          * Restore a CANVAS state.
@@ -267,7 +271,8 @@
          */
         restore: function(state) {
           var data = dataBind(instance.elem)[namespace];
-          return data.memento.restore(state);
+          data.memento.restore(state);
+          return instance;
         },
       },
     });

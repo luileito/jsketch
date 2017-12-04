@@ -186,8 +186,8 @@
     // A helper function to override user-defined event listeners.
     function override(evName) {
       // Flag event override so that it doesn't get fired more than once.
-      if (config.options['_bound$' + evName]) return;
-      config.options['_bound$' + evName] = true;
+      if (config.options['_bound.memento$' + evName]) return;
+      config.options['_bound.memento$' + evName] = true;
 
       if (config.options.events && typeof config.options.events[evName] === 'function') {
         // User has defined this event, so wrap it.

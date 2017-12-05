@@ -15,11 +15,13 @@ Available also as a jQuery plugin.
 
 ## TL;DR:
 
+### Vanilla JavaScript version
 Add `<script src="dist/sketchable.full.min.js"></script>` to your page and just do:
 ```js
 var sketcher = new Sketchable('canvas');
 ```
 
+### jQuery version
 Add `<script src="dist/jquery.sketchable.full.min.js"></script>` to your page and just do:
 ```js
 var $sketcher = $('canvas').sketchable();

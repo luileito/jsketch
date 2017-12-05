@@ -24,8 +24,8 @@
 ;(function(window) {
   /**
    * @constructor
-   * @param {Object|Strig} elem DOM element or selector.
-   * @param {Object} [options] Configuration (default: {@link Sketchable#defaults}).
+   * @param {object|strig} elem - DOM element or selector.
+   * @param {object} [options] - Configuration (default: {@link Sketchable#defaults}).
    */
   function jSketch(elem, options) {
     if (!elem) throw new Error('Sketchable requires a DOM element.');
@@ -50,7 +50,7 @@
   jSketch.prototype = {
     /**
      * Allows to change the drawing context at runtime.
-     * @param {Object} elem DOM element.
+     * @param {object} elem - DOM element.
      * @return jSketch
      * @memberof jSketch
      */
@@ -85,8 +85,8 @@
     },
     /**
      * Sets the dimensions of canvas.
-     * @param {Number} width New canvas width.
-     * @param {Number} height New canvas width.
+     * @param {number} width - New canvas width.
+     * @param {number} height - New canvas width.
      * @return jSketch
      * @memberof jSketch
      */
@@ -101,7 +101,7 @@
     },
     /**
      * Sets the background color of canvas.
-     * @param {String} color An HTML color.
+     * @param {string} color - An HTML color.
      * @return jSketch
      * @memberof jSketch
      */
@@ -113,9 +113,9 @@
     },
     /**
      * Shortcut for setting the size + background color.
-     * @param {Number} width New canvas width.
-     * @param {Number} height New canvas width.
-     * @param {String} bgcolor An HTML color.
+     * @param {number} width - New canvas width.
+     * @param {number} height - New canvas width.
+     * @param {string} bgcolor - An HTML color.
      * @return jSketch
      * @memberof jSketch
      */
@@ -125,7 +125,7 @@
     },
     /**
      * Sets the fill color.
-     * @param {String} color An HTML color.
+     * @param {string} color - An HTML color.
      * @return jSketch
      * @memberof jSketch
      */
@@ -145,11 +145,11 @@
     },
     /**
      * Sets the line style.
-     * @param {String} color An HTML color.
-     * @param {Number} thickness Line thickness.
-     * @param {String} capStyle Style of line cap.
-     * @param {String} joinStyle Style of line join.
-     * @param {String} miter Style of line miter. Only works if capStyle is "miter".
+     * @param {string} color - An HTML color.
+     * @param {number} thickness - Line thickness.
+     * @param {string} capStyle - Style of line cap.
+     * @param {string} joinStyle - Style of line join.
+     * @param {string} miter - Style of line miter. Only works if capStyle is "miter".
      * @return jSketch
      * @memberof jSketch
      */
@@ -164,8 +164,8 @@
     },
     /**
      * Move brush to a coordinate in canvas.
-     * @param {Number} x Horizontal coordinate.
-     * @param {Number} y Vertical coordinate.
+     * @param {number} x - Horizontal coordinate.
+     * @param {number} y - Vertical coordinate.
      * @return jSketch
      * @memberof jSketch
      */
@@ -175,8 +175,8 @@
     },
     /**
      * Draws line to given coordinate.
-     * @param {Number} x Horizontal coordinate.
-     * @param {Number} y Vertical coordinate.
+     * @param {number} x - Horizontal coordinate.
+     * @param {number} y - Vertical coordinate.
      * @return jSketch
      * @memberof jSketch
      */
@@ -186,10 +186,10 @@
     },
     /**
      * Draws line from point 1 to point 2.
-     * @param {Number} x1 Horizontal coordinate of point 1.
-     * @param {Number} y1 Vertical coordinate of point 1.
-     * @param {Number} x2 Horizontal coordinate of point 2.
-     * @param {Number} y2 Vertical coordinate of point 2.
+     * @param {number} x1 - Horizontal coordinate of point 1.
+     * @param {number} y1 - Vertical coordinate of point 1.
+     * @param {number} x2 - Horizontal coordinate of point 2.
+     * @param {number} y2 - Vertical coordinate of point 2.
      * @return jSketch
      * @memberof jSketch
      */
@@ -200,10 +200,10 @@
     },
     /**
      * Draws curve to given coordinate.
-     * @param {Number} x Horizontal coordinate.
-     * @param {Number} y Vertical coordinate.
-     * @param {Number} cpx Horizontal coordinate of control point.
-     * @param {Number} cpy Vertical coordinate of control point.
+     * @param {number} x - Horizontal coordinate.
+     * @param {number} y - Vertical coordinate.
+     * @param {number} cpx - Horizontal coordinate of control point.
+     * @param {number} cpy - Vertical coordinate of control point.
      * @return jSketch
      * @memberof jSketch
      */
@@ -213,12 +213,12 @@
     },
     /**
      * Draws curve from coordinate 1 to coordinate 2.
-     * @param {Number} x1 Horizontal coordinate of point 1.
-     * @param {Number} y1 Vertical coordinate of point 1.
-     * @param {Number} x2 Horizontal coordinate of point 2.
-     * @param {Number} y2 Vertical coordinate of point 2.
-     * @param {Number} cpx Horizontal coordinate of control point.
-     * @param {Number} cpy Vertical coordinate of control point.
+     * @param {number} x1 - Horizontal coordinate of point 1.
+     * @param {number} y1 - Vertical coordinate of point 1.
+     * @param {number} x2 - Horizontal coordinate of point 2.
+     * @param {number} y2 - Vertical coordinate of point 2.
+     * @param {number} cpx - Horizontal coordinate of control point.
+     * @param {number} cpy - Vertical coordinate of control point.
      * @return jSketch
      * @memberof jSketch
      */
@@ -238,10 +238,10 @@
     },
     /**
      * Draws a stroke-only rectangle.
-     * @param {Number} x Horizontal coordinate.
-     * @param {Number} y Vertical coordinate.
-     * @param {Number} width Rectangle width.
-     * @param {Number} height Rectangle height.
+     * @param {number} x - Horizontal coordinate.
+     * @param {number} y - Vertical coordinate.
+     * @param {number} width - Rectangle width.
+     * @param {number} height - Rectangle height.
      * @return jSketch
      * @memberof jSketch
      */
@@ -253,10 +253,10 @@
     },
     /**
      * Draws a filled rectangle.
-     * @param {Number} x Horizontal coordinate.
-     * @param {Number} y Vertical coordinate.
-     * @param {Number} width Rectangle width.
-     * @param {Number} height Rectangle height.
+     * @param {number} x - Horizontal coordinate.
+     * @param {number} y - Vertical coordinate.
+     * @param {number} width - Rectangle width.
+     * @param {number} height - Rectangle height.
      * @return jSketch
      * @memberof jSketch
      */
@@ -268,9 +268,9 @@
     },
     /**
      * Draws a stroke-only circle.
-     * @param {Number} x Horizontal coordinate.
-     * @param {Number} y Vertical coordinate.
-     * @param {Number} radius Circle radius.
+     * @param {number} x - Horizontal coordinate.
+     * @param {number} y - Vertical coordinate.
+     * @param {number} radius - Circle radius.
      * @return jSketch
      * @memberof jSketch
      */
@@ -283,9 +283,9 @@
     },
     /**
      * Draws a filled circle.
-     * @param {Number} x Horizontal coordinate.
-     * @param {Number} y Vertical coordinate.
-     * @param {Number} radius Circle radius.
+     * @param {number} x - Horizontal coordinate.
+     * @param {number} y - Vertical coordinate.
+     * @param {number} radius - Circle radius.
      * @return jSketch
      * @memberof jSketch
      */
@@ -381,7 +381,7 @@
     },
     /**
      * Saves given drawing settings.
-     * @param {Object} [options] Graphics options.
+     * @param {object} [options] - Graphics options.
      * @return jSketch
      * @memberof jSketch
      */
@@ -404,9 +404,9 @@
     },
     /**
      * Draws an image.
-     * @param {String} src Image source path.
-     * @param {Number} [x] Horizontal coordinate.
-     * @param {Number} [y] Vertical coordinate.
+     * @param {string} src - Image source path.
+     * @param {number} [x] - Horizontal coordinate.
+     * @param {number} [y] - Vertical coordinate.
      * @return jSketch
      * @memberof jSketch
      */

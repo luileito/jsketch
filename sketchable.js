@@ -17,8 +17,8 @@
   /**
    * Initialize the plugin: make CANVAS elements drawable.<br>
    * Contrary to the jQuery version, only one element can be passed in at a time.
-   * @param {Object|Strig} elem DOM element or selector.
-   * @param {Object} [options] Configuration (default: {@link Sketchable#defaults}).
+   * @param {object|string} elem - DOM element or selector.
+   * @param {object} [options] - Configuration (default: {@link Sketchable#defaults}).
    * @class
    * @global
    * @version 2.1
@@ -50,7 +50,7 @@
   Sketchable.prototype = {
     /**
      * Initialize the selected CANVAS elements.
-     * @param {Object} [opts] Configuration (default: {@link Sketchable#defaults}).
+     * @param {object} [opts] - Configuration (default: {@link Sketchable#defaults}).
      * @return {Sketchable}
      * @memberof Sketchable
      * @protected
@@ -103,7 +103,7 @@
     },
     /**
      * Change configuration of an existing Sketchable instance.
-     * @param {Object} [opts] Configuration (default: {@link Sketchable#defaults}).
+     * @param {object} [opts] - Configuration (default: {@link Sketchable#defaults}).
      * @return {Sketchable}
      * @memberof Sketchable
      * @example
@@ -124,8 +124,8 @@
     },
     /**
      * Get/Set drawing data strokes sequence.
-     * @param {Array} [arr] Multidimensional array of [x,y,time,status] tuples; status = 0 (pen down) or 1 (pen up).
-     * @return {Array|Sketchable} Strokes object on get, Sketchable instance on set (with the new data attached).
+     * @param {array} [arr] - Multidimensional array of [x,y,time,status] tuples; status = 0 (pen down) or 1 (pen up).
+     * @return {array|Sketchable} Strokes object on get, Sketchable instance on set (with the new data attached).
      * @memberof Sketchable
      * @example
      * var sketcher = new Sketchable('#my-canvas');
@@ -146,7 +146,7 @@
     },
     /**
      * Allows low-level manipulation of the sketchable canvas.
-     * @param {Function} callback Callback function, invoked with 2 arguments: elem (CANVAS element) and data (private element data).
+     * @param {function} callback - Callback function, invoked with 2 arguments: elem (CANVAS element) and data (private element data).
      * @return {Sketchable}
      * @memberof Sketchable
      * @example
@@ -190,7 +190,7 @@
     },
     /**
      * Reinitializes a sketchable canvas with given configuration options.
-     * @param {Object} [opts] Configuration (default: {@link Sketchable#defaults}).
+     * @param {object} [opts] - Configuration (default: {@link Sketchable#defaults}).
      * @return {Sketchable}
      * @memberof Sketchable
      * @example
@@ -242,7 +242,7 @@
   /**
    * Plugins store.
    * @namespace Sketchable.prototype.plugins
-   * @type {Object}
+   * @type {object}
    * @static
    * @example
    * // Note: All plugins are created after instance initialization.
@@ -256,7 +256,7 @@
    * Default configuration.
    * Note that `events.mouse*` callbacks are triggered only if <tt>interactive</tt> is set to <tt>true</tt>.
    * @namespace Sketchable.prototype.defaults
-   * @type {Object}
+   * @type {object}
    * @static
    * @example
    * // The following is the default configuration:

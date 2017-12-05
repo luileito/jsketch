@@ -16,7 +16,7 @@
    * and is part of the {@link Sketchable.plugins.memento} plugin.
    * @class
    * @version 2.1
-   * @param {Sketchable} instance Sketchable element.
+   * @param {Sketchable} instance - Sketchable element.
    * @example
    * var sketcher = new Sketchable('canvas');
    * // This is internally done by the plugin, plus some checks:
@@ -29,8 +29,8 @@
     var self  = this;
     /**
      * Update state.
-     * @param {Image} snapshot Image object.
-     * @param {Array} strokes Strokes associated with snapshot.
+     * @param {Image} snapshot - Image object.
+     * @param {array} strokes - Strokes associated with snapshot.
      * @private
      */
     function draw(snapshot, strokes) {
@@ -50,15 +50,15 @@
      * Key event manager.
      *  - Undo: "Ctrl + Z"
      *  - Redo: "Ctrl + Y" or "Ctrl + Shift + Z"
-     * @param {Object} e DOM event.
+     * @param {object} ev - DOM event.
      * @private
      * @todo Decouple shortcut definition.
      */
-    function keyManager(e) {
-      if (e.ctrlKey) {
-        switch (e.which) {
+    function keyManager(ev) {
+      if (ev.ctrlKey) {
+        switch (ev.which) {
         case 26: // Z
-          if (e.shiftKey) self.redo();
+          if (ev.shiftKey) self.redo();
           else self.undo();
           break;
         case 25: // Y
@@ -103,14 +103,14 @@
     };
     /**
      * Save current state.
-     * @param {Object} evt DOM event.
+     * @param {object} ev - DOM event.
      * @return {MementoCanvas} Class instance.
      */
-    this.save = function(evt) {
+    this.save = function(ev) {
       instance.handler(function(elem, data) {
         // With multitouch events, only the first event should be used to store a snapshot.
         // Then, the subsequent multitouch events must update current strokes data.
-        if (evt && evt.identifier > 0) {
+        if (ev && ev.identifier > 0) {
           stack[stpos].strokes = data.strokes.slice();
         } else {
           stack.push({image: elem.toDataURL(), strokes: data.strokes.slice()});
@@ -121,7 +121,7 @@
     };
     /**
      * Read current state: `{ image:String, strokes:Array }`.
-     * @return {Object}
+     * @return {object}
      */
     this.state = function() {
       // Create a fresh copy of the current state.
@@ -129,7 +129,8 @@
     };
     /**
      * Restore state.
-     * @param {Object} state Canvas state: `{ image:String, strokes:Array }`. Default: current state.
+     * @param {object} state - Canvas state: `{ image:String, strokes:Array }`. Default: current state.
+     * @return {MementoCanvas} Class instance.
      * @private
      */
     this.restore = function(state) {
@@ -165,7 +166,7 @@
 
   /**
    * Memento plugin constructor for Sketchable instances.
-   * @param {Sketchable} instance Sketchable element.
+   * @param {Sketchable} instance - Sketchable element.
    * @memberof Sketchable#plugins
    */
   Sketchable.prototype.plugins.memento = function(instance) {
@@ -176,8 +177,8 @@
       clear: function(elem, data) {
         data.memento.reset();
       },
-      mouseup: function(elem, data, evt) {
-        data.memento.save(evt);
+      mouseup: function(elem, data, ev) {
+        data.memento.save(ev);
       },
       destroy: function(elem, data) {
         data.memento.destroy();
@@ -217,7 +218,7 @@
       memento: {
         /**
          * Goes back to the previous CANVAS state, if available.
-         * @return {MementoCanvas}
+         * @return {Sketchable} Sketchable instance.
          * @memberof Sketchable
          * @example sketchableInstance.memento.undo();
          */
@@ -228,7 +229,7 @@
         },
         /**
          * Goes forward to the previous CANVAS state, if available.
-         * @return {MementoCanvas}
+         * @return {Sketchable} Sketchable instance.
          * @memberof Sketchable
          * @example sketchableInstance.memento.redo();
          */
@@ -239,7 +240,7 @@
         },
         /**
          * Save a snapshot of the current CANVAS.
-         * @return {MementoCanvas}
+         * @return {Sketchable} Sketchable instance.
          * @memberof Sketchable
          * @example sketchableInstance.memento.save();
          */
@@ -250,21 +251,20 @@
         },
         /**
          * Read current CANVAS state: `{ image:String, strokes:Array }`.
-         * @return {Object}
+         * @return {object}
          * @memberof Sketchable
          * @example var state = sketchableInstance.memento.state();
          */
         state: function() {
           var data = dataBind(instance.elem)[namespace];
-          data.memento.state();
-          return instance;
+          return data.memento.state();
         },
         /**
          * Restore a CANVAS state.
-         * @param {Object} state
-         * @param {String} state.image Base64 image.
-         * @param {Array} state.strokes Associated strokes.
-         * @return {MementoCanvas}
+         * @param {object} state - State data.
+         * @param {string} state.image - Base64 image.
+         * @param {array} state.strokes - Associated strokes.
+         * @return {Sketchable} Sketchable instance.
          * @memberof Sketchable
          * @example
          * var someState = sketchableInstance.memento.state();

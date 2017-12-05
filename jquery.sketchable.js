@@ -6,8 +6,8 @@
 /**
  * @method $
  * @description jQuery constructor. See {@link https://jquery.com}
- * @param {String} selector jQuery selector.
- * @return {Object} jQuery
+ * @param {string} selector - jQuery selector.
+ * @return {object} jQuery
  */
 /**
  * @namespace $.fn
@@ -25,7 +25,7 @@
   var api = {
     /**
      * Initialize the selected jQuery objects.
-     * @param {Object} [opts] Configuration (default: {@link $.fn.sketchable.defaults}).
+     * @param {object} [opts] - Configuration (default: {@link $.fn.sketchable.defaults}).
      * @return jQuery
      * @memberof $.fn.sketchable
      * @ignore
@@ -74,7 +74,7 @@
     },
     /**
      * Change configuration of an existing jQuery Sketchable element.
-     * @param {Object} [opts] Configuration (default: {@link $.fn.sketchable.defaults}).
+     * @param {object} [opts] - Configuration (default: {@link $.fn.sketchable.defaults}).
      * @return jQuery
      * @memberof $.fn.sketchable
      * @example
@@ -95,7 +95,7 @@
     },
     /**
      * Get/Set drawing data strokes sequence.
-     * @param {Array} [arr] Multidimensional array of [x,y,time,status] tuples; status = 0 (pen down) or 1 (pen up).
+     * @param {array} [arr] - Multidimensional array of [x,y,time,status] tuples; status = 0 (pen down) or 1 (pen up).
      * @return Strokes object on get, jQuery instance on set (with the new data attached).
      * @memberof $.fn.sketchable
      * @example
@@ -117,7 +117,7 @@
     },
     /**
      * Allow low-level manipulation of the sketchable canvas.
-     * @param {Function} callback Callback function, invoked with 2 arguments: elem (CANVAS element) and data (private element data).
+     * @param {function} callback - Callback function, invoked with 2 arguments: elem (CANVAS element) and data (private element data).
      * @return jQuery
      * @memberof $.fn.sketchable
      * @example
@@ -160,7 +160,7 @@
     },
     /**
      * Reinitialize a sketchable canvas with given configuration options.
-     * @param {Object} [opts] Configuration (default: {@link $.fn.sketchable.defaults}).
+     * @param {object} [opts] - Configuration (default: {@link $.fn.sketchable.defaults}).
      * @return jQuery
      * @memberof $.fn.sketchable
      * @example
@@ -212,7 +212,7 @@
    * Create a <tt>jQuery Sketchable</tt> instance.
    * This is a jQuery wrapper for the <tt>jSketch</tt> drawing class.
    * @namespace $.fn.sketchable
-   * @param {String|Object} method Method to invoke, or a configuration object.
+   * @param {string|object} method - Method to invoke, or a configuration object.
    * @return jQuery
    * @version 2.1
    * @author Luis A. Leiva
@@ -243,7 +243,7 @@
    * Public API. Provides access to all methods of jQuery Sketchable instances.<br>
    * Note: This is equivalent to accessing `Sketchable.prototype` in the non-jQuery version.
    * @namespace $.fn.sketchable.api
-   * @type {Object}
+   * @type {object}
    * @see Sketchable.prototype
    */
   $.fn.sketchable.api = api;
@@ -251,7 +251,7 @@
   /**
    * Plugins store.
    * @namespace $.fn.sketchable.plugins
-   * @type {Object}
+   * @type {object}
    * @example
    * // All plugins are created after instance initialization:
    * $.fn.sketchable.plugins['your-awesome-plugin'] = function($instance) {
@@ -264,7 +264,7 @@
    * Default configuration.
    * Note that `events.mouse*` callbacks are triggered only if <tt>interactive</tt> is set to <tt>true</tt>.
    * @namespace $.fn.sketchable.defaults
-   * @type {Object}
+   * @type {object}
    * @example
    * // The following is the default configuration:
    * $('canvas').sketchable({

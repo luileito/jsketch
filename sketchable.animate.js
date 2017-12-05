@@ -15,7 +15,7 @@
    * Brings animation capabilities to Sketchable elements.
    * @class
    * @version 1.0
-   * @param {Sketchable} instance Sketchable element.
+   * @param {Sketchable} instance - Sketchable element.
    */
   function AnimateSketch(instance) {
     var self = this;
@@ -73,10 +73,10 @@
      * Draw line on jSketch canvas at time t.
      * Optionally set graphics options.
      * @private
-     * @param sketch     Object jSketch canvas.
-     * @param coords     Array  Stroke coordinates.
-     * @param t          Int    Time iterator.
-     * @param [graphics] Object Graphics options.
+     * @param {object} sketch - jSketch canvas.
+     * @param {array} coords - Stroke coordinates.
+     * @param {number} t - Time iterator.
+     * @param {object} [graphics] - Graphics options.
      */
     function drawLine(sketch, coords, t, graphics) {
       var prevPt = coords[t - 1];
@@ -97,8 +97,8 @@
     /**
      * Convert point array to object.
      * @private
-     * @param {Array} p Point, having [x,y,t] items.
-     * @return {Object}
+     * @param {array} p - Point, having at least [x,y,t] items.
+     * @return {object}
      */
     function toPoint(p) {
       if (!(p instanceof Array)) return p;
@@ -108,7 +108,7 @@
 
   /**
    * Animate plugin constructor for jQuery Sketchable instances.
-   * @param {Sketchable} instance Sketchable element.
+   * @param {Sketchable} instance - Sketchable element.
    * @memberof Sketchable#plugins
    */
   Sketchable.prototype.plugins.animate = function(instance) {
@@ -157,7 +157,7 @@
       animate: {
         /**
          * Animate canvas strokes.
-         * @return {AnimateSketch}
+         * @return {Sketchable} instance Sketchable element.
          * @memberof Sketchable
          * @example sketchableInstance.strokes(strokeArray).animate.strokes();
          * @example
@@ -168,7 +168,7 @@
          *       // Animation started.
          *     },
          *     animationend: function(elem, data) {
-         *       // Animation finished.
+         *       // Animation ended.
          *     },
          *   }
          * })

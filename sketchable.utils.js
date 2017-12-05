@@ -15,7 +15,8 @@
    * Add/Read private data to a DOM element.
    * @global
    * @method
-   * @param {Object} elem - DOM element to attach data to.
+   * @param {object} elem - DOM element to bind data to.
+   * @return {void}
    * @example
    * var elem = document.getElementById('foo');
    * // Attach private data to element:
@@ -37,16 +38,21 @@ window.Event = {
   /**
    * Add event to DOM element.
    * @memberof module:Event
-   * @param {Object} elem - DOM element.
-   * @param {String} type - Event type.
-   * @param {Function} fn - Callback.
+   * @param {object|string} elem - DOM element or selector.
+   * @param {string} type - Event type.
+   * @param {function} fn - Callback.
+   * @return {void}
    * @example
    * Event.add(document.getElementById('foo'), 'click', function fooClick(evt) {
+   *   // Element was clicked.
+   * });
+   * Event.add('#foo', 'click', function fooClick(evt) {
    *   // Element was clicked.
    * });
    */
   add: function(elem, type, fn) {
     if (!elem) return false;
+    if (typeof elem === 'string') elem = document.querySelector(elem);
     if (elem.addEventListener) { // W3C standard
       elem.addEventListener(type, fn, false);
     } else if (elem.attachEvent) { // Old IE versions
@@ -60,15 +66,18 @@ window.Event = {
   /**
    * Remove event from DOM element.
    * @memberof module:Event
-   * @param {Object} elem - DOM element.
-   * @param {String} type - Event type.
-   * @param {Function} fn - Callback.
+   * @param {object|string} elem - DOM element or selector.
+   * @param {string} type - Event type.
+   * @param {function} fn - Callback.
+   * @return {void}
    * @example
    * // Assuming elemen had the `fooClick` function (see previous example):
    * Event.remove(document.getElementById('foo'), 'click', fooClick);
+   * Event.remove('#foo'), 'click', fooClick);
    */
   remove: function(elem, type, fn) {
     if (!elem) return false;
+    if (typeof elem === 'string') elem = document.querySelector(elem);
     if (elem.removeEventListener) { // W3C standard
       elem.removeEventListener(type, fn, false);
     } else if (elem.detachEvent) { // Old IE versions
@@ -80,8 +89,8 @@ window.Event = {
   /**
    * Determine if an event is a "right click" event.
    * @memberof module:Event
-   * @param {Object} ev - DOM event.
-   * @return {Boolean}
+   * @param {object} ev - DOM event.
+   * @return {boolean}
    * @example
    * // Assume this function is a click event listener.
    * function clickHandler(evt) {
@@ -101,8 +110,8 @@ window.Event = {
  * A handy method to (deep) extend an object.
  * The input object is modified.
  * @global
- * @param {Object} myObj - Input object.
- * @return {Object}
+ * @param {object} myObj - Input object.
+ * @return {object}
  * @example
  * var one = { foo:1, bar: { a:true, b:false } };
  * var two = { bar: { a:false } };

@@ -14,7 +14,7 @@
    * and is part of the {@link $.fn.sketchable.plugins.memento} plugin.
    * @class
    * @version 2.1
-   * @param {Sketchable} $instance jQuery Sketchable element.
+   * @param {jQuery} $instance - jQuery sketchable element.
    * @example
    * var sketcher = $('canvas').sketchable();
    * // This is internally done by the plugin, plus some checks:
@@ -27,8 +27,8 @@
     var self  = this;
     /**
      * Update state.
-     * @param {Image} snapshot Image object.
-     * @param {Array} strokes Strokes associated with snapshot.
+     * @param {Image} snapshot - Image object.
+     * @param {array} strokes - Strokes associated with snapshot.
      * @private
      */
     function draw(snapshot, strokes) {
@@ -48,15 +48,15 @@
      * Key event manager.
      *  - Undo: "Ctrl + Z"
      *  - Redo: "Ctrl + Y" or "Ctrl + Shift + Z"
-     * @param {Object} e DOM event.
+     * @param {object} ev - DOM event.
      * @private
      * @todo Decouple shortcut definition, perhaps via jquery.hotkeys plugin.
      */
-    function keyManager(e) {
-      if (e.ctrlKey) {
-        switch (e.which) {
+    function keyManager(ev) {
+      if (ev.ctrlKey) {
+        switch (ev.which) {
         case 26: // Z
-          if (e.shiftKey) self.redo();
+          if (ev.shiftKey) self.redo();
           else self.undo();
           break;
         case 25: // Y
@@ -101,14 +101,14 @@
     };
     /**
      * Save current state.
-     * @param {Object} evt DOM event.
+     * @param {object} ev - DOM event.
      * @return {MementoCanvas} Class instance.
      */
-    this.save = function(evt) {
+    this.save = function(ev) {
       $instance.sketchable('handler', function(elem, data) {
         // With multitouch events, only the first event should be used to store a snapshot.
         // Then, the subsequent multitouch events must update current strokes data.
-        if (evt && evt.identifier > 0) {
+        if (ev && ev.identifier > 0) {
           stack[stpos].strokes = data.strokes.slice();
         } else {
           stack.push({image: elem[0].toDataURL(), strokes: data.strokes.slice()});
@@ -119,7 +119,7 @@
     };
     /**
      * Read current state: `{ image:String, strokes:Array }`.
-     * @return {Object}
+     * @return {object}
      */
     this.state = function() {
       // Create a fresh copy of the current state.
@@ -127,7 +127,8 @@
     };
     /**
      * Restore state.
-     * @param {Object} state Canvas state: `{ image:String, strokes:Array }`. Default: current state.
+     * @param {object} state - Canvas state: `{ image:String, strokes:Array }`. Default: current state.
+     * @return {MementoCanvas} Class instance.
      * @private
      */
     this.restore = function(state) {
@@ -163,7 +164,7 @@
 
   /**
    * Memento plugin constructor for jQuery Sketchable instances.
-   * @param {Object} $instance jQuery Sketchable instance.
+   * @param {jQuery} $instance - jQuery sketchable instance.
    * @memberof $.fn.sketchable.plugins
    */
   $.fn.sketchable.plugins.memento = function($instance) {
@@ -174,8 +175,8 @@
       clear: function(elem, data) {
         data.memento.reset();
       },
-      mouseup: function(elem, data, evt) {
-        data.memento.save(evt);
+      mouseup: function(elem, data, ev) {
+        data.memento.save(ev);
       },
       destroy: function(elem, data) {
         data.memento.destroy();
@@ -202,7 +203,7 @@
       }
     }
 
-    // Note: the init event is used to create sketchable instances,
+    // Note: the init event is used to create jQuery sketchable instances,
     // therefore it should NOT be overriden.
     var events = 'mouseup clear destroy'.split(' ');
     for (var i = 0; i < events.length; i++) {
@@ -215,7 +216,7 @@
       memento: {
         /**
          * Goes back to the previous CANVAS state, if available.
-         * @return {MementoCanvas}
+         * @return {jQuery} jQuery sketchable element.
          * @memberof $.fn.sketchable
          * @example jqueryElem.sketchable('memento.undo');
          */
@@ -226,7 +227,7 @@
         },
         /**
          * Goes forward to the previous CANVAS state, if available.
-         * @return {MementoCanvas}
+         * @return {jQuery} jQuery sketchable element.
          * @memberof $.fn.sketchable
          * @example jqueryElem.sketchable('memento.redo');
          */
@@ -237,7 +238,7 @@
         },
         /**
          * Save a snapshot of the current CANVAS.
-         * @return {MementoCanvas}
+         * @return {jQuery} jQuery sketchable element.
          * @memberof $.fn.sketchable
          * @example jqueryElem.sketchable('memento.save');
          */
@@ -248,21 +249,20 @@
         },
         /**
          * Read current CANVAS state: `{ image:String, strokes:Array }`.
-         * @return {Object}
+         * @return {object}
          * @memberof $.fn.sketchable
          * @example var state = jqueryElem.sketchable('memento.state');
          */
         state: function() {
           var data = $(this).data(namespace);
-          data.memento.state();
-          return $instance;
+          return data.memento.state();
         },
         /**
          * Restore a CANVAS state.
-         * @param {Object} state
-         * @param {String} state.image Base64 image.
-         * @param {Array} state.strokes Associated strokes.
-         * @return {MementoCanvas}
+         * @param {object} state - State data.
+         * @param {string} state.image - Base64 image.
+         * @param {array} state.strokes - Associated strokes.
+         * @return {jQuery} jQuery sketchable element.
          * @memberof $.fn.sketchable
          * @example jqueryElem.sketchable('memento.restore', state);
          */

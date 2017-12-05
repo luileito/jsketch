@@ -1,0 +1,28 @@
+{
+  "source": {
+    "include": [
+      "jsketch.js",
+      "sketchable.js",
+      "sketchable.utils.js",
+      "sketchable.memento.js",
+      "jquery.sketchable.js",
+      "jquery.sketchable.memento.js",
+      "README.md"
+    ]
+  },
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "templates": {
+    "cleverLinks": true,
+    "minami": {
+      "staticFiles": {
+        "paths": ["./figs/"]
+      }
+    }
+  },
+  "opts": {
+    "destination": "./docs",
+    "template": "./node_modules/minami"
+  }
+}

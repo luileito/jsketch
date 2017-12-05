@@ -140,6 +140,7 @@
       snapshot.onload = function() {
         draw(this, state.strokes);
       };
+      return this;
     };
     /**
      * Init instance. Currently just (re)attach key event listeners.

@@ -12,12 +12,14 @@ module.exports = {
     'guard-for-in': 0,
     'one-var': 0,
     'no-multi-spaces': 0,
+    'object-curly-spacing': 0,
     'require-jsdoc': 0,
     // --- BEGIN Errors ---
     'no-tabs': 2,
     'indent': ['error', 2],
     'quotes': 2,
     // --- BEGIN Warnings ---
+    'no-unused-vars': 1,
     'max-len': [1, 160],
     'comma-dangle': 1,
     'key-spacing': 1,

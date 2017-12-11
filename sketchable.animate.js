@@ -43,7 +43,7 @@
     }
 
     if (typeof events.animationstart === 'function') {
-      events.animationstart($instance, data);
+      events.animationstart(instance, data);
     }
 
     var raf = {}; // Trigger one animation per stroke.
@@ -68,7 +68,7 @@
           }
           // Advance global count and check if actual animation has ended.
           if (++pts === pointCount - 1 && typeof events.animationend === 'function') {
-            events.animationend($instance, data);
+            events.animationend(instance, data);
           }
         })();
 
@@ -96,17 +96,17 @@
      * @param {object} [graphics] - Graphics options.
      */
     function drawLine(sketch, coords, t, graphics) {
-      var prevPt = coords[t - 1];
       var currPt = coords[t];
+      var nextPt = coords[t + 1];
 
-      if (sketch.data.firstPointSize && (t === 1 || currPt.strokeId !== prevPt.strokeId)) {
-        var pt = t > 1 ? currPt : prevPt;
+      if (sketch.data.firstPointSize && (t === 1 || currPt.strokeId !== nextPt.strokeId)) {
+        var pt = t > 1 ? nextPt : currPt;
         sketch.beginFill(sketch.data.strokeStyle).fillCircle(pt.x, pt.y, sketch.data.firstPointSize);
       }
 
       sketch.lineStyle(graphics.strokeStyle, graphics.lineWidth).beginPath();
-      if (currPt.strokeId === prevPt.strokeId) {
-        sketch.line(prevPt.x, prevPt.y, currPt.x, currPt.y).stroke();
+      if (currPt.strokeId === nextPt.strokeId) {
+        sketch.line(currPt.x, currPt.y, nextPt.x, nextPt.y).stroke();
       }
       sketch.closePath();
     };

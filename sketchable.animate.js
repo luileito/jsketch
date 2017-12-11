@@ -27,46 +27,62 @@
     var events   = data.options.events;
     var graphics = data.options.graphics;
 
-    // Flatten strokes struct to easily handle multistrokes.
     var fmtStrokes = [];
+    var pointCount = 0;
     for (var s = 0; s < strokes.length; s++) {
+      var fmtCoords = [];
       var coords = strokes[s];
       for (var c = 0; c < coords.length; c++) {
+        // Add strokeId to easily handle multistrokes.
         var pt = toPoint(coords[c]);
         pt.strokeId = s;
-        fmtStrokes.push(pt);
+        fmtCoords.push(pt);
+        pointCount++;
       }
+      fmtStrokes.push(fmtCoords);
     }
 
-    var raf;
-    var frame = 1;
-    var count = fmtStrokes.length - 1;
+    if (typeof events.animationstart === 'function') {
+      events.animationstart($instance, data);
+    }
 
-    if (typeof events.animationstart === 'function') events.animationstart(instance.elem, data);
+    var raf = {}; // Trigger one animation per stroke.
+    var pts = 1;  // Will reach the total number of points.
 
-    (function loop() {
-      raf = requestAnimationFrame(loop);
+    for (var s = 0; s < fmtStrokes.length; s++) {
+      (function(s) {
+        var coords = fmtStrokes[s];
+        var frame = 0;
 
-      try {
-        drawLine(sketch, fmtStrokes, frame, graphics);
-        frame++;
-      } catch (err) {
-        console.error(err);
-        cancelAnimationFrame(raf);
-      }
+        (function loop() {
+          raf[s] = requestAnimationFrame(loop);
+          try {
+            drawLine(sketch, coords, frame, graphics);
+          } catch (err) {
+            console.error(err);
+            cancelAnimationFrame(raf[s]);
+          }
+          // Advance local count and check if current animation should end.
+          if (++frame === coords.length - 1) {
+            cancelAnimationFrame(raf[s]);
+          }
+          // Advance global count and check if actual animation has ended.
+          if (++pts === pointCount - 1 && typeof events.animationend === 'function') {
+            events.animationend($instance, data);
+          }
+        })();
 
-      if (frame == count) {
-        cancelAnimationFrame(raf);
-        if (typeof events.animationend === 'function') events.animationend(instance.elem, data);
-      }
-    })();
+      })(s);
+    }
 
     /**
      * Cancel current animation.
      * @return {AnimateSketch}.
      */
     this.cancel = function() {
-      cancelAnimationFrame(raf);
+      for (var s in raf) {
+        cancelAnimationFrame(raf[s]);
+      }
       return this;
     };
 

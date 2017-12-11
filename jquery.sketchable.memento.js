@@ -165,7 +165,7 @@
   /**
    * Memento plugin constructor for jQuery Sketchable instances.
    * @param {jQuery} $instance - jQuery sketchable instance.
-   * @memberof $.fn.sketchable.plugins
+   * @namespace $.fn.sketchable.plugins.memento
    */
   $.fn.sketchable.plugins.memento = function($instance) {
     // Access the instance configuration.
@@ -217,7 +217,7 @@
         /**
          * Goes back to the previous CANVAS state, if available.
          * @return {jQuery} jQuery sketchable element.
-         * @memberof $.fn.sketchable
+         * @memberof $.fn.sketchable.plugins.memento
          * @example jqueryElem.sketchable('memento.undo');
          */
         undo: function() {
@@ -228,7 +228,7 @@
         /**
          * Goes forward to the previous CANVAS state, if available.
          * @return {jQuery} jQuery sketchable element.
-         * @memberof $.fn.sketchable
+         * @memberof $.fn.sketchable.plugins.memento
          * @example jqueryElem.sketchable('memento.redo');
          */
         redo: function() {
@@ -239,7 +239,7 @@
         /**
          * Save a snapshot of the current CANVAS.
          * @return {jQuery} jQuery sketchable element.
-         * @memberof $.fn.sketchable
+         * @memberof $.fn.sketchable.plugins.memento
          * @example jqueryElem.sketchable('memento.save');
          */
         save: function() {
@@ -250,7 +250,7 @@
         /**
          * Read current CANVAS state: `{ image:String, strokes:Array }`.
          * @return {object}
-         * @memberof $.fn.sketchable
+         * @memberof $.fn.sketchable.plugins.memento
          * @example var state = jqueryElem.sketchable('memento.state');
          */
         state: function() {
@@ -263,7 +263,7 @@
          * @param {string} state.image - Base64 image.
          * @param {array} state.strokes - Associated strokes.
          * @return {jQuery} jQuery sketchable element.
-         * @memberof $.fn.sketchable
+         * @memberof $.fn.sketchable.plugins.memento
          * @example jqueryElem.sketchable('memento.restore', state);
          */
         restore: function(state) {

@@ -44,8 +44,6 @@
   /**
    * jSketch methods (publicly extensible).
    * @ignore
-   * @memberof jSketch
-   * @see jSketch
    */
   jSketch.prototype = {
     /**

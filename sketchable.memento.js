@@ -167,7 +167,7 @@
   /**
    * Memento plugin constructor for Sketchable instances.
    * @param {Sketchable} instance - Sketchable element.
-   * @memberof Sketchable#plugins
+   * @namespace Sketchable.plugins.memento
    */
   Sketchable.prototype.plugins.memento = function(instance) {
     // Access the instance configuration.
@@ -219,7 +219,7 @@
         /**
          * Goes back to the previous CANVAS state, if available.
          * @return {Sketchable} Sketchable instance.
-         * @memberof Sketchable
+         * @memberof Sketchable.plugins.memento
          * @example sketchableInstance.memento.undo();
          */
         undo: function() {
@@ -230,7 +230,7 @@
         /**
          * Goes forward to the previous CANVAS state, if available.
          * @return {Sketchable} Sketchable instance.
-         * @memberof Sketchable
+         * @memberof Sketchable.plugins.memento
          * @example sketchableInstance.memento.redo();
          */
         redo: function() {
@@ -241,7 +241,7 @@
         /**
          * Save a snapshot of the current CANVAS.
          * @return {Sketchable} Sketchable instance.
-         * @memberof Sketchable
+         * @memberof Sketchable.plugins.memento
          * @example sketchableInstance.memento.save();
          */
         save: function() {
@@ -252,7 +252,7 @@
         /**
          * Read current CANVAS state: `{ image:String, strokes:Array }`.
          * @return {object}
-         * @memberof Sketchable
+         * @memberof Sketchable.plugins.memento
          * @example var state = sketchableInstance.memento.state();
          */
         state: function() {
@@ -265,7 +265,7 @@
          * @param {string} state.image - Base64 image.
          * @param {array} state.strokes - Associated strokes.
          * @return {Sketchable} Sketchable instance.
-         * @memberof Sketchable
+         * @memberof Sketchable.plugins.memento
          * @example
          * var someState = sketchableInstance.memento.state();
          * sketchableInstance.memento.restore(someState);

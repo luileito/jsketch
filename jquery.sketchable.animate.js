@@ -61,6 +61,7 @@
 
     /**
      * Cancel current animation.
+     * @return {AnimateSketch}.
      */
     this.cancel = function() {
       cancelAnimationFrame(raf);
@@ -107,7 +108,7 @@
   /**
    * Animate plugin constructor for jQuery Sketchable instances.
    * @param {jQuery} $instance - jQuery Sketchable instance.
-   * @memberof $.fn.sketchable.plugins
+   * @namespace $.fn.sketchable.plugins.animate
    */
   $.fn.sketchable.plugins.animate = function($instance) {
     // Access the instance configuration.
@@ -156,7 +157,7 @@
         /**
          * Animate canvas strokes.
          * @return {jQuery} jQuery sketchable element.
-         * @memberof $.fn.sketchable
+         * @memberof $.fn.sketchable.plugins.animate
          * @example jqueryElem.sketchable('strokes', strokesArray).sketchable('animate.strokes');
          * @example
          * // Accessing event hooks:

@@ -244,7 +244,7 @@
    * Note: This is equivalent to accessing `Sketchable.prototype` in the non-jQuery version.
    * @namespace $.fn.sketchable.api
    * @type {object}
-   * @see Sketchable.prototype
+   * @see Sketchable
    */
   $.fn.sketchable.api = api;
 

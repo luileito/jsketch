@@ -5,8 +5,10 @@
       "sketchable.js",
       "sketchable.utils.js",
       "sketchable.memento.js",
+      "sketchable.animate.js",
       "jquery.sketchable.js",
       "jquery.sketchable.memento.js",
+      "jquery.sketchable.animate.js",
       "README.md"
     ]
   },

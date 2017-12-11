@@ -44,8 +44,7 @@
 
   /**
    * Sketchable prototype.
-   * @namespace Sketchable.prototype
-   * @static
+   * @ignore
    */
   Sketchable.prototype = {
     /**

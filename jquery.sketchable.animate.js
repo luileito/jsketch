@@ -1,5 +1,5 @@
 /*!
- * An animation plugin for jQuery Sketchable | v1.0 | Luis A. Leiva | MIT license
+ * An animation plugin for jQuery Sketchable | v1.1 | Luis A. Leiva | MIT license
  */
 
 /* eslint-env browser */
@@ -19,95 +19,87 @@
     var self = this;
     var data = $instance.data(namespace);
 
-    // Note: requires strokes to be set in advance.
+    // Note: To animate a sketchable canvas, strokes must be set in advance.
     var sketch   = data.sketch;
     var strokes  = data.strokes;
     var events   = data.options.events;
     var graphics = data.options.graphics;
 
+    // Reformat strokes to handle multitouch.
     var fmtStrokes = [];
-    var pointCount = 0;
     for (var s = 0; s < strokes.length; s++) {
-      var fmtCoords = [];
       var coords = strokes[s];
       for (var c = 0; c < coords.length; c++) {
-        // Add strokeId to easily handle multistrokes.
         var pt = toPoint(coords[c]);
-        pt.strokeId = s;
-        fmtCoords.push(pt);
-        pointCount++;
+        // The strokeId is not available in jsketchable < 2.2, so add it.
+        if (!pt.strokeId) pt.strokeId = s;
+        fmtStrokes.push(pt);
       }
-      fmtStrokes.push(fmtCoords);
     }
 
-    if (typeof events.animationstart === 'function') {
+    if (typeof events.animationstart === 'function')
       events.animationstart($instance, data);
-    }
 
-    var raf = {}; // Trigger one animation per stroke.
-    var pts = 1;  // Will reach the total number of points.
+    var raf;
+    var frame = 0;
 
-    for (var s = 0; s < fmtStrokes.length; s++) {
-      (function(s) {
-        var coords = fmtStrokes[s];
-        var frame = 0;
+    sketch.lineStyle(graphics.strokeStyle, graphics.lineWidth);
 
-        (function loop() {
-          raf[s] = requestAnimationFrame(loop);
-          try {
-            drawLine(sketch, coords, frame, graphics);
-          } catch (err) {
-            console.error(err);
-            cancelAnimationFrame(raf[s]);
-          }
-          // Advance local count and check if current animation should end.
-          if (++frame === coords.length - 1) {
-            cancelAnimationFrame(raf[s]);
-          }
-          // Advance global count and check if actual animation has ended.
-          if (++pts === pointCount - 1 && typeof events.animationend === 'function') {
-            events.animationend($instance, data);
-          }
-        })();
-
-      })(s);
-    }
+    (function loop() {
+      raf = requestAnimationFrame(loop);
+      // Here be dragons, thus surround by try/catch.
+      try {
+        drawLine(sketch, fmtStrokes, frame, graphics);
+      } catch (err) {
+        console.error(err);
+        cancelAnimationFrame(raf);
+      }
+      // Advance local count and check if current animation should end.
+      if (++frame === fmtStrokes.length - 1) {
+        cancelAnimationFrame(raf);
+        if (typeof events.animationend === 'function')
+          events.animationend($instance, data);
+      }
+    })();
 
     /**
      * Cancel current animation.
      * @return {AnimateSketch}.
      */
     this.cancel = function() {
-      for (var s in raf) {
-        cancelAnimationFrame(raf[s]);
-      }
+      cancelAnimationFrame(raf);
       return this;
     };
 
     /**
      * Draw line on jSketch canvas at time t.
-     * Optionally set graphics options.
      * @private
      * @param {object} sketch - jSketch canvas.
      * @param {array} coords - Stroke coordinates.
      * @param {number} t - Time iterator.
-     * @param {object} [graphics] - Graphics options.
      */
-    function drawLine(sketch, coords, t, graphics) {
+    function drawLine(sketch, coords, t) {
       var currPt = coords[t];
       var nextPt = coords[t + 1];
 
-      if (sketch.data.firstPointSize && (t === 1 || currPt.strokeId !== nextPt.strokeId)) {
-        var pt = t > 1 ? nextPt : currPt;
-        sketch.beginFill(sketch.data.strokeStyle).fillCircle(pt.x, pt.y, sketch.data.firstPointSize);
+      if (t === 0 || currPt.strokeId !== nextPt.strokeId) {
+        // Draw first point.
+        if (sketch.data.firstPointSize) {
+          var pt = t > 0 ? nextPt : currPt;
+          sketch.beginFill(sketch.data.strokeStyle)
+                .fillCircle(pt.x, pt.y, sketch.data.firstPointSize)
+                .endFill();
+        }
+        // Trigger step event for subsequent strokes.
+        if (t > 0 && typeof events.animationstep === 'function')
+          events.animationstep($instance, data);
+        // Flag stroke change.
+        sketch.closePath().beginPath();
       }
 
-      sketch.lineStyle(graphics.strokeStyle, graphics.lineWidth).beginPath();
-      if (currPt.strokeId === nextPt.strokeId) {
+      if (currPt.strokeId === nextPt.strokeId)
         sketch.line(currPt.x, currPt.y, nextPt.x, nextPt.y).stroke();
-      }
-      sketch.closePath();
-    };
+    }
 
     /**
      * Convert point array to object.
@@ -117,8 +109,9 @@
      */
     function toPoint(p) {
       if (!(p instanceof Array)) return p;
-      return { x: p[0], y: p[1], t: p[2] };
-    };
+      // Point coords is an array with 4 items: [x, y, time, is_drawing, strokeId].
+      return { x: p[0], y: p[1], time: p[2], strokeId: p[4] };
+    }
   }
 
   /**

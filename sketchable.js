@@ -1,5 +1,5 @@
 /*!
- * Sketchable | v2.1 | Luis A. Leiva | MIT license
+ * Sketchable | v2.2 | Luis A. Leiva | MIT license
  * A plugin for the jSketch drawing library.
  */
 
@@ -21,7 +21,7 @@
    * @param {object} [options] - Configuration (default: {@link Sketchable#defaults}).
    * @class
    * @global
-   * @version 2.1
+   * @version 2.2
    * @author Luis A. Leiva
    * @license MIT
    * @example
@@ -80,7 +80,8 @@
         // This will store one stroke per touching finger.
         coords: {},
         // Date of first coord, used as time origin.
-        timestamp: (new Date).getTime(),
+        // Will be initialized on drawing the first stroke.
+        timestamp: 0,
         // Save a pointer to the drawing canvas (jSketch instance).
         sketch: sketch,
         // Save also a pointer to the Sketchable instance.
@@ -94,9 +95,9 @@
       // Trigger init event.
       if (typeof options.events.init === 'function')
         options.events.init(elem, data);
-
       // Initialize plugins.
-      for (var name in this.plugins) this.plugins[name](this);
+      for (var name in this.plugins)
+        this.plugins[name](this);
       // Make methods chainable.
       return this;
     },
@@ -381,6 +382,7 @@
     return {
       x: Math.round(e.pageX - pos.left),
       y: Math.round(e.pageY - pos.top),
+      time: Date.now(),
     };
   };
 
@@ -391,15 +393,14 @@
     // Current coords are already initialized.
     var coords = data.coords[idx];
 
-    var time = (new Date).getTime();
     if (data.options.relTimestamps) {
       // The first timestamp is relative to initialization time;
       // thus fix it so that it is relative to the timestamp of the first stroke.
-      if (data.strokes.length === 0 && coords.length === 0) data.timestamp = time;
-      time -= data.timestamp;
+      if (data.strokes.length === 0 && coords.length === 0) data.timestamp = pt.time;
+      pt.time -= data.timestamp;
     }
 
-    coords.push([pt.x, pt.y, time, +data.sketch.isDrawing]);
+    coords.push([pt.x, pt.y, pt.time, +data.sketch.isDrawing, idx]);
 
     // Check if consecutive points should be removed.
     if (data.options.filterCoords && coords.length > 1) {
@@ -570,7 +571,10 @@
    * @ignore
    */
   function execTouchEvent(e, callback) {
-    var elem = e.target, data = dataBind(elem)[namespace], options = data.options;
+    var elem  = e.target,
+      data    = dataBind(elem)[namespace],
+      options = data.options;
+
     if (options.multitouch) {
       // Track all fingers.
       var touches = e.changedTouches;

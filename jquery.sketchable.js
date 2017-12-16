@@ -1,5 +1,5 @@
 /*!
- * jQuery sketchable | v2.1 | Luis A. Leiva | MIT license
+ * jQuery sketchable | v2.2 | Luis A. Leiva | MIT license
  * A jQuery plugin for the jSketch drawing library.
  */
 
@@ -57,7 +57,8 @@
           // This will store one stroke per touching finger.
           coords: {},
           // Date of first coord, used as time origin.
-          timestamp: (new Date).getTime(),
+          // Will be initialized on drawing the first stroke.
+          timestamp: 0,
           // Save a pointer to the drawing canvas (jSketch instance).
           sketch: sketch,
           // Save also a pointer to the given options.
@@ -214,7 +215,7 @@
    * @namespace $.fn.sketchable
    * @param {string|object} method - Method to invoke, or a configuration object.
    * @return jQuery
-   * @version 2.1
+   * @version 2.2
    * @author Luis A. Leiva
    * @license MIT license
    * @example
@@ -382,6 +383,7 @@
     return {
       x: Math.round(e.pageX - pos.left),
       y: Math.round(e.pageY - pos.top),
+      time: Date.now(),
     };
   };
 
@@ -392,15 +394,14 @@
     // Current coords are already initialized.
     var coords = data.coords[idx];
 
-    var time = (new Date).getTime();
     if (data.options.relTimestamps) {
       // The first timestamp is relative to initialization time;
       // thus fix it so that it is relative to the timestamp of the first stroke.
-      if (data.strokes.length === 0 && coords.length === 0) data.timestamp = time;
-      time -= data.timestamp;
+      if (data.strokes.length === 0 && coords.length === 0) data.timestamp = pt.time;
+      pt.time -= data.timestamp;
     }
 
-    coords.push([pt.x, pt.y, time, +data.sketch.isDrawing]);
+    coords.push([pt.x, pt.y, pt.time, +data.sketch.isDrawing, idx]);
 
     // Check if consecutive points should be removed.
     if (data.options.filterCoords && coords.length > 1) {
@@ -571,7 +572,10 @@
    * @private
    */
   function execTouchEvent(e, callback) {
-    var elem = $(e.target), data = elem.data(namespace), options = data.options;
+    var elem  = $(e.target),
+      data    = elem.data(namespace),
+      options = data.options;
+
     if (options.multitouch) {
       // Track all fingers.
       var touches = e.originalEvent.changedTouches;

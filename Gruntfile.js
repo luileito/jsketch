@@ -12,6 +12,7 @@ module.exports = function(grunt) {
           'sketchable.js',
           'sketchable.memento.js',
           'sketchable.animate.js',
+          'sketchable.svg.js',
         ],
         dest: 'dist/sketchable.full.js'
       },
@@ -21,6 +22,7 @@ module.exports = function(grunt) {
           'jquery.sketchable.js',
           'jquery.sketchable.memento.js',
           'jquery.sketchable.animate.js',
+          'jquery.sketchable.svg.js',
         ],
         dest: 'dist/jquery.sketchable.full.js'
       }
@@ -47,6 +49,11 @@ module.exports = function(grunt) {
           'dist/sketchable.animate.min.js': [ 'sketchable.animate.js' ]
         }
       },
+      svg: {
+        files: {
+          'dist/sketchable.svg.min.js': [ 'sketchable.svg.js' ]
+        }
+      },
       full: {
         options: {
           banner: '/*! <%= pkg.description %> (all in one) | v<%= pkg.version %> | <%= grunt.template.today("yyyy-mm-dd") %> */\n'
@@ -68,6 +75,11 @@ module.exports = function(grunt) {
       jqAnimate: {
         files: {
           'dist/jquery.sketchable.animate.min.js': [ 'jquery.sketchable.animate.js' ]
+        }
+      },
+      jqSvg: {
+        files: {
+          'dist/jquery.sketchable.svg.min.js': [ 'jquery.sketchable.svg.js' ]
         }
       },
       jqFull: {
@@ -97,12 +109,7 @@ module.exports = function(grunt) {
   grunt.registerTask('sketchable',  [ 'uglify:sketchable', 'uglify:jqSketchable', 'clean' ]);
   grunt.registerTask('memento',     [ 'uglify:memento', 'uglify:jqMemento', 'clean' ]);
   grunt.registerTask('animate',     [ 'uglify:animate', 'uglify:jqAnimate', 'clean' ]);
+  grunt.registerTask('svg',         [ 'uglify:svg', 'uglify:jqSvg', 'clean' ]);
 
-  grunt.registerTask('default',     [
-                                      'full',
-                                      'jsketch',
-                                      'sketchable',
-                                      'memento',
-                                      'animate',
-                                    ]);
+  grunt.registerTask('default',     [ 'full', 'jsketch', 'sketchable', 'memento', 'animate', 'svg' ]);
 };

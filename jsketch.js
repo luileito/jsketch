@@ -37,6 +37,9 @@
     this.stageHeight = elem.height;
     // Make room for storing some data such as line type, colors, etc.
     this.data = options;
+    // Save abstract calls to low-level canvas methods,
+    // this way we can reproduce the drawing in different renderers.
+    this.callStack = [];
     // Set drawing defaults.
     // All methods are chainable.
     return this.setDefaults();
@@ -104,9 +107,14 @@
      * @memberof jSketch
      */
     background: function(color) {
+      var args = [0, 0, this.stageWidth, this.stageHeight];
+      // Process canvas.
       this.beginFill(color);
-      this.context.fillRect(0, 0, this.stageWidth, this.stageHeight);
+      this.context.fillRect.apply(this.context, args);
       this.endFill();
+      // Save abstract call.
+      this.callStack.push({ property: 'fillStyle', value: color });
+      this.callStack.push({ method: 'fillRect', args: args });
       return this;
     },
     /**
@@ -130,10 +138,11 @@
     beginFill: function(color) {
       this.saveGraphics();
       this.context.fillStyle = color;
+      this.callStack.push({ property: 'fillStyle', value: color });
       return this;
     },
     /**
-     * Recovers the fill color that was set before <code>beginFill()</code>.
+     * Recovers the fill color that was set before `beginFill()`.
      * @return jSketch
      * @memberof jSketch
      */
@@ -168,7 +177,9 @@
      * @memberof jSketch
      */
     moveTo: function(x, y) {
-      this.context.moveTo(x, y);
+      var args = [].slice.call(arguments);
+      this.context.moveTo.apply(this.context, args);
+      this.callStack.push({ method: 'moveTo', args: args });
       return this;
     },
     /**
@@ -179,7 +190,9 @@
      * @memberof jSketch
      */
     lineTo: function(x, y) {
-      this.context.lineTo(x, y);
+      var args = [].slice.call(arguments);
+      this.context.lineTo.apply(this.context, args);
+      this.callStack.push({ method: 'lineTo', args: args });
       return this;
     },
     /**
@@ -192,7 +205,7 @@
      * @memberof jSketch
      */
     line: function(x1, y1, x2, y2) {
-      this.context.moveTo(x1, y1);
+      this.moveTo(x1, y1);
       this.lineTo(x2, y2);
       return this;
     },
@@ -206,7 +219,10 @@
      * @memberof jSketch
      */
     curveTo: function(x, y, cpx, cpy) {
-      this.context.quadraticCurveTo(cpx, cpy, x, y);
+      // XXX: The native canvas API uses a different arg order.
+      var args = [cpx, cpy, x, y];
+      this.context.quadraticCurveTo.apply(this.context, args);
+      this.callStack.push({ method: 'quadraticCurveTo', args: args });
       return this;
     },
     /**
@@ -221,7 +237,7 @@
      * @memberof jSketch
      */
     curve: function(x1, y1, x2, y2, cpx, cpy) {
-      this.context.moveTo(x1, y1);
+      this.moveTo(x1, y1);
       this.curveTo(x2, y2, cpx, cpy);
       return this;
     },
@@ -244,9 +260,14 @@
      * @memberof jSketch
      */
     strokeRect: function(x, y, width, height) {
+      var args = [].slice.call(arguments);
+
       this.context.beginPath();
-      this.context.strokeRect(x, y, width, height);
+      this.context.strokeRect.apply(this.context, args);
       this.context.closePath();
+
+      this.callStack.push({ method: 'strokeRect', args: args });
+
       return this;
     },
     /**
@@ -259,9 +280,14 @@
      * @memberof jSketch
      */
     fillRect: function(x, y, width, height) {
+      var args = [].slice.call(arguments);
+
       this.context.beginPath();
-      this.context.fillRect(x, y, width, height);
+      this.context.fillRect.apply(this.context, args);
       this.context.closePath();
+
+      this.callStack.push({ method: 'fillRect', args: args });
+
       return this;
     },
     /**
@@ -273,10 +299,15 @@
      * @memberof jSketch
      */
     strokeCircle: function(x, y, radius) {
+      var args = [x, y, radius, 0, 2*Math.PI, false];
+
       this.context.beginPath();
-      this.context.arc(x, y, radius, 0, 2*Math.PI, false);
+      this.context.arc.apply(this.context, args);
       this.context.stroke();
       this.context.closePath();
+
+      this.callStack.push({ method: 'strokeCircle', args: args });
+
       return this;
     },
     /**
@@ -288,10 +319,15 @@
      * @memberof jSketch
      */
     fillCircle: function(x, y, radius) {
+      var args = [x, y, radius, 0, 2*Math.PI, false];
+
       this.context.beginPath();
-      this.context.arc(x, y, radius, 0, 2*Math.PI, false);
+      this.context.arc.apply(this.context, args);
       this.context.fill();
       this.context.closePath();
+
+      this.callStack.push({ method: 'fillCircle', args: args });
+
       return this;
     },
     /**
@@ -319,6 +355,7 @@
     beginPath: function() {
       this.saveGraphics();
       this.context.beginPath();
+      this.callStack.push({ method: 'beginPath' });
       return this;
     },
     /**
@@ -328,6 +365,7 @@
      */
     closePath: function() {
       this.context.closePath();
+      this.callStack.push({ method: 'closePath' });
       this.restoreGraphics();
       return this;
     },
@@ -338,6 +376,7 @@
      */
     eraser: function() {
       this.context.globalCompositeOperation = 'destination-out';
+      this.callStack.push({ property: 'comp-op', value: 'dst_out' });
       return this;
     },
     /**
@@ -347,6 +386,7 @@
      */
     pencil: function() {
       this.context.globalCompositeOperation = 'source-over';
+      this.callStack.push({ property: 'comp-op', value: 'src_over' });
       return this;
     },
     /**
@@ -355,8 +395,10 @@
      * @memberof jSketch
      */
     clear: function() {
+      var args = [0, 0, this.stageWidth, this.stageHeight];
       // Note: using 'this.canvas.width = this.canvas.width' resets _all_ styles, so better use clearRect.
-      this.context.clearRect(0, 0, this.stageWidth, this.stageHeight);
+      this.context.clearRect.apply(this.context, args);
+      this.callStack.push({ method: 'fillRect', args: args });
       return this;
     },
     /**
@@ -366,6 +408,7 @@
      */
     save: function() {
       this.context.save();
+      this.callStack.push({ method: 'save' });
       return this;
     },
     /**
@@ -375,6 +418,7 @@
      */
     restore: function() {
       this.context.restore();
+      this.callStack.push({ method: 'restore' });
       return this;
     },
     /**
@@ -395,8 +439,11 @@
      * @memberof jSketch
      */
     restoreGraphics: function() {
+      var nativeProps = 'fillStyle strokeStyle lineWidth lineCap lineJoin miterLimit'.split(' ')
       for (var opt in this.data) {
         this.context[opt] = this.data[opt];
+        if (nativeProps.indexOf(opt) > -1)
+          this.callStack.push({ property: opt, value: this.data[opt] });
       }
       return this;
     },
@@ -415,7 +462,16 @@
       img.src = src;
       img.onload = function() {
         self.context.drawImage(img, x, y);
+        self.callStack.push({ method: 'drawImage', args: [img, x, y] });
+        // Remove async flag.
+        self.callStack.push({ method: 'removeAsync' });
       };
+      img.onerror = function() {
+        // Remove async flag.
+        self.callStack.push({ method: 'removeAsync' });
+      };
+      // Add async flag.
+      self.callStack.push({ method: 'addAsync' });
       return this;
     },
   };

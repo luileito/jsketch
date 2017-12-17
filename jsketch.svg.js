@@ -239,7 +239,7 @@
         var contents = build();
         callback(contents);
       } else {
-        console.info('Waiting for queue to be empty:', asyncQueue);
+        console.info('Waiting for %s async operations to be finished ...', asyncOps);
       }
     }
 

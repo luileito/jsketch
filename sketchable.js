@@ -268,6 +268,8 @@
         // User has not defined this event, so attach our listener.
         options.events[evName] = listener;
       }
+
+      return this;
     },
   };
 

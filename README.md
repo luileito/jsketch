@@ -1,9 +1,13 @@
 # jSketch
 
 A lightweight JavaScript library for drawing facilities on an HTML5 canvas.
-
 Conveniently wrapped in a `Sketchable` class.
 Available also as a jQuery plugin.
+
+**Disclaimer:** This library is mainly focused on free-form drawing,
+although it supports many of the native canvas methods.
+If you need a more complex solution try [RaphäelJS](http://www.raphaeljs.com)
+or [Fabric.js](http://www.fabricjs.com)
 
 [Demos and documentation](https://luis.leiva.name/jsketch/)
 

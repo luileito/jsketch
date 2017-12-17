@@ -9,9 +9,9 @@
   // Custom namespace ID, for private data bindind.
   var namespace = 'sketchable';
   /**
-   * Memento plugin constructor for jQuery Sketchable instances.
+   * SVG plugin constructor for jQuery Sketchable instances.
    * @param {jQuery} $instance - jQuery sketchable instance.
-   * @namespace $.fn.sketchable.plugins.memento
+   * @namespace $.fn.sketchable.plugins.svg
    */
   $.fn.sketchable.plugins.svg = function($instance) {
     // Access the instance configuration.
@@ -31,7 +31,7 @@
     var events = 'clear destroy'.split(' ');
     for (var i = 0; i < events.length; i++) {
       var evName = events[i];
-      $instance.sketchable('decorateEvent', evName, callbacks[evName], 'svg');
+      $instance.sketchable('decorate', evName, callbacks[evName], 'svg');
     }
 
     // Expose public API: all jQuery sketchable instances will have these methods.
@@ -40,10 +40,13 @@
       svg: {
         /**
          * Generate SVG.
-         * @param {function} callback - Callback function, executed with the SVG as argument.
-         * @return {Sketchable} Sketchable instance.
-         * @memberof Sketchable.plugins.memento
-         * @example sketchableInstance.memento.undo();
+         * @param {function} callback - Callback function, executed with the SVG (string) as argument.
+         * @return {jQuery} jQuery sketchable element.
+         * @memberof $.fn.sketchable.plugins.svg
+         * @example
+         * jqueryElem.sketchable('svg.create', function(contents) {
+         *   // Do something with the SVG string.
+         * });
          */
         create: function(callback) {
           var data = $(this).data(namespace);

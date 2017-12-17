@@ -11,9 +11,9 @@
   // Custom namespace ID, for private data bindind.
   var namespace = 'sketchable';
   /**
-   * Memento plugin constructor for Sketchable instances.
+   * SVG plugin constructor for Sketchable instances.
    * @param {Sketchable} instance - Sketchable element.
-   * @namespace Sketchable.plugins.memento
+   * @namespace Sketchable.plugins.svg
    */
   Sketchable.prototype.plugins.svg = function(instance) {
     // Access the instance configuration.
@@ -33,19 +33,22 @@
     var events = 'clear destroy'.split(' ');
     for (var i = 0; i < events.length; i++) {
       var evName = events[i];
-      instance.decorateEvent(evName, callbacks[evName], 'svg');
+      instance.decorate(evName, callbacks[evName], 'svg');
     }
 
     // Expose public API: all Sketchable instances will have these methods.
     deepExtend(instance, {
       // Namespace methods to avoid collisions with other plugins.
       svg: {
-        /**
+         /**
          * Generate SVG.
-         * @param {function} callback - Callback function, executed with the SVG as argument.
-         * @return {Sketchable} Sketchable instance.
-         * @memberof Sketchable.plugins.memento
-         * @example sketchableInstance.memento.undo();
+         * @param {function} callback - Callback function, executed with the SVG (string) as argument.
+         * @return {Sketchable} Sketchable element.
+         * @memberof Sketchable.plugins.svg
+         * @example
+         * sketchableInstance.svg.create(function(contents) {
+         *   // Do something with the SVG string.
+         * });
          */
         create: function(callback) {
           var data = dataBind(instance.elem)[namespace];

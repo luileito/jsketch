@@ -139,7 +139,7 @@
     var events = 'clear destroy'.split(' ');
     for (var i = 0; i < events.length; i++) {
       var evName = events[i];
-      instance.decorateEvent(evName, callbacks[evName], 'animate');
+      instance.decorate(evName, callbacks[evName], 'animate');
     }
 
     // Expose public API: all Sketchable instances will have these methods.
@@ -148,7 +148,7 @@
       animate: {
         /**
          * Animate canvas strokes.
-         * @return {Sketchable} instance Sketchable element.
+         * @return {Sketchable} Sketchable element.
          * @memberof Sketchable.plugins.animate
          * @example sketchableInstance.strokes(strokeArray).animate.strokes();
          * @example

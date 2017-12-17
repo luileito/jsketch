@@ -2,13 +2,16 @@
   "source": {
     "include": [
       "jsketch.js",
+      "jsketch.svg.js",
       "sketchable.js",
       "sketchable.utils.js",
       "sketchable.memento.js",
       "sketchable.animate.js",
+      "sketchable.svg.js",
       "jquery.sketchable.js",
       "jquery.sketchable.memento.js",
       "jquery.sketchable.animate.js",
+      "jquery.sketchable.svg.js",
       "README.md"
     ]
   },

@@ -190,7 +190,7 @@
     var events = 'mouseup clear destroy'.split(' ');
     for (var i = 0; i < events.length; i++) {
       var evName = events[i];
-      instance.decorateEvent(evName, callbacks[evName], 'memento');
+      instance.decorate(evName, callbacks[evName], 'memento');
     }
 
     // Expose public API: all Sketchable instances will have these methods.

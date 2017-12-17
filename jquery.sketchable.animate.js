@@ -137,7 +137,7 @@
     var events = 'clear destroy'.split(' ');
     for (var i = 0; i < events.length; i++) {
       var evName = events[i];
-      $instance.sketchable('decorateEvent', evName, callbacks[evName], 'animate');
+      $instance.sketchable('decorate', evName, callbacks[evName], 'animate');
     }
 
     // Expose public API: all jQuery sketchable instances will have these methods.

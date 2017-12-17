@@ -13,9 +13,12 @@
 ;(function(window) {
   /**
    * Convert jSketch canvas to SVG.
-   * @param {function} callback - Callback function, executed when SVG is ready.
-   * @return {string}
+   * This method is asynchronous, and will be invoked when the SVG is ready.
+   * @param {function} callback - Callback function, to be invoked with the SVG (string) as argument.
+   * @return {jSketch}
    * @memberof jSketch
+   * @method
+   * @name toSVG
    */
   window.jSketch.prototype.toSVG = function(callback) {
     // Save pointer for use in closures.
@@ -239,6 +242,8 @@
         console.info('Waiting for queue to be empty:', asyncQueue);
       }
     }
+
+    return this;
   };
 
 })(this);

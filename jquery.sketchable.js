@@ -212,8 +212,14 @@
      * @param {string} evName - Event name.
      * @param {function} listener - Custom event listener.
      * @param {string} initiator - Some identifier.
+     * @return jQuery
+     * @memberof $.fn.sketchable
+     * @example
+     * // Decorate 'clear' method with `myClearFn()`,
+     * // using 'someId' to avoid collisions with other decorators.
+     * $('canvas').sketchable('decorate', 'clear', myClearFn, 'someId');
      */
-    decorateEvent: function(evName, listener, initiator) {
+    decorate: function(evName, listener, initiator) {
       return this.each(function() {
         var elem = $(this), data = elem.data(namespace), options = data.options;
         // Flag event override so that it doesn't get fired more than once.

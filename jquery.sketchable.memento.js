@@ -188,7 +188,7 @@
     var events = 'mouseup clear destroy'.split(' ');
     for (var i = 0; i < events.length; i++) {
       var evName = events[i];
-      $instance.sketchable('decorateEvent', evName, callbacks[evName], 'memento');
+      $instance.sketchable('decorate', evName, callbacks[evName], 'memento');
     }
 
     // Expose public API: all jQuery sketchable instances will have these methods.

@@ -241,8 +241,15 @@
      * @param {string} evName - Event name.
      * @param {function} listener - Custom event listener.
      * @param {string} initiator - Some identifier.
+     * @return {Sketchable}
+     * @memberof Sketchable
+     * @example
+     * var sketcher = new Sketchable('#my-canvas');
+     * // Decorate 'clear' method with `myClearFn()`,
+     * // using 'someId' to avoid collisions with other decorators.
+     * sketcher.decorate('clear', myClearFn, 'someId');
      */
-    decorateEvent: function(evName, listener, initiator) {
+    decorate: function(evName, listener, initiator) {
       var elem = this.elem, data = dataBind(elem)[namespace], options = data.options;
       // Flag event override so that it doesn't get fired more than once.
       var overrideId = '_bound$'+ evName + '.' + initiator;

@@ -3,7 +3,7 @@
 (function() {
   var cache = [0], expando = 'data' + Date.now();
   function data(elem) {
-    var cacheIndex     = elem[expando],
+    var cacheIndex   = elem[expando],
       nextCacheIndex = cache.length;
     if (!cacheIndex) {
       cacheIndex = elem[expando] = nextCacheIndex;

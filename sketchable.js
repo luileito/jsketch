@@ -236,7 +236,32 @@
 
       return this;
     },
+    /**
+     * Decorate event. Will execute default event first.
+     * @param {string} evName - Event name.
+     * @param {function} listener - Custom event listener.
+     * @param {string} initiator - Some identifier.
+     */
+    decorateEvent: function(evName, listener, initiator) {
+      var elem = this.elem, data = dataBind(elem)[namespace], options = data.options;
+      // Flag event override so that it doesn't get fired more than once.
+      var overrideId = '_bound$'+ evName + '.' + initiator;
+      if (data[overrideId]) return;
+      data[overrideId] = true;
 
+      if (options.events && typeof options.events[evName] === 'function') {
+        // User has defined this event, so wrap it.
+        var fn = options.events[evName];
+        options.events[evName] = function() {
+          // Exec original function first, then exec our listener.
+          fn.apply(this, arguments);
+          listener.apply(this, arguments);
+        };
+      } else {
+        // User has not defined this event, so attach our listener.
+        options.events[evName] = listener;
+      }
+    },
   };
 
   /**

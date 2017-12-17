@@ -132,31 +132,12 @@
       },
     };
 
-    // A helper function to override user-defined event listeners.
-    function override(evName) {
-      // Flag event override so that it doesn't get fired more than once.
-      if (config.options['_bound.animate$' + evName]) return;
-      config.options['_bound.animate$' + evName] = true;
-
-      if (config.options.events && typeof config.options.events[evName] === 'function') {
-        // User has defined this event, so wrap it.
-        var fn = config.options.events[evName];
-        config.options.events[evName] = function() {
-          // Exec original function first, then exec our callback.
-          fn.apply($instance, arguments);
-          callbacks[evName].apply($instance, arguments);
-        };
-      } else {
-        // User has not defined this event, so attach our callback.
-        config.options.events[evName] = callbacks[evName];
-      }
-    }
-
     // Note: the init event is used to create sketchable instances,
     // therefore it should NOT be overriden.
     var events = 'clear destroy'.split(' ');
     for (var i = 0; i < events.length; i++) {
-      override(events[i]);
+      var evName = events[i];
+      $instance.sketchable('decorateEvent', evName, callbacks[evName], 'animate');
     }
 
     // Expose public API: all jQuery sketchable instances will have these methods.

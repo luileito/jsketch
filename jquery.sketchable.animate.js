@@ -154,13 +154,13 @@
          * jqueryElem.sketchable('config', {
          *   events: {
          *     animationstart: function(elem, data) {
-         *       // Animation started.
+         *       // Animation started: the first stroke is being drawn.
          *     },
          *     animationstep: function(elem, data) {
          *       // Animation steped: a new stroke is being drawn.
          *     },
          *     animationend: function(elem, data) {
-         *       // Animation ended.
+         *       // Animation ended: the last stroke has been drawn.
          *     },
          *   }
          * })

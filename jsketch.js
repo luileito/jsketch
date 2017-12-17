@@ -291,6 +291,28 @@
       return this;
     },
     /**
+     * Draws a filled+stroked rectangle.
+     * @param {number} x - Horizontal coordinate.
+     * @param {number} y - Vertical coordinate.
+     * @param {number} width - Rectangle width.
+     * @param {number} height - Rectangle height.
+     * @return jSketch
+     * @memberof jSketch
+     */
+    rect: function(x, y, width, height) {
+      var args = [].slice.call(arguments);
+
+      this.context.beginPath();
+      this.context.fillRect.apply(this.context, args);
+      this.context.strokeRect.apply(this.context, args);
+      this.context.closePath();
+
+      this.callStack.push({ method: 'fillRect', args: args });
+      this.callStack.push({ method: 'strokeRect', args: args });
+
+      return this;
+    },
+    /**
      * Draws a stroke-only circle.
      * @param {number} x - Horizontal coordinate.
      * @param {number} y - Vertical coordinate.
@@ -327,6 +349,28 @@
       this.context.closePath();
 
       this.callStack.push({ method: 'fillCircle', args: args });
+
+      return this;
+    },
+    /**
+     * Draws a filled+stroked circle.
+     * @param {number} x - Horizontal coordinate.
+     * @param {number} y - Vertical coordinate.
+     * @param {number} radius - Circle radius.
+     * @return jSketch
+     * @memberof jSketch
+     */
+    circle: function(x, y, radius) {
+      var args = [x, y, radius, 0, 2*Math.PI, false];
+
+      this.context.beginPath();
+      this.context.arc.apply(this.context, args);
+      this.context.fill();
+      this.context.stroke();
+      this.context.closePath();
+
+      this.callStack.push({ method: 'fillCircle', args: args });
+      this.callStack.push({ method: 'strokeCircle', args: args });
 
       return this;
     },

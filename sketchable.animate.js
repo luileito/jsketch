@@ -158,6 +158,9 @@
          *     animationstart: function(elem, data) {
          *       // Animation started.
          *     },
+         *     animationstep: function(elem, data) {
+         *       // Animation steped: a new stroke is being drawn.
+         *     },
          *     animationend: function(elem, data) {
          *       // Animation ended.
          *     },

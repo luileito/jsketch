@@ -187,6 +187,10 @@
         return '';
       },
     };
+    /**
+     * Alias of `closePath()`;
+     */
+    methods.stroke = methods.closePath;
 
     function build() {
       var svg = '<?xml version="1.0" encoding="utf-8" standalone="no" ?>';

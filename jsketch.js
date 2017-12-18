@@ -248,6 +248,7 @@
      */
     stroke: function() {
       this.context.stroke();
+      this.callStack.push({ method: 'stroke', args: [] });
       return this;
     },
     /**

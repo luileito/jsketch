@@ -302,15 +302,8 @@
      */
     rect: function(x, y, width, height) {
       var args = [].slice.call(arguments);
-
-      this.context.beginPath();
-      this.context.fillRect.apply(this.context, args);
-      this.context.strokeRect.apply(this.context, args);
-      this.context.closePath();
-
-      this.callStack.push({ method: 'fillRect', args: args });
-      this.callStack.push({ method: 'strokeRect', args: args });
-
+      this.fillRect.apply(this, args);
+      this.strokeRect.apply(this, args);
       return this;
     },
     /**
@@ -362,17 +355,9 @@
      * @memberof jSketch
      */
     circle: function(x, y, radius) {
-      var args = [x, y, radius, 0, 2*Math.PI, false];
-
-      this.context.beginPath();
-      this.context.arc.apply(this.context, args);
-      this.context.fill();
-      this.context.stroke();
-      this.context.closePath();
-
-      this.callStack.push({ method: 'fillCircle', args: args });
-      this.callStack.push({ method: 'strokeCircle', args: args });
-
+      var args = [].slice.call(arguments);
+      this.fillCircle.apply(this, args);
+      this.strokeCircle.apply(this, args);
       return this;
     },
     /**

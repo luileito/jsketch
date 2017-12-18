@@ -21,6 +21,8 @@
    * @name toSVG
    */
   window.jSketch.prototype.toSVG = function(callback) {
+    // No callback, no SVG.
+    if (typeof callback !== 'function') throw new Error('You must supply a callback in toSVG() method.');
     // Save pointer for use in closures.
     var self = this;
     // Gather lines together until path is closed.
@@ -192,6 +194,7 @@
      */
     methods.stroke = methods.closePath;
 
+    // Create SVG.
     function build() {
       var svg = '<?xml version="1.0" encoding="utf-8" standalone="no" ?>';
       svg += '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" \
@@ -213,6 +216,7 @@
       return svg.replace(/\s+/g, ' ');
     }
 
+    // Serialize jSketch elements.
     function processElements() {
       var ret = '';
       for (var i = 0; i < self.callStack.length; i++) {

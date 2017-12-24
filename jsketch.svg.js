@@ -189,10 +189,6 @@
         return '';
       },
     };
-    /**
-     * Alias of `closePath()`;
-     */
-    methods.stroke = methods.closePath;
 
     // Create SVG.
     function build() {

@@ -502,7 +502,7 @@
     // Don't handle right clicks.
     if (e.which === 3) return false;
 
-    var idx   = e.identifier || 0,
+    var idx   = Math.abs(e.identifier || 0),
       elem    = $(e.target),
       data    = elem.data(namespace),
       options = data.options;
@@ -543,7 +543,7 @@
    * @private
    */
   function moveHandler(e) {
-    var idx   = e.identifier || 0,
+    var idx   = Math.abs(e.identifier || 0),
       elem    = $(e.target),
       data    = elem.data(namespace),
       options = data.options;
@@ -581,7 +581,7 @@
    * @private
    */
   function upHandler(e) {
-    var idx   = e.identifier || 0,
+    var idx   = Math.abs(e.identifier || 0),
       elem    = $(e.target),
       data    = elem.data(namespace),
       options = data.options;

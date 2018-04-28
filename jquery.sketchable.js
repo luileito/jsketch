@@ -614,16 +614,11 @@
       var touches = e.originalEvent.changedTouches;
       for (var i = 0; i < touches.length; i++) {
         var touch = touches[i];
-        // Add event type and finger ID.
-        touch.type = e.type;
-        touch.identifier = i;
         callback(touch);
       }
     } else {
       // Track only the current finger.
       var touch = e.originalEvent.touches[0];
-      touch.type = e.type;
-      touch.identifier = 0;
       callback(touch);
     }
   };

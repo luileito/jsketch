@@ -11,8 +11,7 @@
       "jquery.sketchable.js",
       "jquery.sketchable.memento.js",
       "jquery.sketchable.animate.js",
-      "jquery.sketchable.svg.js",
-      "README.md"
+      "jquery.sketchable.svg.js"
     ]
   },
   "plugins": [
@@ -20,14 +19,16 @@
   ],
   "templates": {
     "cleverLinks": true,
-    "minami": {
+    "default": {
       "staticFiles": {
-        "paths": ["./figs/"]
+        "__note__": "See https://github.com/jsdoc3/jsdoc/issues/1266",
+        "include": ["figs"]
       }
     }
   },
   "opts": {
-    "destination": "./docs",
-    "template": "./node_modules/minami"
+    "destination": "docs",
+    "readme": "README.md",
+    "template": "node_modules/minami"
   }
 }

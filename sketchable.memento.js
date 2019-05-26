@@ -1,5 +1,5 @@
 /*!
- * Memento plugin for Sketchable | v2.1 | Luis A. Leiva | MIT license
+ * Memento plugin for Sketchable | v2.2 | Luis A. Leiva | MIT license
  */
 
 // XXX: Requires `sketchable.utils.js` to be loaded first.
@@ -29,11 +29,13 @@
     var self  = this;
     /**
      * Update state.
-     * @param {Image} snapshot - Image object.
-     * @param {array} strokes - Strokes associated with snapshot.
+     * @param {image} snapshot - Image object.
+     * @param {object} state - State associated with snapshot.
+     * @param {object} state.strokes - Strokes data.
+     * @param {object} state.callStack - Actions history.
      * @private
      */
-    function draw(snapshot, strokes) {
+    function draw(snapshot, state) {
       // Manipulate canvas via Sketchable API.
       // This way, we don't lose default drawing settings et al.
       instance.handler(function(elem, data) {
@@ -42,8 +44,9 @@
         // so use the native HTMLCanvasElement.drawImage method instead.
         data.sketch.clear();
         data.sketch.context.drawImage(snapshot, 0, 0);
-        // Update strokes.
-        data.strokes = strokes.slice();
+        // Update state data.
+        data.strokes = state.strokes.slice();
+        data.sketch.callStack = state.callStack.slice();
       });
     }
     /**
@@ -113,7 +116,11 @@
         if (ev && ev.identifier > 0) {
           stack[stpos].strokes = data.strokes.slice();
         } else {
-          stack.push({image: elem.toDataURL(), strokes: data.strokes.slice()});
+          stack.push({
+            image: elem.toDataURL(),
+            strokes: data.strokes.slice(),
+            callStack: data.sketch.callStack.slice(),
+          });
           stpos++;
         }
       });
@@ -139,7 +146,7 @@
       var snapshot = new Image();
       snapshot.src = state.image;
       snapshot.onload = function() {
-        draw(this, state.strokes);
+        draw(this, state);
       };
       return this;
     };

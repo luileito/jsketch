@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dist": "grunt",
-    "lint": "eslint *sketch*.js || echo [sudo] npm i -g eslint",
+    "lint": "eslint src/*.js || echo [sudo] npm i -g eslint",
     "docs": "jsdoc --debug -c jsdoc.json && cp -rn figs/ docs/ || echo [sudo] npm i -g jsdoc"
   },
   "repository": {

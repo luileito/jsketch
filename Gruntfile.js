@@ -12,6 +12,7 @@ module.exports = function(grunt) {
           'sketchable.js',
           'sketchable.memento.js',
           'sketchable.animate.js',
+          'sketchable.serializer.js',
           'sketchable.svg.js',
         ],
         dest: 'dist/sketchable.full.js'
@@ -22,6 +23,7 @@ module.exports = function(grunt) {
           'jquery.sketchable.js',
           'jquery.sketchable.memento.js',
           'jquery.sketchable.animate.js',
+          'jquery.sketchable.serializer.js',
           'jquery.sketchable.svg.js',
         ],
         dest: 'dist/jquery.sketchable.full.js'
@@ -47,6 +49,11 @@ module.exports = function(grunt) {
       animate: {
         files: {
           'dist/sketchable.animate.min.js': [ 'sketchable.animate.js' ]
+        }
+      },
+      serializer: {
+        files: {
+          'dist/sketchable.serializer.min.js': [ 'sketchable.serializer.js' ]
         }
       },
       svg: {
@@ -75,6 +82,11 @@ module.exports = function(grunt) {
       jqAnimate: {
         files: {
           'dist/jquery.sketchable.animate.min.js': [ 'jquery.sketchable.animate.js' ]
+        }
+      },
+      jqSerializer: {
+        files: {
+          'dist/jquery.sketchable.serializer.min.js': [ 'jquery.sketchable.serializer.js' ]
         }
       },
       jqSvg: {
@@ -109,7 +121,8 @@ module.exports = function(grunt) {
   grunt.registerTask('sketchable',  [ 'uglify:sketchable', 'uglify:jqSketchable', 'clean' ]);
   grunt.registerTask('memento',     [ 'uglify:memento', 'uglify:jqMemento', 'clean' ]);
   grunt.registerTask('animate',     [ 'uglify:animate', 'uglify:jqAnimate', 'clean' ]);
+  grunt.registerTask('serializer',  [ 'uglify:serializer', 'uglify:jqSerializer', 'clean' ]);
   grunt.registerTask('svg',         [ 'uglify:svg', 'uglify:jqSvg', 'clean' ]);
 
-  grunt.registerTask('default',     [ 'full', 'jsketch', 'sketchable', 'memento', 'animate', 'svg' ]);
+  grunt.registerTask('default',     [ 'full', 'jsketch', 'sketchable', 'memento', 'animate', 'serializer', 'svg' ]);
 };

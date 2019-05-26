@@ -52,7 +52,7 @@
     /**
      * Allows to change the drawing context at runtime.
      * @param {object} elem - DOM element.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     setContext: function(elem) {
@@ -71,7 +71,7 @@
      * - lineCap: Line cap ('round').
      * - lineJoin: Line join ('round').
      * - miterLimit: Line miter (10). Works only if the lineJoin attribute is "miter".
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     setDefaults: function() {
@@ -94,7 +94,7 @@
      * Sets the dimensions of canvas.
      * @param {number} width - New canvas width.
      * @param {number} height - New canvas width.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     size: function(width, height) {
@@ -109,7 +109,7 @@
     /**
      * Sets the background color of canvas.
      * @param {string} color - An HTML color.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     background: function(color) {
@@ -128,7 +128,7 @@
      * @param {number} width - New canvas width.
      * @param {number} height - New canvas width.
      * @param {string} bgcolor - An HTML color.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     stage: function(width, height, bgcolor) {
@@ -138,7 +138,7 @@
     /**
      * Sets the fill color.
      * @param {string} color - An HTML color.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     beginFill: function(color) {
@@ -149,7 +149,7 @@
     },
     /**
      * Recovers the fill color that was set before `beginFill()`.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     endFill: function() {
@@ -163,7 +163,7 @@
      * @param {string} capStyle - Style of line cap.
      * @param {string} joinStyle - Style of line join.
      * @param {string} miter - Style of line miter. Only works if capStyle is "miter".
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     lineStyle: function(color, thickness, capStyle, joinStyle, miter) {
@@ -180,7 +180,7 @@
      * Move brush to a coordinate in canvas.
      * @param {number} x - Horizontal coordinate.
      * @param {number} y - Vertical coordinate.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     moveTo: function(x, y) {
@@ -193,7 +193,7 @@
      * Draws line to given coordinate.
      * @param {number} x - Horizontal coordinate.
      * @param {number} y - Vertical coordinate.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     lineTo: function(x, y) {
@@ -208,7 +208,7 @@
      * @param {number} y1 - Vertical coordinate of point 1.
      * @param {number} x2 - Horizontal coordinate of point 2.
      * @param {number} y2 - Vertical coordinate of point 2.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     line: function(x1, y1, x2, y2) {
@@ -222,7 +222,7 @@
      * @param {number} y - Vertical coordinate.
      * @param {number} cpx - Horizontal coordinate of control point.
      * @param {number} cpy - Vertical coordinate of control point.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     curveTo: function(x, y, cpx, cpy) {
@@ -240,7 +240,7 @@
      * @param {number} y2 - Vertical coordinate of point 2.
      * @param {number} cpx - Horizontal coordinate of control point.
      * @param {number} cpy - Vertical coordinate of control point.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     curve: function(x1, y1, x2, y2, cpx, cpy) {
@@ -250,7 +250,7 @@
     },
     /**
      * Strokes a given path.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     stroke: function() {
@@ -264,7 +264,7 @@
      * @param {number} y - Vertical coordinate.
      * @param {number} width - Rectangle width.
      * @param {number} height - Rectangle height.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     strokeRect: function(x, y, width, height) {
@@ -284,7 +284,7 @@
      * @param {number} y - Vertical coordinate.
      * @param {number} width - Rectangle width.
      * @param {number} height - Rectangle height.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     fillRect: function(x, y, width, height) {
@@ -304,7 +304,7 @@
      * @param {number} y - Vertical coordinate.
      * @param {number} width - Rectangle width.
      * @param {number} height - Rectangle height.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     rect: function(x, y, width, height) {
@@ -318,7 +318,7 @@
      * @param {number} x - Horizontal coordinate.
      * @param {number} y - Vertical coordinate.
      * @param {number} radius - Circle radius.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     strokeCircle: function(x, y, radius) {
@@ -338,7 +338,7 @@
      * @param {number} x - Horizontal coordinate.
      * @param {number} y - Vertical coordinate.
      * @param {number} radius - Circle radius.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     fillCircle: function(x, y, radius) {
@@ -358,7 +358,7 @@
      * @param {number} x - Horizontal coordinate.
      * @param {number} y - Vertical coordinate.
      * @param {number} radius - Circle radius.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     circle: function(x, y, radius) {
@@ -386,7 +386,7 @@
     },
     /**
      * A path is started.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     beginPath: function() {
@@ -397,7 +397,7 @@
     },
     /**
      * A path is finished.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     closePath: function() {
@@ -408,7 +408,7 @@
     },
     /**
      * Sets brush to eraser mode.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     eraser: function() {
@@ -418,7 +418,7 @@
     },
     /**
      * Sets brush to pencil mode.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     pencil: function() {
@@ -428,7 +428,7 @@
     },
     /**
      * Clears stage.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     clear: function() {
@@ -440,7 +440,7 @@
     },
     /**
      * Saves a snapshot of all styles and transformations.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     save: function() {
@@ -450,7 +450,7 @@
     },
     /**
      * Restores previous drawing state.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     restore: function() {
@@ -461,7 +461,7 @@
     /**
      * Saves given drawing settings.
      * @param {object} [options] - Graphics options.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     saveGraphics: function(options) {
@@ -477,7 +477,7 @@
     },
     /**
      * Restores given drawing settings.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     restoreGraphics: function() {
@@ -491,7 +491,7 @@
      * @param {string} src - Image source path.
      * @param {number} [x] - Horizontal coordinate.
      * @param {number} [y] - Vertical coordinate.
-     * @return jSketch
+     * @return {object} jSketch
      * @memberof jSketch
      */
     drawImage: function(src, x, y) {

@@ -23,12 +23,12 @@
       serializer: {
         /**
          * Save canvas data as JSON string.
-         * @return {string} serialized canvas data.
+         * @return {string}
          * @memberof $.fn.sketchable.plugins.serializer
          * @example
          * var contents = jqueryElem.sketchable('serializer.save');
          */
-        save: function(contents) {
+        save: function() {
           var data = $(this).data(namespace);
           // Save only the required properties.
           // Also avoid circular JSON references.
@@ -40,6 +40,7 @@
         },
         /**
          * Load canvas data from JSON string.
+         * @param {string} jsonStr - JSON data saved with {@link $.fn.sketchable.plugins.serializer.save} method.
          * @return {jQuery} jQuery sketchable element.
          * @memberof $.fn.sketchable.plugins.serializer
          * @example

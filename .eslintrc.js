@@ -14,6 +14,8 @@ module.exports = {
     'no-multi-spaces': 0,
     'object-curly-spacing': 0,
     'require-jsdoc': 0,
+    'prefer-spread': 0,
+    'no-multi-str': 0,
     // --- BEGIN Errors ---
     'no-tabs': 2,
     'indent': ['error', 2],

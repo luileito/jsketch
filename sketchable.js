@@ -517,9 +517,9 @@
     // Mark visually 1st point of stroke.
     if (options.graphics.firstPointSize > 0) {
       data.sketch
-          .beginFill(options.graphics.fillStyle)
-          .fillCircle(p.x, p.y, options.graphics.firstPointSize)
-          .endFill();
+        .beginFill(options.graphics.fillStyle)
+        .fillCircle(p.x, p.y, options.graphics.firstPointSize)
+        .endFill();
     }
 
     data.sketch.isDrawing = true;

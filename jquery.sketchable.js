@@ -26,7 +26,7 @@
     /**
      * Initialize the selected jQuery objects.
      * @param {object} [opts] - Configuration (default: {@link $.fn.sketchable.defaults}).
-     * @return jQuery
+     * @return {object} jQuery
      * @memberof $.fn.sketchable
      * @ignore
      * @protected
@@ -76,7 +76,7 @@
     /**
      * Change configuration of an existing jQuery Sketchable element.
      * @param {object} [opts] - Configuration (default: {@link $.fn.sketchable.defaults}).
-     * @return jQuery
+     * @return {object} jQuery
      * @memberof $.fn.sketchable
      * @example
      * var $canvas = $('canvas').sketchable('config', { interactive: false });
@@ -97,7 +97,7 @@
     /**
      * Get/Set drawing data strokes sequence.
      * @param {array} [arr] - Multidimensional array of [x,y,time,status] tuples; status = 0 (pen down) or 1 (pen up).
-     * @return Strokes object on get, jQuery instance on set (with the new data attached).
+     * @return {*} Strokes object on get, jQuery instance on set (with the new data attached).
      * @memberof $.fn.sketchable
      * @example
      * // Getter: read associated strokes.
@@ -119,7 +119,7 @@
     /**
      * Allow low-level manipulation of the sketchable canvas.
      * @param {function} callback - Callback function, invoked with 2 arguments: elem (CANVAS element) and data (private element data).
-     * @return jQuery
+     * @return {object} jQuery
      * @memberof $.fn.sketchable
      * @example
      * $('canvas').sketchable('handler', function(elem, data) {
@@ -134,7 +134,7 @@
     },
     /**
      * Clears canvas <b>together with</b> associated strokes data.
-     * @return jQuery
+     * @return {object} jQuery
      * @memberof $.fn.sketchable
      * @see $.fn.sketchable.handler
      * @example
@@ -162,7 +162,7 @@
     /**
      * Reinitialize a sketchable canvas with given configuration options.
      * @param {object} [opts] - Configuration (default: {@link $.fn.sketchable.defaults}).
-     * @return jQuery
+     * @return {object} jQuery
      * @memberof $.fn.sketchable
      * @example
      * var $canvas = $('canvas').sketchable();
@@ -183,7 +183,7 @@
     },
     /**
      * Destroy sketchable canvas, together with strokes data and associated events.
-     * @return jQuery
+     * @return {object} jQuery
      * @memberof $.fn.sketchable
      * @example
      * var $canvas = $('canvas').sketchable();
@@ -212,7 +212,7 @@
      * @param {string} evName - Event name.
      * @param {function} listener - Custom event listener.
      * @param {string} initiator - Some identifier.
-     * @return jQuery
+     * @return {object} jQuery
      * @memberof $.fn.sketchable
      * @example
      * // Decorate 'clear' method with `myClearFn()`,
@@ -247,7 +247,7 @@
    * This is a jQuery wrapper for the <tt>jSketch</tt> drawing class.
    * @namespace $.fn.sketchable
    * @param {string|object} method - Method to invoke, or a configuration object.
-   * @return jQuery
+   * @return {object} jQuery
    * @version 2.2
    * @author Luis A. Leiva
    * @license MIT license
@@ -517,9 +517,9 @@
     // Mark visually 1st point of stroke.
     if (options.graphics.firstPointSize > 0) {
       data.sketch
-          .beginFill(options.graphics.fillStyle)
-          .fillCircle(p.x, p.y, options.graphics.firstPointSize)
-          .endFill();
+        .beginFill(options.graphics.fillStyle)
+        .fillCircle(p.x, p.y, options.graphics.firstPointSize)
+        .endFill();
     }
 
     data.sketch.isDrawing = true;

@@ -25,7 +25,7 @@
       serializer: {
         /**
          * Save canvas data as JSON string.
-         * @return {string} serialized canvas data.
+         * @return {string} Serialized canvas data.
          * @memberof Sketchable.plugins.serializer
          * @example
          * var contents = sketchableInstance.serializer.save();
@@ -42,6 +42,7 @@
         },
         /**
          * Load canvas from JSON string.
+         * @param {string} jsonStr - JSON data saved with {@link Sketchable.plugins.serializer.save} method.
          * @return {Sketchable} Sketchable element.
          * @memberof Sketchable.plugins.serializer
          * @example

@@ -89,8 +89,8 @@
         if (sketch.data.firstPointSize) {
           var pt = t > 0 ? nextPt : currPt;
           sketch.beginFill(sketch.data.strokeStyle)
-                .fillCircle(pt.x, pt.y, sketch.data.firstPointSize)
-                .endFill();
+            .fillCircle(pt.x, pt.y, sketch.data.firstPointSize)
+            .endFill();
         }
         // Trigger step event for subsequent strokes.
         if (t > 0 && typeof events.animationstep === 'function')

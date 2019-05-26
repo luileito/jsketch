@@ -7,10 +7,12 @@
       "sketchable.utils.js",
       "sketchable.memento.js",
       "sketchable.animate.js",
+      "sketchable.serializer.js",
       "sketchable.svg.js",
       "jquery.sketchable.js",
       "jquery.sketchable.memento.js",
       "jquery.sketchable.animate.js",
+      "jquery.sketchable.serializer.js",
       "jquery.sketchable.svg.js"
     ]
   },

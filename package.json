@@ -1,11 +1,11 @@
 {
   "name": "jsketch",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "jSketch drawing lib",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dist": "grunt",
-    "lint": "eslint *sketchable*.js || echo [sudo] npm i -g eslint",
+    "lint": "eslint *sketch*.js || echo [sudo] npm i -g eslint",
     "docs": "jsdoc --debug -c jsdoc.json && cp -rn figs/ docs/ || echo [sudo] npm i -g jsdoc"
   },
   "repository": {

@@ -40,7 +40,7 @@
     deepExtend(instance, {
       // Namespace methods to avoid collisions with other plugins.
       svg: {
-         /**
+        /**
          * Generate SVG.
          * @param {function} callback - Callback function, executed with the SVG (string) as argument.
          * @return {Sketchable} Sketchable element.

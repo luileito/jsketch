@@ -248,7 +248,7 @@
      */
     stroke: function() {
       this.context.stroke();
-      this.callStack.push({ method: 'stroke', args: [] });
+      this.callStack.push({ method: 'stroke' });
       return this;
     },
     /**
@@ -428,7 +428,6 @@
       var args = [0, 0, this.stageWidth, this.stageHeight];
       // Note: using 'this.canvas.width = this.canvas.width' resets _all_ styles, so better use clearRect.
       this.context.clearRect.apply(this.context, args);
-      this.callStack.push({ method: 'fillRect', args: args });
       return this;
     },
     /**
@@ -472,8 +471,6 @@
       var nativeProps = 'fillStyle strokeStyle lineWidth lineCap lineJoin miterLimit'.split(' ')
       for (var opt in this.data) {
         this.context[opt] = this.data[opt];
-        if (nativeProps.indexOf(opt) > -1)
-          this.callStack.push({ property: opt, value: this.data[opt] });
       }
       return this;
     },

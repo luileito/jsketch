@@ -75,14 +75,20 @@
      * @memberof jSketch
      */
     setDefaults: function() {
-      return this.saveGraphics({
+      var options = {
         fillStyle: this.data.fillStyle || '#F00',
         strokeStyle: this.data.strokeStyle || '#F0F',
         lineWidth: this.data.lineWidth || 2,
         lineCap: this.data.lineCap || 'round',
         lineJoin: this.data.lineJoin || 'round',
         miterLimit: this.data.miterLimit || 10,
-      }).restoreGraphics();
+      };
+      // Save options as abstract calls at least once, so that we can recover them.
+      for (var opt in options) {
+        var val = options[opt];
+        this.callStack.push({ property: opt, value: val });
+      }
+      return this.saveGraphics(options).restoreGraphics();
     },
     /**
      * Sets the dimensions of canvas.
@@ -161,13 +167,14 @@
      * @memberof jSketch
      */
     lineStyle: function(color, thickness, capStyle, joinStyle, miter) {
-      return this.saveGraphics({
-        strokeStyle: color     || this.data.strokeStyle,
-        lineWidth: thickness || this.data.lineWidth,
-        lineCap: capStyle  || this.data.lineCap,
-        lineJoin: joinStyle || this.data.lineJoin,
-        miterLimit: miter     || this.data.miterLimit,
-      }).restoreGraphics();
+      var options = {
+        strokeStyle: color,
+        lineWidth: thickness,
+        lineCap: capStyle,
+        lineJoin: joinStyle,
+        miterLimit: miter,
+      };
+      return this.saveGraphics(options).restoreGraphics();
     },
     /**
      * Move brush to a coordinate in canvas.
@@ -428,6 +435,7 @@
       var args = [0, 0, this.stageWidth, this.stageHeight];
       // Note: using 'this.canvas.width = this.canvas.width' resets _all_ styles, so better use clearRect.
       this.context.clearRect.apply(this.context, args);
+      this.callStack.push({ method: 'clear' });
       return this;
     },
     /**
@@ -458,7 +466,12 @@
      */
     saveGraphics: function(options) {
       for (var opt in options) {
-        this.data[opt] = options[opt];
+        var val = options[opt];
+        if (val && val !== this.data[opt]) {
+          this.data[opt] = val;
+          // Save only the options that have changed as abstract calls.
+          this.callStack.push({ property: opt, value: val });
+        }
       }
       return this;
     },
@@ -468,7 +481,6 @@
      * @memberof jSketch
      */
     restoreGraphics: function() {
-      var nativeProps = 'fillStyle strokeStyle lineWidth lineCap lineJoin miterLimit'.split(' ')
       for (var opt in this.data) {
         this.context[opt] = this.data[opt];
       }
@@ -490,14 +502,11 @@
       img.onload = function() {
         self.context.drawImage(img, x, y);
         self.callStack.push({ method: 'drawImage', args: [img, x, y] });
-        // Remove async flag.
         self.callStack.push({ method: 'removeAsync' });
       };
       img.onerror = function() {
-        // Remove async flag.
         self.callStack.push({ method: 'removeAsync' });
       };
-      // Add async flag.
       self.callStack.push({ method: 'addAsync' });
       return this;
     },

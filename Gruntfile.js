@@ -7,24 +7,24 @@ module.exports = function(grunt) {
     concat: {
       full: {
         src: [
-          'jsketch.js',
-          'sketchable.utils.js',
-          'sketchable.js',
-          'sketchable.memento.js',
-          'sketchable.animate.js',
-          'sketchable.serializer.js',
-          'sketchable.svg.js',
+          'src/jsketch.js',
+          'src/sketchable.utils.js',
+          'src/sketchable.js',
+          'src/sketchable.memento.js',
+          'src/sketchable.animate.js',
+          'src/sketchable.serializer.js',
+          'src/sketchable.svg.js',
         ],
         dest: 'dist/sketchable.full.js'
       },
       jqFull: {
         src: [
-          'jsketch.js',
-          'jquery.sketchable.js',
-          'jquery.sketchable.memento.js',
-          'jquery.sketchable.animate.js',
-          'jquery.sketchable.serializer.js',
-          'jquery.sketchable.svg.js',
+          'src/jsketch.js',
+          'src/jquery.sketchable.js',
+          'src/jquery.sketchable.memento.js',
+          'src/jquery.sketchable.animate.js',
+          'src/jquery.sketchable.serializer.js',
+          'src/jquery.sketchable.svg.js',
         ],
         dest: 'dist/jquery.sketchable.full.js'
       }
@@ -33,32 +33,32 @@ module.exports = function(grunt) {
     uglify: {
       jsketch: {
         files: {
-          'dist/jsketch.min.js': [ 'jsketch.js' ]
+          'dist/jsketch.min.js': [ 'src/jsketch.js' ]
         }
       },
       sketchable: {
         files: {
-          'dist/sketchable.min.js': [ 'sketchable.js' ]
+          'dist/sketchable.min.js': [ 'src/sketchable.js' ]
         }
       },
       memento: {
         files: {
-          'dist/sketchable.memento.min.js': [ 'sketchable.memento.js' ]
+          'dist/sketchable.memento.min.js': [ 'src/sketchable.memento.js' ]
         }
       },
       animate: {
         files: {
-          'dist/sketchable.animate.min.js': [ 'sketchable.animate.js' ]
+          'dist/sketchable.animate.min.js': [ 'src/sketchable.animate.js' ]
         }
       },
       serializer: {
         files: {
-          'dist/sketchable.serializer.min.js': [ 'sketchable.serializer.js' ]
+          'dist/sketchable.serializer.min.js': [ 'src/sketchable.serializer.js' ]
         }
       },
       svg: {
         files: {
-          'dist/sketchable.svg.min.js': [ 'sketchable.svg.js' ]
+          'dist/sketchable.svg.min.js': [ 'src/sketchable.svg.js' ]
         }
       },
       full: {
@@ -71,27 +71,27 @@ module.exports = function(grunt) {
       },
       jqSketchable: {
         files: {
-          'dist/jquery.sketchable.min.js': [ 'jquery.sketchable.js' ]
+          'dist/jquery.sketchable.min.js': [ 'src/jquery.sketchable.js' ]
         }
       },
       jqMemento: {
         files: {
-          'dist/jquery.sketchable.memento.min.js': [ 'jquery.sketchable.memento.js' ]
+          'dist/jquery.sketchable.memento.min.js': [ 'src/jquery.sketchable.memento.js' ]
         }
       },
       jqAnimate: {
         files: {
-          'dist/jquery.sketchable.animate.min.js': [ 'jquery.sketchable.animate.js' ]
+          'dist/jquery.sketchable.animate.min.js': [ 'src/jquery.sketchable.animate.js' ]
         }
       },
       jqSerializer: {
         files: {
-          'dist/jquery.sketchable.serializer.min.js': [ 'jquery.sketchable.serializer.js' ]
+          'dist/jquery.sketchable.serializer.min.js': [ 'src/jquery.sketchable.serializer.js' ]
         }
       },
       jqSvg: {
         files: {
-          'dist/jquery.sketchable.svg.min.js': [ 'jquery.sketchable.svg.js' ]
+          'dist/jquery.sketchable.svg.min.js': [ 'src/jquery.sketchable.svg.js' ]
         }
       },
       jqFull: {

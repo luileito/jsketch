@@ -502,7 +502,7 @@
     // Don't handle right clicks.
     if (Event.isRightClick(e)) return false;
 
-    var idx   = Math.abs(e.identifier),
+    var idx   = Math.abs(e.identifier || 0),
       elem    = e.target,
       data    = dataBind(elem)[namespace],
       options = data.options;
@@ -543,7 +543,7 @@
    * @ignore
    */
   function moveHandler(e) {
-    var idx   = Math.abs(e.identifier),
+    var idx   = Math.abs(e.identifier || 0),
       elem    = e.target,
       data    = dataBind(elem)[namespace],
       options = data.options;
@@ -581,7 +581,7 @@
    * @ignore
    */
   function upHandler(e) {
-    var idx   = Math.abs(e.identifier),
+    var idx   = Math.abs(e.identifier || 0),
       elem    = e.target,
       data    = dataBind(elem)[namespace],
       options = data.options;

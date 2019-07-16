@@ -1,5 +1,5 @@
 /*!
- * jSketch 1.0 | Luis A. Leiva | MIT license
+ * jSketch 1.1 | Luis A. Leiva | MIT license
  * A simple JavaScript library for drawing facilities on HTML5 canvas.
  */
 
@@ -9,7 +9,7 @@
  * such as function chainability and old-school AS3-like notation.
  * @name jSketch
  * @class
- * @version 1.0
+ * @version 1.1
  * @author Luis A. Leiva
  * @license MIT license
  * @example
@@ -28,13 +28,13 @@
    * @param {object} [options] - Configuration (default: {@link Sketchable#defaults}).
    */
   function jSketch(elem, options) {
-    if (!elem) throw new Error('Sketchable requires a DOM element.');
+    if (!elem) throw new Error('Sketchable requires a DOM element or selector.');
     if (typeof elem === 'string') elem = document.querySelector(elem);
     // Set drawing context first.
     this.setContext(elem);
     // Scene defaults.
-    this.stageWidth  = elem.width;
-    this.stageHeight = elem.height;
+    this.stageWidth  = elem.offsetWidth;
+    this.stageHeight = elem.offsetHeight;
     // Make room for storing some data such as line type, colors, etc.
     this.data = options;
     // Save abstract calls to low-level canvas methods,
@@ -98,10 +98,13 @@
      * @memberof jSketch
      */
     size: function(width, height) {
-      this.stageWidth  = width;
-      this.stageHeight = height;
-      this.canvas.width  = width;
-      this.canvas.height = height;
+      // Allow grabbing values from CSS such as "100px".
+      var w = parseFloat(width);
+      var h = parseFloat(height);
+      this.stageWidth  = w;
+      this.stageHeight = h;
+      this.canvas.width  = w;
+      this.canvas.height = h;
       // On resizing we lose drawing options, so restore them.
       this.restoreGraphics();
       return this;

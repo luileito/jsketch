@@ -63,7 +63,7 @@
             }
           }
           // Update required properties.
-          data.callStack = origData.actions.slice();
+          data.sketch.callStack = origData.actions.slice();
           data.strokes = origData.strokes.slice();
           data.options = origData.options;
 

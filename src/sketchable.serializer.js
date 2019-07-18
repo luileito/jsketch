@@ -16,9 +16,6 @@
    * @namespace Sketchable.plugins.serializer
    */
   Sketchable.prototype.plugins.serializer = function(instance) {
-    // Access the instance configuration.
-    var config = instance.config();
-
     // Expose public API: all Sketchable instances will have these methods.
     deepExtend(instance, {
       // Namespace methods to avoid collisions with other plugins.

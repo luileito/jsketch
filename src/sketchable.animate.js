@@ -122,9 +122,6 @@
    * @namespace Sketchable.plugins.animate
    */
   Sketchable.prototype.plugins.animate = function(instance) {
-    // Access the instance configuration.
-    var config = instance.config();
-
     var callbacks = {
       clear: function(elem, data) {
         data.animate && data.animate.cancel();

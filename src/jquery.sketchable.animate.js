@@ -120,9 +120,6 @@
    * @namespace $.fn.sketchable.plugins.animate
    */
   $.fn.sketchable.plugins.animate = function($instance) {
-    // Access the instance configuration.
-    var config = $instance.sketchable('config');
-
     var callbacks = {
       clear: function(elem, data) {
         data.animate && data.animate.cancel();

@@ -16,9 +16,6 @@
    * @namespace Sketchable.plugins.svg
    */
   Sketchable.prototype.plugins.svg = function(instance) {
-    // Access the instance configuration.
-    var config = instance.config();
-
     var callbacks = {
       clear: function(elem, data) {
         data.sketch.callStack = [];

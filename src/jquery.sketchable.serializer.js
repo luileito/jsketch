@@ -14,9 +14,6 @@
    * @namespace $.fn.sketchable.plugins.serializer
    */
   $.fn.sketchable.plugins.serializer = function($instance) {
-    // Access the instance configuration.
-    var config = $instance.sketchable('config');
-
     // Expose public API: all jQuery sketchable instances will have these methods.
     $.extend($.fn.sketchable.api, {
       // Namespace methods to avoid collisions with other plugins.

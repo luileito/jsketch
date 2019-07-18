@@ -91,7 +91,9 @@
           postProcess(elem);
         });
       } else { // getter
-        return $(this).data(namespace);
+        return $(this).data(namespace).options;
+      }
+    },
       }
     },
     /**

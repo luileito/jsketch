@@ -119,6 +119,9 @@
         postProcess(elem);
         return this;
       } else { // getter
+        return data.options;
+      }
+    },
         return data;
       }
     },

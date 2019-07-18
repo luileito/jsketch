@@ -94,6 +94,24 @@
         return $(this).data(namespace).options;
       }
     },
+    /**
+     * Retrieve data associated to an existing Sketchable instance.
+     * @param {string} [property] - Top-level data property, e.g. "instance", "sketch", "options".
+     * @return {*}
+     * @memberof Sketchable
+     * @example
+     * // Read all the data associated to this instance.
+     * var data = $('canvas').sketchable('data');
+     * // Quick access to the Sketchable instance.
+     * var inst = $('canvas').sketchable('data', 'instance');
+     */
+    data: function(property) {
+      var data = $(this).data(namespace);
+
+      if (property) {
+        return data[property];
+      } else {
+        return data;
       }
     },
     /**

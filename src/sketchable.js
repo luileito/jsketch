@@ -122,6 +122,24 @@
         return data.options;
       }
     },
+    /**
+     * Retrieve data associated to an existing Sketchable instance.
+     * @param {string} [property] - Top-level data property, e.g. "instance", "sketch", "options".
+     * @return {*}
+     * @memberof Sketchable
+     * @example
+     * var sketcher = new Sketchable('#my-canvas', { interactive: false });
+     * // Read all the data associated to this instance.
+     * var data = sketcher.data();
+     * // Quick access to Sketchable instance.
+     * var inst = sketcher.data('instance');
+     */
+    data: function(property) {
+      var elem = this.elem, data = dataBind(elem)[namespace];
+
+      if (property) {
+        return data[property];
+      } else {
         return data;
       }
     },

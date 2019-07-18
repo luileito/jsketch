@@ -177,9 +177,6 @@
    * @namespace Sketchable.plugins.memento
    */
   Sketchable.prototype.plugins.memento = function(instance) {
-    // Access the instance configuration.
-    var config = instance.config();
-
     var callbacks = {
       clear: function(elem, data) {
         data.memento.reset();
@@ -267,8 +264,9 @@
     });
 
     // Initialize plugin here.
-    config.memento = new MementoCanvas(instance);
-    config.memento.init();
+    var data = dataBind(instance.elem)[namespace];
+    data.memento = new MementoCanvas(instance);
+    data.memento.init();
   };
 
 })(this);

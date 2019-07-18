@@ -74,7 +74,7 @@
       });
     },
     /**
-     * Change configuration of an existing jQuery Sketchable element.
+     * Get/Set user configuration of an existing jQuery Sketchable element.
      * @param {object} [opts] - Configuration (default: {@link $.fn.sketchable.defaults}).
      * @return {object} jQuery
      * @memberof $.fn.sketchable
@@ -98,7 +98,7 @@
      * Retrieve data associated to an existing Sketchable instance.
      * @param {string} [property] - Top-level data property, e.g. "instance", "sketch", "options".
      * @return {*}
-     * @memberof Sketchable
+     * @memberof $.fn.sketchable
      * @example
      * // Read all the data associated to this instance.
      * var data = $('canvas').sketchable('data');

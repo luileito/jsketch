@@ -102,7 +102,7 @@
       return this;
     },
     /**
-     * Change configuration of an existing Sketchable instance.
+     * Get/Set user configuration of an existing Sketchable instance.
      * @param {object} [opts] - Configuration (default: {@link Sketchable#defaults}).
      * @return {Sketchable}
      * @memberof Sketchable

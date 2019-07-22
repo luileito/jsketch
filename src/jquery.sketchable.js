@@ -411,12 +411,14 @@
    */
   function postProcess(elem, options) {
     if (!options) options = elem.data(namespace).options;
+
+    var domEl = elem.get(0);
     if (options.cssCursors) {
       // Visually indicate whether this element is interactive or not.
-      elem[0].style.cursor = options.interactive ? 'pointer' : 'not-allowed';
+      domEl.style.cursor = options.interactive ? 'pointer' : 'not-allowed';
     }
-    // Fix unwanted highlight "bug". Note: `this` is the actual DOM element.
-    this.onselectstart = function() {
+    // Fix unwanted highlight "bug".
+    domEl.onselectstart = function() {
       return false;
     };
   };

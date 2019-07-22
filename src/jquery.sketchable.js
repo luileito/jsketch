@@ -1,5 +1,5 @@
 /*!
- * jQuery sketchable | v2.2 | Luis A. Leiva | MIT license
+ * jQuery sketchable | v2.3 | Luis A. Leiva | MIT license
  * A jQuery plugin for the jSketch drawing library.
  */
 
@@ -130,6 +130,7 @@
         return this.each(function() {
           var elem = $(this), data = elem.data(namespace);
           data.strokes = arr;
+          redraw(elem);
         });
       } else { // getter
         var data = $(this).data(namespace);
@@ -273,7 +274,7 @@
    * @namespace $.fn.sketchable
    * @param {string|object} method - Method to invoke, or a configuration object.
    * @return {object} jQuery
-   * @version 2.2
+   * @version 2.3
    * @author Luis A. Leiva
    * @license MIT license
    * @example
@@ -587,15 +588,19 @@
     var coords = data.coords[idx];
     var last = coords[coords.length - 1];
     if (last) {
-      var brush = data.sketch;
+      var lineColor, lineWidth;
       if (data.sketch.isDrawing) {
-        // Style for regular, pendown strokes.
-        brush.lineStyle(options.graphics.strokeStyle, options.graphics.lineWidth);
-      } else if (options.mouseupMovements.visible !== false) {
-        // Style for penup strokes.
-        brush.lineStyle(options.mouseupMovements.strokeStyle || '#DDD', options.mouseupMovements.lineWidth || 1);
+          // Style for regular, pendown strokes.
+          lineColor = options.strokeStyle;
+          lineWidth = options.lineWidth;
+      } else if (options.mouseupMovements) {
+          // Style for penup strokes.
+          lineColor = options.mouseupMovements.strokeStyle || '#DDD';
+          lineWidth = options.mouseupMovements.lineWidth || 1;
       }
-      brush.line(last[0], last[1], p.x, p.y).stroke();
+      data.sketch.lineStyle(lineColor, lineWidth)
+        .line(last[0], last[1], p.x, p.y)
+        .stroke();
     }
 
     saveMousePos(idx, data, p);
@@ -649,5 +654,72 @@
       callback(touch);
     }
   };
+
+  /**
+   * Redraw canvas according to stored strokes data.
+   * @return {object} jQuery
+   * @memberof $.fn.sketchable
+   * @private
+   */
+  function redraw(elem) {
+    var data  = elem.data(namespace),
+      options = data.options,
+      sketch  = data.sketch;
+
+    // Clear current canvas content, since strokes content may have changed.
+    sketch.clear();
+
+    for (var s = 0; s < data.strokes.length; s++) {
+      var stroke = data.strokes[s];
+      for (var t = 0; t < stroke.length; t++) {
+        var currPt = stroke[t];
+        var nextPt = stroke[t + 1];
+
+        // By default, assume all strokes are pendown strokes.
+        var isDrawing = true;
+        if (currPt.length > 3) {
+          isDrawing = currPt[3] === 1;
+        }
+
+        // Skip penup strokes, if specified.
+        if (!isDrawing && !options.mouseupMovements) {
+          break;
+        }
+
+        if (t === 0) {
+          sketch.beginPath();
+          // Draw first point of stroke.
+          if (options.graphics.firstPointSize > 0) {
+            sketch.beginFill(lineColor)
+              .fillCircle(currPt[0], currPt[1], options.graphics.firstPointSize)
+              .endFill();
+          }
+        }
+
+        // Connect consecutive points with lines.
+        if (nextPt) {
+          var lineColor, lineWidth;
+          if (isDrawing) {
+              // Style for regular, pendown strokes.
+              lineColor = options.strokeStyle;
+              lineWidth = options.lineWidth;
+          } else if (options.mouseupMovements) {
+              // Style for penup strokes.
+              lineColor = options.mouseupMovements.strokeStyle || '#DDD';
+              lineWidth = options.mouseupMovements.lineWidth || 1;
+          }
+
+          sketch.lineStyle(lineColor, lineWidth)
+            .line(currPt[0], currPt[1], nextPt[0], nextPt[1])
+            .stroke();
+        }
+
+        // Flag stroke change.
+        if (t === stroke.length - 1) {
+          sketch.closePath();
+        }
+      }
+    }
+  }
 
 })(jQuery);

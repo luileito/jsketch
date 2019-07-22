@@ -186,6 +186,7 @@
     /**
      * Clears canvas <b>together with</b> associated strokes data.
      * @see Sketchable.handler
+     * @param {boolean} [keepStrokes] - Preserve stroke data (default: false).
      * @return {Sketchable}
      * @memberof Sketchable
      * @example
@@ -193,16 +194,21 @@
      * // Warning: This will remove strokes data as well.
      * sketcher.clear();
      * // If you only need to clear the canvas, just do:
+     * sketcher.clear(true);
+     * // Or, alternatively:
      * sketcher.handler(function(elem, data) {
      *   data.sketch.clear();
      * });
      */
-    clear: function() {
+    clear: function(keepStrokes) {
       var elem = this.elem, data = dataBind(elem)[namespace], options = data.options;
 
       data.sketch.clear();
-      data.strokes = [];
-      data.coords  = {};
+
+      if (!keepStrokes) {
+        data.strokes = [];
+        data.coords  = {};
+      }
 
       if (typeof options.events.clear === 'function')
         options.events.clear(elem, data);

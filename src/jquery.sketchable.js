@@ -155,6 +155,7 @@
     /**
      * Clears canvas <b>together with</b> associated strokes data.
      * @return {object} jQuery
+     * @param {boolean} [keepStrokes] - Preserve stroke data (default: false).
      * @memberof $.fn.sketchable
      * @see $.fn.sketchable.handler
      * @example
@@ -166,11 +167,13 @@
      *   data.sketch.clear();
      * });
      */
-    clear: function() {
+    clear: function(keepStrokes) {
       return this.each(function() {
         var elem = $(this), data = elem.data(namespace), options = data.options;
-        if (data.sketch) {
-          data.sketch.clear();
+
+        data.sketch.clear();
+
+        if (!keepStrokes) {
           data.strokes = [];
           data.coords  = {};
         }

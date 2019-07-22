@@ -163,6 +163,8 @@
      * // This will remove strokes data as well.
      * $canvas.clear();
      * // If you only need to clear the canvas, just do:
+     * $canvas.clear(true);
+     * // Or, alternatively:
      * $canvas.sketchable('handler', function(elem, data) {
      *   data.sketch.clear();
      * });

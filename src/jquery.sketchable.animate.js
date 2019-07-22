@@ -162,6 +162,7 @@
          *   }
          * })
          * .sketchable('strokes', strokesArray)
+         * .sketchable('clear', true)
          * .sketchable('animate.strokes');
          */
         strokes: function() {

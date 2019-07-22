@@ -164,6 +164,7 @@
          *   }
          * })
          * .strokes(strokeArray)
+         * .clear(true)
          * .animate.strokes();
          */
         strokes: function() {

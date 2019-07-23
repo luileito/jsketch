@@ -145,7 +145,7 @@
      * @memberof jSketch
      */
     beginFill: function(color) {
-      this.saveGraphics();
+      this.saveGraphics({ fillStyle: color });
       this.context.fillStyle = color;
       this.callStack.push({ property: 'fillStyle', value: color });
       return this;
@@ -393,7 +393,6 @@
      * @memberof jSketch
      */
     beginPath: function() {
-      this.saveGraphics();
       this.context.beginPath();
       this.callStack.push({ method: 'beginPath' });
       return this;
@@ -406,7 +405,6 @@
     closePath: function() {
       this.context.closePath();
       this.callStack.push({ method: 'closePath' });
-      this.restoreGraphics();
       return this;
     },
     /**

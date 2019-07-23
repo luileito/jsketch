@@ -682,36 +682,30 @@
         }
 
         if (t === 0) {
-          sketch.beginPath();
           // Draw first point of stroke.
           if (options.graphics.firstPointSize > 0) {
-            sketch.beginFill(lineColor)
+            sketch.beginFill(options.graphics.fillStyle)
               .fillCircle(currPt[0], currPt[1], options.graphics.firstPointSize)
               .endFill();
           }
-        }
-
-        // Connect consecutive points with lines.
-        if (nextPt) {
-          var lineColor, lineWidth;
+          // Set line styles.
+          var lc, lw;
           if (isDrawing) {
-              // Style for regular, pendown strokes.
-              lineColor = options.strokeStyle;
-              lineWidth = options.lineWidth;
+            // Style for regular, pendown strokes.
+            lc = options.strokeStyle;
+            lw = options.lineWidth;
           } else if (options.mouseupMovements) {
-              // Style for penup strokes.
-              lineColor = options.mouseupMovements.strokeStyle || '#DDD';
-              lineWidth = options.mouseupMovements.lineWidth || 1;
+            // Style for penup strokes.
+            lc = options.mouseupMovements.strokeStyle || '#DDD';
+            lw = options.mouseupMovements.lineWidth || 1;
           }
-
-          sketch.lineStyle(lineColor, lineWidth)
+          sketch.lineStyle(lc, lw);
+        } else if (nextPt) {
+          // Connect consecutive points with lines.
+          sketch.beginPath()
             .line(currPt[0], currPt[1], nextPt[0], nextPt[1])
-            .stroke();
-        }
-
-        // Flag stroke change.
-        if (t === stroke.length - 1) {
-          sketch.closePath();
+            .stroke()
+            .closePath();
         }
       }
     }

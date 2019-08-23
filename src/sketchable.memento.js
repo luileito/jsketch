@@ -1,5 +1,5 @@
 /*!
- * Memento plugin for Sketchable | v2.2 | Luis A. Leiva | MIT license
+ * Memento plugin for Sketchable | v2.3 | Luis A. Leiva | MIT license
  */
 
 // XXX: Requires `sketchable.utils.js` to be loaded first.
@@ -27,6 +27,7 @@
     var stack = [];
     var stpos = -1;
     var self  = this;
+
     /**
      * Update state.
      * @param {image} snapshot - Image object.
@@ -49,6 +50,32 @@
         data.sketch.callStack = state.callStack.slice();
       });
     }
+
+    /**
+     * Update state.
+     * @param {Image} snapshot - Image object.
+     * @param {object} state - State associated with snapshot.
+     * @param {object} state.strokes - Strokes data.
+     * @param {object} state.callStack - Actions history.
+     * @private
+     */
+    function save(ev) {
+      instance.handler(function(elem, data) {
+        // With multitouch events, only the first event should be used to store a snapshot.
+        // Then, the subsequent multitouch events must update current strokes data.
+        if (ev && ev.identifier > 0) {
+          stack[stpos].strokes = data.strokes.slice();
+        } else {
+          stack.push({
+            image: elem.toDataURL(),
+            strokes: data.strokes.slice(),
+            callStack: data.sketch.callStack.slice(),
+          });
+          stpos++;
+        }
+      });
+    }
+
     /**
      * Key event manager.
      *  - Undo: "Ctrl + Z"
@@ -80,6 +107,8 @@
       if (stpos > 0) {
         stpos--;
         this.restore();
+
+        instance.trigger('mementoundo');
       }
       return this;
     };
@@ -91,6 +120,8 @@
       if (stpos < stack.length - 1) {
         stpos++;
         this.restore();
+
+        instance.trigger('mementoredo');
       }
       return this;
     };
@@ -101,8 +132,11 @@
     this.reset = function() {
       stack = [];
       stpos = -1;
+
       // Save blank state afterward.
-      return this.save();
+      save();
+
+      return this;
     };
     /**
      * Save current state.
@@ -110,20 +144,10 @@
      * @return {MementoCanvas} Class instance.
      */
     this.save = function(ev) {
-      instance.handler(function(elem, data) {
-        // With multitouch events, only the first event should be used to store a snapshot.
-        // Then, the subsequent multitouch events must update current strokes data.
-        if (ev && ev.identifier > 0) {
-          stack[stpos].strokes = data.strokes.slice();
-        } else {
-          stack.push({
-            image: elem.toDataURL(),
-            strokes: data.strokes.slice(),
-            callStack: data.sketch.callStack.slice(),
-          });
-          stpos++;
-        }
-      });
+      save(ev);
+
+      instance.trigger('mementosave');
+
       return this;
     };
     /**
@@ -147,7 +171,10 @@
       snapshot.src = state.image;
       snapshot.onload = function() {
         draw(this, state);
+
+        instance.trigger('mementochange');
       };
+
       return this;
     };
     /**
@@ -157,8 +184,13 @@
     this.init = function() {
       Event.remove(document, 'keypress', keyManager);
       Event.add(document, 'keypress', keyManager);
+
+      instance.trigger('mementoinit');
+
       // Save blank state to begin with.
-      return this.save();
+      save();
+
+      return this;
     };
     /**
      * Destroy instance: reset state and remove key event listeners.
@@ -166,6 +198,9 @@
      */
     this.destroy = function() {
       Event.remove(document, 'keypress', keyManager);
+
+      instance.trigger('mementodestroy');
+
       return this.reset();
     };
 

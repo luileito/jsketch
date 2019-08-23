@@ -1,5 +1,5 @@
 /*!
- * Memento plugin for jQuery Sketchable | v2.2 | Luis A. Leiva | MIT license
+ * Memento plugin for jQuery Sketchable | v2.3 | Luis A. Leiva | MIT license
  */
 
 /* eslint-env browser */
@@ -25,6 +25,7 @@
     var stack = [];
     var stpos = -1;
     var self  = this;
+
     /**
      * Update state.
      * @param {Image} snapshot - Image object.
@@ -47,6 +48,32 @@
         data.sketch.callStack = state.callStack.slice();
       });
     }
+
+    /**
+     * Update state.
+     * @param {Image} snapshot - Image object.
+     * @param {object} state - State associated with snapshot.
+     * @param {object} state.strokes - Strokes data.
+     * @param {object} state.callStack - Actions history.
+     * @private
+     */
+    function save(ev) {
+      $instance.sketchable('handler', function(elem, data) {
+        // With multitouch events, only the first event should be used to store a snapshot.
+        // Then, the subsequent multitouch events must update current strokes data.
+        if (ev && ev.identifier > 0) {
+          stack[stpos].strokes = data.strokes.slice();
+        } else {
+          stack.push({
+            image: elem.get(0).toDataURL(),
+            strokes: data.strokes.slice(),
+            callStack: data.sketch.callStack.slice(),
+          });
+          stpos++;
+        }
+      });
+    }
+
     /**
      * Key event manager.
      *  - Undo: "Ctrl + Z"
@@ -70,6 +97,7 @@
         }
       }
     }
+
     /**
      * Goes back to the last saved state, if available.
      * @return {MementoCanvas} Class instance.
@@ -78,6 +106,8 @@
       if (stpos > 0) {
         stpos--;
         this.restore();
+
+        $instance.sketchable('trigger', 'mementoundo');
       }
       return this;
     };
@@ -89,6 +119,8 @@
       if (stpos < stack.length - 1) {
         stpos++;
         this.restore();
+
+        $instance.sketchable('trigger', 'mementoredo');
       }
       return this;
     };
@@ -99,8 +131,13 @@
     this.reset = function() {
       stack = [];
       stpos = -1;
+
+      $instance.sketchable('trigger', 'mementoreset');
+
       // Save blank state afterward.
-      return this.save();
+      save();
+
+      return this;
     };
     /**
      * Save current state.
@@ -108,20 +145,10 @@
      * @return {MementoCanvas} Class instance.
      */
     this.save = function(ev) {
-      $instance.sketchable('handler', function(elem, data) {
-        // With multitouch events, only the first event should be used to store a snapshot.
-        // Then, the subsequent multitouch events must update current strokes data.
-        if (ev && ev.identifier > 0) {
-          stack[stpos].strokes = data.strokes.slice();
-        } else {
-          stack.push({
-            image: elem.get(0).toDataURL(),
-            strokes: data.strokes.slice(),
-            callStack: data.sketch.callStack.slice(),
-          });
-          stpos++;
-        }
-      });
+      save(ev);
+
+      $instance.sketchable('trigger', 'mementosave');
+
       return this;
     };
     /**
@@ -145,7 +172,10 @@
       snapshot.src = state.image;
       snapshot.onload = function() {
         draw(this, state);
+
+        $instance.sketchable('trigger', 'mementochange');
       };
+
       return this;
     };
     /**
@@ -155,8 +185,13 @@
     this.init = function() {
       $(document).off('keypress', keyManager);
       $(document).on('keypress', keyManager);
+
+      $instance.sketchable('trigger', 'mementoinit');
+
       // Save blank state to begin with.
-      return this.save();
+      save();
+
+      return this;
     };
     /**
      * Destroy instance: reset state and remove key event listeners.
@@ -164,9 +199,11 @@
      */
     this.destroy = function() {
       $(document).off('keypress', keyManager);
+
+      $instance.sketchable('trigger', 'mementodestroy');
+
       return this.reset();
     };
-
   }
 
   /**
@@ -256,7 +293,7 @@
           data.memento.restore(state);
           return $instance;
         },
-      },
+      }
     });
 
     // Initialize plugin here.

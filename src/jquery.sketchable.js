@@ -1,5 +1,5 @@
 /*!
- * jQuery sketchable | v2.3 | Luis A. Leiva | MIT license
+ * jQuery sketchable | v2.4 | Luis A. Leiva | MIT license
  * A jQuery plugin for the jSketch drawing library.
  */
 
@@ -150,7 +150,26 @@
     handler: function(callback) {
       return this.each(function() {
         var elem = $(this), data = elem.data(namespace);
+
         callback(elem, data);
+      });
+    },
+    /**
+     * Execute programmatically an event.
+     * @param {string} event - Event name.
+     * @return {object} jQuery
+     * @memberof $.fn.sketchable
+     * @example
+     * $('canvas').sketchable('trigger', 'mouseup');
+     */
+    trigger: function(event) {
+      return this.each(function() {
+        var elem = $(this), data = elem.data(namespace);
+
+        var evts = data.options.events;
+        if (evts && typeof evts[event] === 'function') {
+          evts[event](elem, data);
+        }
       });
     },
     /**

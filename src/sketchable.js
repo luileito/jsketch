@@ -1,5 +1,5 @@
 /*!
- * Sketchable | v2.3 | Luis A. Leiva | MIT license
+ * Sketchable | v2.4 | Luis A. Leiva | MIT license
  * A plugin for the jSketch drawing library.
  */
 
@@ -182,6 +182,24 @@
 
       callback(elem, data);
 
+      return this;
+    },
+    /**
+     * Execute programmatically an event.
+     * @param {string} event - Event name.
+     * @return {Sketchable}
+     * @memberof Sketchable
+     * @example
+     * var sketcher = new Sketchable('#my-canvas', { events: ... });
+     * sketcher.trigger('mouseup');
+     */
+    trigger: function(event) {
+      var elem = this.elem, data = dataBind(elem)[namespace];
+
+      var evts = data.options.events;
+      if (evts && typeof evts[event] === 'function') {
+        evts[event](elem, data);
+      }
       return this;
     },
     /**

@@ -37,8 +37,7 @@
       }
     }
 
-    if (typeof events.animationstart === 'function')
-      events.animationstart($instance, data);
+    $instance.sketchable('trigger', 'animationstart');
 
     var raf;
     var frame = 0;
@@ -57,8 +56,8 @@
       // Advance local count and check if current animation should end.
       if (++frame === fmtStrokes.length - 1) {
         cancelAnimationFrame(raf);
-        if (typeof events.animationend === 'function')
-          events.animationend($instance, data);
+
+        $instance.sketchable('trigger', 'animationend');
       }
     })();
 
@@ -91,8 +90,8 @@
             .endFill();
         }
         // Trigger step event for subsequent strokes.
-        if (t > 0 && typeof events.animationstep === 'function')
-          events.animationstep($instance, data);
+        if (t > 0) $instance.sketchable('trigger', 'animationstep');
+
         // Flag stroke change.
         sketch.closePath().beginPath();
       }

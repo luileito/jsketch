@@ -661,14 +661,24 @@
       var touches = e.changedTouches;
       for (var i = 0; i < touches.length; i++) {
         var touch = touches[i];
+        evtProps(touch, e);
         callback(touch);
       }
     } else {
       // Track only the current finger.
       var touch = e.touches[0];
+      evtProps(touch, e);
       callback(touch);
     }
     e.preventDefault();
+  };
+
+  /**
+   * @ignore
+   */
+  function evtProps(targetEvent, sourceEvent) {
+      // TODO: Ensure all desired properties are included in the target event.
+      if (!targetEvent.type) targetEvent.type = sourceEvent.type;
   };
 
   /**

@@ -607,15 +607,20 @@
     var coords = data.coords[idx];
     var last = coords[coords.length - 1];
     if (last) {
-      var brush = data.sketch;
+      var lineColor, lineWidth;
       if (data.sketch.isDrawing) {
         // Style for regular, pendown strokes.
-        brush.lineStyle(options.graphics.strokeStyle, options.graphics.lineWidth);
+        lineColor = options.graphics.strokeStyle;
+        lineWidth = options.graphics.lineWidth;
       } else if (options.mouseupMovements) {
         // Style for penup strokes.
-        brush.lineStyle(options.mouseupMovements.strokeStyle || '#DDD', options.mouseupMovements.lineWidth || 1);
+        lineColor = options.mouseupMovements.strokeStyle || '#DDD';
+        lineWidth = options.mouseupMovements.lineWidth || 1;
       }
-      brush.line(last[0], last[1], p.x, p.y).stroke();
+      data.sketch
+        .lineStyle(lineColor, lineWidth)
+        .line(last[0], last[1], p.x, p.y)
+        .stroke();
     }
 
     saveMousePos(idx, data, p);
@@ -720,8 +725,8 @@
           var lc, lw;
           if (isDrawing) {
             // Style for regular, pendown strokes.
-            lc = options.strokeStyle;
-            lw = options.lineWidth;
+            lc = options.graphics.strokeStyle;
+            lw = options.graphics.lineWidth;
           } else if (options.mouseupMovements) {
             // Style for penup strokes.
             lc = options.mouseupMovements.strokeStyle || '#DDD';

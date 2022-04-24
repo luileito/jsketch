@@ -610,14 +610,15 @@
       var lineColor, lineWidth;
       if (data.sketch.isDrawing) {
           // Style for regular, pendown strokes.
-          lineColor = options.strokeStyle;
-          lineWidth = options.lineWidth;
+          lineColor = options.graphics.strokeStyle;
+          lineWidth = options.graphics.lineWidth;
       } else if (options.mouseupMovements) {
           // Style for penup strokes.
           lineColor = options.mouseupMovements.strokeStyle || '#DDD';
           lineWidth = options.mouseupMovements.lineWidth || 1;
       }
-      data.sketch.lineStyle(lineColor, lineWidth)
+      data.sketch
+        .lineStyle(lineColor, lineWidth)
         .line(last[0], last[1], p.x, p.y)
         .stroke();
     }
@@ -726,8 +727,8 @@
           var lc, lw;
           if (isDrawing) {
             // Style for regular, pendown strokes.
-            lc = options.strokeStyle;
-            lw = options.lineWidth;
+            lc = options.graphics.strokeStyle;
+            lw = options.graphics.lineWidth;
           } else if (options.mouseupMovements) {
             // Style for penup strokes.
             lc = options.mouseupMovements.strokeStyle || '#DDD';
